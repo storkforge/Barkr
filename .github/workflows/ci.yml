@@ -19,6 +19,7 @@ jobs:
         with:
           distribution: 'oracle'
           java-version: 24
+          cache: 'maven'
 
       - name: Compile with Maven
         run: mvn -B --no-transfer-progress compile --file pom.xml
