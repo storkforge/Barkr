@@ -12,7 +12,7 @@ import java.util.List;
 @Transactional
 public class PostService {
 
-    Logger log = LoggerFactory.getLogger(UserService.class);
+    Logger log = LoggerFactory.getLogger(PostService.class);
 
     private final PostRepository postRepository;
 
