@@ -22,10 +22,16 @@ public class User {
     private String username;
 
     @PastOrPresent
-    private LocalDateTime created_at;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Post> posts = new ArrayList<>();
+
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null) createdAt = LocalDateTime.now();
+    }
 
     public Long getId() {
         return id;
@@ -43,12 +49,12 @@ public class User {
         this.username = username;
     }
 
-    public LocalDateTime getCreated_at() {
-        return created_at;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(LocalDateTime created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     @Override
@@ -72,6 +78,6 @@ public class User {
         return getClass().getSimpleName() + "(" +
                 "id = " + id + ", " +
                 "username = " + username + ", " +
-                "created_at = " + created_at + ")";
+                "created_at = " + createdAt + ")";
     }
 }
