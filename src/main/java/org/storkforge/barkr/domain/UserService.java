@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 @Transactional
 public class UserService {
-    Logger log = LoggerFactory.getLogger(UserService.class);
+    private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
 
