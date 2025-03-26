@@ -18,7 +18,7 @@ public class User {
     private Long id;
 
     @NotBlank
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String username;
 
     @PastOrPresent

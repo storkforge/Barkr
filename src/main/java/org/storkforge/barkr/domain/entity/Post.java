@@ -17,6 +17,7 @@ public class Post {
 
     @NotBlank
     @Size(min = 1, max = 255)
+    @Column(nullable = false)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
