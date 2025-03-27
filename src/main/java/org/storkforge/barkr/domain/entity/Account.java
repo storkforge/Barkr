@@ -57,6 +57,16 @@ public class Account {
         this.createdAt = createdAt;
     }
 
+  public void addPost(Post post) {
+    posts.add(post);
+    post.setAccount(this);
+  }
+
+  public void removePost(Post post) {
+    posts.remove(post);
+    post.setAccount(null);
+  }
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
