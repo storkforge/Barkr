@@ -64,7 +64,6 @@ public class Account {
 
   public void removePost(Post post) {
     posts.remove(post);
-    post.setAccount(null);
   }
 
     @Override
