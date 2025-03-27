@@ -21,8 +21,8 @@ public class Post {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "account_id", nullable = false)
+    private Account account;
 
     @PastOrPresent
     @Column(nullable = false, updatable = false)
@@ -49,12 +49,12 @@ public class Post {
         this.content = content;
     }
 
-    public User getUser() {
-        return user;
+    public Account getAccount() {
+        return account;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -86,7 +86,7 @@ public class Post {
         return getClass().getSimpleName() + "(" +
                 "id = " + id + ", " +
                 "content = " + content + ", " +
-                "user = " + user + ", " +
+                "account = " + account + ", " +
                 "created_at = " + createdAt + ")";
     }
 }
