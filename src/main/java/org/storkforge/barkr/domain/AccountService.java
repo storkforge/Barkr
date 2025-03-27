@@ -21,7 +21,7 @@ public class AccountService {
     }
 
     public List<Account> findAll() {
-        log.info("Finding all users");
+        log.info("Finding all accounts");
         return accountRepository.findAll();
     }
 
