@@ -86,7 +86,6 @@ public class Post {
         return getClass().getSimpleName() + "(" +
                 "id = " + id + ", " +
                 "content = " + content + ", " +
-                "account = " + account + ", " +
                 "created_at = " + createdAt + ")";
     }
 }
