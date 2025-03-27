@@ -25,8 +25,8 @@ public class Account {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
-    private List<Post> posts = new ArrayList<>();
+  @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  private List<Post> posts = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
