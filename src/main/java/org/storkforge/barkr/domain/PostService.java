@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.domain.entity.Post;
 import org.storkforge.barkr.infrastructure.persistence.PostRepository;
 import java.util.List;
@@ -23,5 +24,11 @@ public class PostService {
     public List<Post> findAll() {
         log.info("Finding all posts");
         return postRepository.findAll();
+    }
+
+
+    public Post findOne(Long id) {
+        log.info("Finding post by id: {}", id);
+        return postRepository.findById(id).orElse(null);
     }
 }

@@ -25,6 +25,9 @@ public class AccountService {
         return accountRepository.findAll();
     }
 
-
+    public Account findOne(Long id) {
+        log.info("Finding account by id: {}", id);
+        return accountRepository.findById(id).orElse(null);
+    }
 
 }
