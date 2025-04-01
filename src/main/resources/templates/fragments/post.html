@@ -1,0 +1,12 @@
+<div th:fragment="post(post)" class="post">
+    <div class="post-header">
+<!--        <img th:src="${post.account.image}" alt="Profile Picture">-->
+        <div class="post-info">
+            <h3 th:text="${post.account.username}">Unknown user</h3>
+            <p th:text="${#temporals.format(post.createdAt, 'h:mm a · d MMM yyyy', #locale)}">Unknown date</p>
+        </div>
+    </div>
+    <div class="post-content">
+        <p th:text="${post.content}">No provided body</p>
+    </div>
+</div>
