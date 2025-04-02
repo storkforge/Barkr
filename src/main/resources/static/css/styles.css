@@ -83,6 +83,12 @@ header {
     transition: color 0.3s ease;
 }
 
+.site-title2 {
+    font-size: 1.4rem;
+    color: var(--heading);
+    transition: color 0.3s ease;
+}
+
 nav {
     display: flex;
     align-items: center;
