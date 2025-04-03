@@ -11,7 +11,7 @@ public class PostMapper {
         if (post == null) {
             return null;
         }
-    return new ResponsePost(
+        return new ResponsePost(
             post.getId(),
             post.getContent(),
             post.getAccount() != null ? post.getAccount().getId() : null,
@@ -28,9 +28,9 @@ public static Post mapToEntity(CreatePost dto, Account account) {
         return post;
 }
 public static void mapToUpdateEntity(Post post, UpdatePost dto) {
-    if(post == null || dto == null) {
+        if(post == null || dto == null) {
         return ;
-    }
-    post.setContent(dto.content());
+        }
+        post.setContent(dto.content());
 }
 }
