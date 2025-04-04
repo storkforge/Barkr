@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" class="light" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="icon" th:href="@{/images/logo/BarkrNoText.png}" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${queryAccount.username} + ' / Barkr'">Barkr - Social Media for Dogs</title>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container main-layout" th:style="${account == null ? 'grid-template-columns: 1fr' : ''}">
+    <div th:replace="~{fragments/sidebar :: aside}"></div>
+    <main>
+        <div class="card profile-header">
+            <div class="profile-info">
+                <div class="profile-info-header">
+                    <img th:src="${queryAccount.imageUrl}" alt="Profile picture" class="profile-picture">
+                    <div class="profile-actions" th:if="${account.username() == queryAccount.username}">
+                        <button class="btn">Edit Profile</button>
+                    </div>
+                </div>
+                <div class="profile-details">
+                    <h1 class="profile-name" th:text="${queryAccount.username}">Unknown account</h1>
+                </div>
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <span class="stat-count" th:text="${accountPosts.size}">N/A</span>
+                        <span class="stat-label"> Barks</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+       <div>
+            <div th:each="post : ${accountPosts}">
+                <div th:replace="~{fragments/post :: post(${post})}"></div>
+            </div>
+        </div>
+    </main>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script th:src="@{/js/theme-switcher.js}"></script>
+</body>
+</html>
