@@ -28,6 +28,10 @@ public class WebController {
   public String index(Model model) {
     List<Post> posts = postService.findAll();
     model.addAttribute("posts", posts);
+    model.addAttribute("createPostDto", new CreatePost("", 1L));
+    // TODO: Change this to the actual account once security is in place
+    model.addAttribute("account", accountService.findById(1L));
+
     return "index";
   }
 
