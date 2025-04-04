@@ -1,0 +1,11 @@
+<aside class="sidebar" th:if="${account}">
+    <div class="profile-card">
+        <img th:src="${account.imageUrl}" alt="Profile Picture">
+        <h2 th:text="${account.username}">Username Placeholder</h2>
+        <p th:text="${account.breed}">Breed Placeholder</p>
+    </div>
+    <ul class="nav-menu">
+        <li><a href="/"><i>🏠</i> Home</a></li>
+        <li><a th:href="@{'/' + ${account.username}}"><i>👤</i> Profile</a></li>
+    </ul>
+</aside>

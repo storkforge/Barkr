@@ -2,48 +2,41 @@
 <html lang="en" class="light" xmlns:th="http://www.thymeleaf.org">
 <head>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="icon" th:href="@{/images/logo/BarkrNoText.png}" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barkr - Social Media for Dogs</title>
+    <title>Home / Barkr</title>
 </head>
 <body>
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="container">
-    <aside class="sidebar">
-        <div class="profile">
-            <img src="https://via.placeholder.com/100" alt="Profile Picture">
-            <h2>Username Placeholder</h2>
-            <p>Breed Placeholder | Age Placeholder</p>
-        </div>
-        <ul class="menu">
-            <li><a href="#">My Profile</a></li>
-            <li><a href="#">Logout</a></li>
-        </ul>
-    </aside>
-
+<div class="container main-layout" th:style="${account == null ? 'grid-template-columns: 1fr' : ''}">
+    <div th:replace="~{fragments/sidebar :: aside}"></div>
     <main>
-        <div class="post-form">
+        <div class="card post-form" th:if="${account}">
             <h2>Create a New Bark</h2>
-            <form>
-                <div class="form-group">
+            <form th:action="@{/post/add}" method="post" th:object="${createPostDto}">
+                <div class="post-input">
                     <label for="post-content">What's on your mind?</label>
-                    <textarea id="post-content" placeholder="Share your pawsome thoughts..."></textarea>
+                    <textarea id="post-content" placeholder="Share your pawsome thoughts..." th:field="*{content}" required></textarea>
                 </div>
-                <button type="submit">Bark It!</button>
+                <input type="hidden" th:field="*{accountId}" th:value="${account.id}">
+                <button type="submit" class="btn">Bark It!</button>
             </form>
+
+            <div th:if="${success}" style="color: green; margin-top: 15px;">
+                Successfully barked!
+            </div>
         </div>
 
-        <div class="feed">
+        <div>
             <div th:each="post : ${posts}">
                 <div th:replace="~{fragments/post :: post(${post})}"></div>
             </div>
         </div>
     </main>
 </div>
-<footer>
-    <p>&copy; 2025 Barkr - The Social Network for Dogs. All Rights Reserved.</p>
-</footer>
+<div th:replace="~{fragments/footer :: footer}"></div>
 <script th:src="@{/js/theme-switcher.js}"></script>
 </body>
 </html>
