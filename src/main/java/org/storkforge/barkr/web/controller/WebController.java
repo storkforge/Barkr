@@ -2,8 +2,8 @@ package org.storkforge.barkr.web.controller;
 
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.storkforge.barkr.domain.AccountService;
 import org.storkforge.barkr.domain.PostService;
 import org.storkforge.barkr.domain.entity.Post;
@@ -51,5 +51,10 @@ public class WebController {
                         RedirectAttributes redirectAttributes) {
     postService.addPost(dto);
 
+    redirectAttributes.addFlashAttribute("success", true);
+    redirectAttributes.addFlashAttribute("createPostDto", new CreatePost("", dto.accountId()));
+
+    return "redirect:/";
+  }
 }
 
