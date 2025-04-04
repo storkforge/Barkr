@@ -5,7 +5,7 @@
         <p th:text="${account.breed}">Breed Placeholder</p>
     </div>
     <ul class="nav-menu">
-        <li><a href="/"><i>🏠</i> Home</a></li>
-        <li><a th:href="@{'/' + ${account.username}}"><i>👤</i> Profile</a></li>
+        <li><a href="/"><i>🏠</i> <span th:text="#{home}">Home</span></a></li>
+        <li><a th:href="@{'/' + ${account.username}}"><i>👤</i> <span th:text="#{profile}">Profile</span></a></li>
     </ul>
 </aside>

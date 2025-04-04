@@ -5,7 +5,7 @@
     <link rel="icon" th:href="@{/images/logo/BarkrNoText.png}" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home / Barkr</title>
+    <title th:text="#{home} + ' / Barkr'">Home / Barkr</title>
 </head>
 <body>
 <div th:replace="~{fragments/header :: header}"></div>
@@ -14,17 +14,17 @@
     <div th:replace="~{fragments/sidebar :: aside}"></div>
     <main>
         <div class="card post-form" th:if="${account}">
-            <h2>Create a New Bark</h2>
+            <h2 th:text="#{create.header}">Create a New Bark</h2>
             <form th:action="@{/post/add}" method="post" th:object="${createPostDto}">
                 <div class="post-input">
-                    <label for="post-content">What's on your mind?</label>
-                    <textarea id="post-content" placeholder="Share your pawsome thoughts..." th:field="*{content}" required></textarea>
+                    <label for="post-content" th:text="#{create.form.label}">What's on your mind?</label>
+                    <textarea id="post-content" th:placeholder="#{create.form.placeholder}" th:field="*{content}" required></textarea>
                 </div>
                 <input type="hidden" th:field="*{accountId}" th:value="${account.id}">
-                <button type="submit" class="btn">Bark It!</button>
+                <button type="submit" class="btn" th:text="#{create.post}">Bark It!</button>
             </form>
 
-            <div th:if="${success}" style="color: green; margin-top: 15px;">
+            <div th:if="${success}" th:text="#{success}" style="color: green; margin-top: 15px;">
                 Successfully barked!
             </div>
         </div>

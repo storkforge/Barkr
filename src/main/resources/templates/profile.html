@@ -10,7 +10,7 @@
 <body>
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="container main-layout" th:style="${account == null ? 'grid-template-columns: 1fr' : ''}">
+<div class="container main-layout">
     <div th:replace="~{fragments/sidebar :: aside}"></div>
     <main>
         <div class="card profile-header">
@@ -18,7 +18,7 @@
                 <div class="profile-info-header">
                     <img th:src="${queryAccount.imageUrl}" alt="Profile picture" class="profile-picture">
                     <div class="profile-actions" th:if="${account.username() == queryAccount.username}">
-                        <button class="btn">Edit Profile</button>
+                        <button class="btn" th:text="#{edit.profile}">Edit Profile</button>
                     </div>
                 </div>
                 <div class="profile-details">
@@ -27,7 +27,7 @@
                 <div class="profile-stats">
                     <div class="stat-item">
                         <span class="stat-count" th:text="${accountPosts.size}">N/A</span>
-                        <span class="stat-label"> Barks</span>
+                        <span class="stat-label" th:text="${accountPosts.size == 1 ? ' Bark' : ' Barks'}"> Bark(s)</span>
                     </div>
                 </div>
             </div>

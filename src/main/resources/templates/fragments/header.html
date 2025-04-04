@@ -2,18 +2,17 @@
     <div class="container header-container">
         <div>
             <a href="/" class="logo">
-            <img src="/images/logo/BarkrNoText.png" alt="Barkr Logo" class="logo">
-            <h1>Barkr</h1>
+                <img src="/images/logo/BarkrNoText.png" alt="Barkr Logo" class="logo">
+                <h1>Barkr</h1>
             </a>
         </div>
         <div class="auth-buttons">
-            <button class="btn" th:unless="${account}">Sign in</button>
-            <button class="btn" th:if="${account}">Sign out</button>
+            <button class="btn" th:unless="${account}" th:text="#{sign.in}">Sign in</button>
+            <button class="btn" th:if="${account}" th:text="#{sign.out}">Sign out</button>
             <div class="theme-toggle" id="theme-toggle">
                 <div class="theme-toggle-icon">
                     <span id="theme-icon">☀️</span>
                 </div>
-                <span class="theme-toggle-text" id="theme-text">Dark Mode</span>
             </div>
         </div>
     </div>
