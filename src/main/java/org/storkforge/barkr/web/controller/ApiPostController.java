@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.storkforge.barkr.domain.PostService;
 import org.storkforge.barkr.domain.entity.Post;
+import org.storkforge.barkr.dto.postDto.ResponsePost;
+import org.storkforge.barkr.dto.postDto.ResponsePostList;
+import org.storkforge.barkr.mapper.PostMapper;
 
 import java.util.List;
 
@@ -22,12 +25,13 @@ public class ApiPostController {
     }
 
     @GetMapping("/posts")
-    public List<Post> getPosts(Model model) {
-        return postService.findAll();
+    public ResponsePostList getPosts(Model model) {
+        List<ResponsePost> posts = postService.findAll();
+       return new ResponsePostList(posts);
     }
 
     @GetMapping("/posts/{id}")
-    public Post getPost(@PathVariable Long id) {
+    public ResponsePost getPost(@PathVariable Long id) {
         return postService.findOne(id);
     }
 

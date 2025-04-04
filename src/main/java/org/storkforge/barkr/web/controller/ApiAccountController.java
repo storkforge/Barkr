@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.storkforge.barkr.domain.AccountService;
 import org.storkforge.barkr.domain.entity.Account;
+import org.storkforge.barkr.dto.accountDto.ResponseAccount;
+import org.storkforge.barkr.dto.accountDto.ResponseAccountList;
+import org.storkforge.barkr.mapper.AccountMapper;
 
 import java.util.List;
 
@@ -21,12 +24,12 @@ public class ApiAccountController {
     }
 
     @GetMapping("/accounts")
-    public List<Account> accounts(Model model) {
-        return accountService.findAll();
+    public ResponseAccountList accounts(Model model) {
+        return new ResponseAccountList(accountService.findAll());
     }
 
     @GetMapping("/accounts/{id}")
-    public Account account(@PathVariable Long id) {
+    public ResponseAccount account(@PathVariable Long id) {
         return accountService.findOne(id);
     }
 }

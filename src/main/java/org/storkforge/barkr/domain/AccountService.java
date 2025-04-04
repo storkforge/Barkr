@@ -5,7 +5,10 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.storkforge.barkr.domain.entity.Account;
+import org.storkforge.barkr.dto.accountDto.ResponseAccount;
+import org.storkforge.barkr.dto.accountDto.ResponseAccountList;
 import org.storkforge.barkr.infrastructure.persistence.AccountRepository;
+import org.storkforge.barkr.mapper.AccountMapper;
 
 import java.util.List;
 
@@ -20,14 +23,15 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
-    public List<Account> findAll() {
+    public List<ResponseAccount> findAll() {
         log.info("Finding all accounts");
-        return accountRepository.findAll();
+        List<Account> accounts = accountRepository.findAll();
+        return accounts.stream().map(AccountMapper::mapToResponse).toList();
     }
 
-    public Account findOne(Long id) {
+    public ResponseAccount findOne(Long id) {
         log.info("Finding account by id: {}", id);
-        return accountRepository.findById(id).orElse(null);
+        return AccountMapper.mapToResponse(accountRepository.findById(id).orElse(null));
     }
 
 }
