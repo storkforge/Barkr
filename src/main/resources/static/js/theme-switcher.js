@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const rootElement = document.documentElement;
     const themeToggle = document.querySelector('#theme-toggle');
     const themeIcon = document.querySelector('#theme-icon');
-    const themeText = document.querySelector('#theme-text');
 
     // Check for saved theme preference or use default
     const savedTheme = localStorage.getItem('theme') || 'light';
@@ -23,10 +22,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function updateThemeToggle(theme) {
         if (theme === 'dark') {
             themeIcon.textContent = '🌙';
-            themeText.textContent = 'Light Mode';
         } else {
             themeIcon.textContent = '☀️';
-            themeText.textContent = 'Dark Mode';
         }
     }
 });
