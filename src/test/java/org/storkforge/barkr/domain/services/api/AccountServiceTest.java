@@ -31,7 +31,7 @@ class AccountServiceTest {
 
 
     @Nested
-    class NoAccountsTests{
+    class NoAccountsTests {
 
         @Test
         @DisplayName("No accounts in database throws exception")
@@ -49,6 +49,16 @@ class AccountServiceTest {
             assertThatThrownBy(() -> accountService.findOne(1L)).isInstanceOf(AccountNotFound.class).hasMessage("Account with id: 1 was not found");
 
         }
+
+        @Test
+        @DisplayName("Null account throws exceptions")
+        void nullAccountThrowsExceptions() {
+
+            when(accountRepository.findAll()).thenReturn(null).thenThrow(new AccountNotFound("No account record(s) found in database"));
+            assertThatThrownBy(accountService::findAll).isInstanceOf(AccountNotFound.class).hasMessage("No account record(s) found in database");
+
+        }
+    }
 
         @Nested
         class AccountsTests{
@@ -106,8 +116,3 @@ class AccountServiceTest {
 
 
     }
-
-
-
-
-}
