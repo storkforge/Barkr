@@ -7,8 +7,10 @@ import org.springframework.stereotype.Service;
 import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.domain.entity.Post;
 import org.storkforge.barkr.dto.postDto.CreatePost;
+import org.storkforge.barkr.dto.postDto.ResponsePost;
 import org.storkforge.barkr.infrastructure.persistence.AccountRepository;
 import org.storkforge.barkr.infrastructure.persistence.PostRepository;
+import org.storkforge.barkr.mapper.PostMapper;
 
 import java.util.List;
 
@@ -26,17 +28,26 @@ public class PostService {
     this.accountRepository = accountRepository;
   }
 
-  public List<Post> findAll() {
+  public List<ResponsePost> findAll() {
     log.info("Finding all posts");
-    return postRepository.findAll();
+    return postRepository
+            .findAll()
+            .stream()
+            .map(PostMapper::mapToResponse)
+            .toList();
   }
 
-  public List<Post> findByUsername(String username) {
+  public List<ResponsePost> findByUsername(String username) {
     log.info("Finding posts by username {}", username);
     Account account = accountRepository
             .findByUsernameEqualsIgnoreCase(username)
             .orElseThrow(() -> new RuntimeException("Account not found"));
-    return postRepository.findByAccount(account);
+
+    return postRepository
+            .findByAccount(account)
+            .stream()
+            .map(PostMapper::mapToResponse)
+            .toList();
   }
 
   public void addPost(CreatePost dto) {
