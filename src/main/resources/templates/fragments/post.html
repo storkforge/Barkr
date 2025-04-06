@@ -1,7 +1,6 @@
 <div th:fragment="post(post)" class="card">
     <div class="post-header">
-<!--        <img th:src="${post.account.image}" alt="Profile Picture">-->
-        <img src="/images/logo/BarkrNoText.png" alt="Barkr Logo" class="logo">
+        <img th:src="@{'/account/' + ${post.account.id} + '/image'}" alt="Profile Picture">
         <div class="user-info">
             <h4 th:text="${post.account.username}">Unknown user</h4>
             <span th:text="${#temporals.format(post.createdAt, 'h:mm a · d MMM yyyy', #locale)}">Unknown date</span>

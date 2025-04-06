@@ -25,6 +25,12 @@ public class Account {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "image")
+    private byte[] image;
+
+    @NotBlank
+    private String breed;
+
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Post> posts = new ArrayList<>();
 
@@ -57,6 +63,22 @@ public class Account {
         this.createdAt = createdAt;
     }
 
+    public byte[] getImage() {
+      return image;
+    }
+
+    public void setImage(byte[] image) {
+      this.image = image;
+    }
+
+    public String getBreed() {
+      return breed;
+    }
+
+    public void setBreed(String breed) {
+      this.breed = breed;
+    }
+
     public void addPost(Post post) {
       posts.add(post);
       post.setAccount(this);
@@ -84,9 +106,10 @@ public class Account {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" +
-                "id = " + id + ", " +
-                "username = " + username + ", " +
-                "created_at = " + createdAt + ")";
+      return getClass().getSimpleName() + "(" +
+              "id = " + id + ", " +
+              "username = " + username + ", " +
+              "createdAt = " + createdAt + ", " +
+              "breed = " + breed + ")";
     }
 }

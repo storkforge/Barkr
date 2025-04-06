@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
+import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.dto.accountDto.ResponseAccount;
 import org.storkforge.barkr.infrastructure.persistence.AccountRepository;
 import org.storkforge.barkr.mapper.AccountMapper;
@@ -46,4 +47,21 @@ public class AccountService {
                 .orElseThrow(() -> new RuntimeException("Account with id " + id + " not found"));
     }
 
+    public byte[] getAccountImage(Long id) {
+        log.info("Getting account image {}", id);
+
+        return accountRepository.getAccountImage(id);
+    }
+
+    public void updateImage(Long id, byte[] image) {
+        log.info("Updating image for user with id {}", id);
+
+        Account account = accountRepository
+                .findById(id)
+                .orElseThrow(() -> new RuntimeException("Account with id " + id + " not found"));
+
+        account.setImage(image);
+
+        accountRepository.save(account);
+    }
 }

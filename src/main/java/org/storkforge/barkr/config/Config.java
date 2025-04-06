@@ -27,12 +27,18 @@ public class Config {
         log.info("Seeding users/accounts into the database...");
         Account accountOne = new Account();
         accountOne.setUsername("Bella Pawkins");
+        accountOne.setBreed("Golden Retriever");
+        accountOne.setImage(null);
 
         Account accountTwo = new Account();
         accountTwo.setUsername("Charlie Barkson");
+        accountTwo.setBreed("Siberian Husky");
+        accountTwo.setImage(null);
 
         Account accountThree = new Account();
         accountThree.setUsername("Max Woofington");
+        accountThree.setBreed("German Shepherd");
+        accountThree.setImage(null);
 
         accountRepository.saveAll(List.of(accountOne, accountTwo, accountThree));
 

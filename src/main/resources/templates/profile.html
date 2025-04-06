@@ -16,7 +16,7 @@
         <div class="card profile-header">
             <div class="profile-info">
                 <div class="profile-info-header">
-                    <img th:src="${queryAccount.imageUrl}" alt="Profile picture" class="profile-picture">
+                    <img th:src="@{'/account/' + ${queryAccount.id} + '/image'}" alt="Profile Picture" class="profile-picture">
                     <div class="profile-actions" th:if="${account.username() == queryAccount.username}">
                         <button class="btn" th:text="#{edit.profile}">Edit Profile</button>
                     </div>
@@ -26,19 +26,28 @@
                 </div>
                 <div class="profile-stats">
                     <div class="stat-item">
-                        <span class="stat-count" th:text="${accountPosts.size}">N/A</span>
-                        <span class="stat-label" th:text="${accountPosts.size == 1 ? ' Bark' : ' Barks'}"> Bark(s)</span>
+                        <span class="stat-label" th:text="#{breed}">Breed:</span>
+                        <span class="stat-count" th:text="${account.breed}">Unknown breed</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-count" th:text="${accountPosts.size()}">N/A</span>
+                        <span class="stat-label"
+                              th:text="${accountPosts.size() == 1 ? ' Bark' : ' Barks'}"> Bark(s)</span>
                     </div>
                 </div>
             </div>
         </div>
-       <div>
+        <div>
             <div th:each="post : ${accountPosts}">
                 <div th:replace="~{fragments/post :: post(${post})}"></div>
             </div>
         </div>
     </main>
 </div>
+<form th:action="@{/account/{id}/upload(id=${account.id})}" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" required accept="image/*">
+    <button type="submit">Update image</button>
+</form>
 <div th:replace="~{fragments/footer :: footer}"></div>
 <script th:src="@{/js/theme-switcher.js}"></script>
 </body>
