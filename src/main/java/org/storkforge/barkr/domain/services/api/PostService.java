@@ -1,4 +1,4 @@
-package org.storkforge.barkr.domain;
+package org.storkforge.barkr.domain.services.api;
 
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;

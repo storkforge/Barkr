@@ -6,11 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.storkforge.barkr.domain.PostService;
-import org.storkforge.barkr.domain.entity.Post;
+import org.storkforge.barkr.domain.services.api.PostService;
 import org.storkforge.barkr.dto.postDto.ResponsePost;
 import org.storkforge.barkr.dto.postDto.ResponsePostList;
-import org.storkforge.barkr.mapper.PostMapper;
 
 import java.util.List;
 
