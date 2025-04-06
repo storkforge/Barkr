@@ -1,11 +1,11 @@
 // The Konami code in keycodes
-const konamiCode = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
+const konamiCode = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
 let currentPosition = 0;
 
 document.addEventListener("keydown", (event) => {
-    if (event.keyCode == konamiCode[currentPosition]) {
+    if (event.key === konamiCode[currentPosition]) {
         currentPosition++;
-        if (currentPosition == konamiCode.length) {
+        if (currentPosition === konamiCode.length) {
             currentPosition = 0;
             switchLang();
         }
