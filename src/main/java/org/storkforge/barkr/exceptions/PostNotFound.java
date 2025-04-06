@@ -6,9 +6,10 @@ import org.storkforge.barkr.domain.entity.Post;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class PostNotFound extends RuntimeException {
-  public PostNotFound(Post post) {
-    super();
-  }
+    public PostNotFound(Post post) {
+        super();
+    }
+
     public PostNotFound(String message) {
         super(message);
     }
