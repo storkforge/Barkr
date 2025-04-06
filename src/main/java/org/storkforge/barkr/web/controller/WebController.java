@@ -38,6 +38,9 @@ public class WebController {
 
   @GetMapping("/{username}")
   public String user(@PathVariable("username") String username, Model model) {
+    if (username.equals("favicon.ico")) {
+      return "redirect:/";
+    }
     ResponseAccount queryAccount = accountService.findByUsername(username);
     if (queryAccount == null) {
       return "redirect:/";
