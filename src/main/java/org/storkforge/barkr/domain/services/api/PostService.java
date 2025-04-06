@@ -34,7 +34,7 @@ public class PostService {
 
         var posts = postRepository.findAll();
         if (posts == null || posts.isEmpty()) {
-            throw new PostNotFound("No posts records found in database");
+            throw new PostNotFound("No post record(s) found in database");
         }
         return posts.stream().filter(Objects::nonNull).map(PostMapper::mapToResponse).toList();
     }

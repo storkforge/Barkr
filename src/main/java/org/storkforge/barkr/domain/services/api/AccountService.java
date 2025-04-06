@@ -28,7 +28,7 @@ public class AccountService {
         log.info("Finding all accounts");
         List<Account> accounts = accountRepository.findAll();
         if (accounts == null ||accounts.isEmpty()) {
-            throw new AccountNotFound("No account records found in database");
+            throw new AccountNotFound("No account record(s) found in database");
 
         }
         return accounts.stream().filter(Objects::nonNull).map(AccountMapper::mapToResponse).toList();
