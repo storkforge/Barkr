@@ -1,7 +1,9 @@
 package org.storkforge.barkr.dto.accountDto;
 
 
+import jakarta.validation.constraints.NotBlank;
+
 import java.util.List;
 
-public record ResponseAccountList(List<ResponseAccount> accounts) {
+public record ResponseAccountList(@NotBlank List<ResponseAccount> accounts) {
 }
