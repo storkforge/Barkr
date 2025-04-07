@@ -24,4 +24,8 @@ public class PostService {
         log.info("Finding all posts");
         return postRepository.findAll();
     }
+
+    public Post findById(Long id) {
+        return postRepository.findById(id).orElse(null);
+    }
 }
