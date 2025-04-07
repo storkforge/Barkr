@@ -45,6 +45,14 @@ public class AccountService {
     public void updateImage(Long id, byte[] image) {
         log.info("Updating image for user with id {}", id);
 
+        if (image == null || image.length == 0) {
+            throw new IllegalArgumentException("Image cannot be empty");
+        }
+
+        if (image.length > 5 * 1024 * 1024) {
+            throw new IllegalArgumentException("Image is too large");
+        }
+
         Account account = accountRepository
                 .findById(id)
                 .orElseThrow(() -> new RuntimeException("Account with id " + id + " not found"));
