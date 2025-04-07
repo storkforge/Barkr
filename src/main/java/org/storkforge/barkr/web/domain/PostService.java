@@ -51,13 +51,18 @@ public class PostService {
   }
 
   public void addPost(CreatePost dto) {
-    String content = dto.content();
+    log.info("Adding post {}", dto);
+
+    if (dto.content() == null || dto.content().trim().isEmpty()) {
+      throw new IllegalArgumentException("Post content cannot be empty");
+    }
+
     Account account = accountRepository
             .findById(dto.accountId())
             .orElseThrow(() -> new RuntimeException("Account not found with id " + dto.accountId()));
 
     Post post = new Post();
-    post.setContent(content);
+    post.setContent(dto.content());
     post.setAccount(account);
     postRepository.save(post);
   }
