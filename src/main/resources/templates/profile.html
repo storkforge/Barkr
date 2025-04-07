@@ -73,5 +73,11 @@
 </script>
 <script th:src="@{/js/theme-switcher.js}"></script>
 <script th:src="@{/js/konami.js}"></script>
+<script>
+    function changeLanguage(language) {
+        const url = new URL(window.location.href);
+        url.searchParams.set("lang", language);
+        window.location.href = url.toString();    }
+</script>
 </body>
 </html>
