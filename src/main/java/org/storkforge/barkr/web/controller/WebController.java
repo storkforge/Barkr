@@ -56,23 +56,36 @@ public class WebController {
   }
 
   @GetMapping("/{username}")
-  public String user(@PathVariable("username") String username, Model model, RedirectAttributes redirectAttributes) {
+  public DeferredResult<String> user(@PathVariable("username") String username, Model model, RedirectAttributes redirectAttributes) {
+    DeferredResult<String> result = new DeferredResult<>();
     ResponseAccount queryAccount;
+
     try {
       queryAccount = accountService.findByUsername(username);
     }
     catch (Exception e) {
       redirectAttributes.addFlashAttribute("error", "User '"+ username +"' not found");
-      return "redirect:/";
+      result.setResult("redirect:/");
+      return result;
     }
 
     model.addAttribute("accountPosts", postService.findByUsername(username));
     model.addAttribute("queryAccount", queryAccount);
-    model.addAttribute("fact", dogFactService.getDogFact().block());
     // TODO: Change this to the actual account once security is in place
     model.addAttribute("account", accountService.findById(1L));
 
-    return "profile";
+    dogFactService.getDogFact().subscribe(
+            fact -> {
+              model.addAttribute("fact", fact);
+              result.setResult("profile");
+            },
+            error -> {
+              model.addAttribute("fact", "Error loading dog fact: " + error.getMessage());
+              result.setResult("profile");
+            }
+    );
+
+    return result;
   }
 
   @PostMapping("/post/add")
