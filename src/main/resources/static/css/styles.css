@@ -408,6 +408,13 @@ i {
 
 .success-message {
     color: green;
+}
+
+.error-message {
+    color: red;
+}
+
+.success-message, .error-message {
     margin-top: 15px;
 }
 

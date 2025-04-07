@@ -29,7 +29,9 @@
                 Successfully barked!
             </div>
         </div>
-
+        <div th:if="${error}" th:text="${error}" class="error-message">
+            Account not found
+        </div>
         <div th:each="post : ${posts}">
             <div th:replace="~{fragments/post :: post(${post})}"></div>
         </div>

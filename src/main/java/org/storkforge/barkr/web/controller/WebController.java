@@ -43,12 +43,13 @@ public class WebController {
   }
 
   @GetMapping("/{username}")
-  public String user(@PathVariable("username") String username, Model model) {
-    if (username.equals("favicon.ico")) {
-      return "redirect:/";
+  public String user(@PathVariable("username") String username, Model model, RedirectAttributes redirectAttributes) {
+    ResponseAccount queryAccount;
+    try {
+      queryAccount = accountService.findByUsername(username);
     }
-    ResponseAccount queryAccount = accountService.findByUsername(username);
-    if (queryAccount == null) {
+    catch (Exception e) {
+      redirectAttributes.addFlashAttribute("error", "User '"+ username +"' not found");
       return "redirect:/";
     }
 
