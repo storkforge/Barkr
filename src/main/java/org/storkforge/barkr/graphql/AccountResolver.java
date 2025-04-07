@@ -6,26 +6,26 @@ import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 import org.storkforge.barkr.domain.AccountService;
-import org.storkforge.barkr.domain.entity.Account;
+import org.storkforge.barkr.dto.accountDto.ResponseAccount;
 
 import java.util.List;
 
 @Controller
-public class AccountController {
+public class AccountResolver {
 
     private final AccountService accountService;
 
-    public AccountController(AccountService accountService) {
+    public AccountResolver(AccountService accountService) {
         this.accountService = accountService;
     }
 
     @QueryMapping("Accounts")
-    public List<Account> accounts() {
+    public List<ResponseAccount> accounts() {
         return accountService.findAll();
     }
 
     @QueryMapping("Account")
-    public Account account(@Argument Long id) {
+    public ResponseAccount account(@Argument Long id) {
         return accountService.findById(id);
     }
 

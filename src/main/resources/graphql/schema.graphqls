@@ -13,7 +13,6 @@ type Post {
     account: Account!
 }
 
-
 type Account {
     id: ID
     username: String!
