@@ -1,6 +1,5 @@
 package org.storkforge.barkr.web.controller;
 
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +19,7 @@ public class ApiAccountController {
     }
 
     @GetMapping("/accounts")
-    public ResponseAccountList accounts(Model model) {
+    public ResponseAccountList accounts() {
         return new ResponseAccountList(accountService.findAll());
     }
 

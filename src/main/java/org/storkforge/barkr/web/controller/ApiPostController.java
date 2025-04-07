@@ -1,7 +1,6 @@
 package org.storkforge.barkr.web.controller;
 
 
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +22,7 @@ public class ApiPostController {
     }
 
     @GetMapping("/posts")
-    public ResponsePostList getPosts(Model model) {
+    public ResponsePostList getPosts() {
         List<ResponsePost> posts = postService.findAll();
        return new ResponsePostList(posts);
     }

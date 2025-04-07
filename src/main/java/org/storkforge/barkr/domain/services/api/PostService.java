@@ -4,8 +4,6 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.storkforge.barkr.domain.entity.Post;
 import org.storkforge.barkr.dto.postDto.ResponsePost;
 import org.storkforge.barkr.exceptions.PostNotFound;
@@ -39,8 +37,6 @@ public class PostService {
     }
 
 
-    @ExceptionHandler(PostNotFound.class)
-    @ResponseBody
     public ResponsePost findOne(Long id) {
         Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFound("The post with id: " + id + " could not be found"));
         log.info("Finding post by id: {}", id);
