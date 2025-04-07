@@ -26,9 +26,11 @@ public class Account {
     private LocalDateTime createdAt;
 
     @Column(name = "image")
+    @Size(max = 5242880)
     private byte[] image;
 
     @NotBlank
+    @Size(min = 2, max = 100, message = "Breed name must be between 2 and 100 characters")
     private String breed;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -64,11 +66,11 @@ public class Account {
     }
 
     public byte[] getImage() {
-      return image;
+      return image == null ? null : image.clone();
     }
 
     public void setImage(byte[] image) {
-      this.image = image;
+      this.image = image == null ? null : image.clone();
     }
 
     public String getBreed() {
