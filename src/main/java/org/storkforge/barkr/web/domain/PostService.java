@@ -41,7 +41,7 @@ public class PostService {
     log.info("Finding posts by username {}", username);
     Account account = accountRepository
             .findByUsernameEqualsIgnoreCase(username)
-            .orElseThrow(() -> new RuntimeException("Account not found"));
+            .orElseThrow(() -> new RuntimeException("Account not found with username " + username));
 
     return postRepository
             .findByAccount(account)
@@ -54,7 +54,7 @@ public class PostService {
     String content = dto.content();
     Account account = accountRepository
             .findById(dto.accountId())
-            .orElseThrow(() -> new RuntimeException("Account not found"));
+            .orElseThrow(() -> new RuntimeException("Account not found with id " + dto.accountId()));
 
     Post post = new Post();
     post.setContent(content);
