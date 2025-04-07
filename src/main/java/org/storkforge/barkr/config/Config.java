@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.domain.entity.Post;
-import org.storkforge.barkr.infrastructure.persistence.AccountRepository;
-import org.storkforge.barkr.infrastructure.persistence.PostRepository;
+import org.storkforge.barkr.web.infrastructure.persistence.AccountRepository;
+import org.storkforge.barkr.web.infrastructure.persistence.PostRepository;
 
 import java.util.List;
 

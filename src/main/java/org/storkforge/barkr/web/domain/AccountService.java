@@ -1,4 +1,4 @@
-package org.storkforge.barkr.domain;
+package org.storkforge.barkr.web.domain;
 
 import jakarta.transaction.Transactional;
 import org.slf4j.LoggerFactory;
@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.dto.accountDto.ResponseAccount;
-import org.storkforge.barkr.infrastructure.persistence.AccountRepository;
+import org.storkforge.barkr.web.infrastructure.persistence.AccountRepository;
 import org.storkforge.barkr.mapper.AccountMapper;
 
 import java.util.List;

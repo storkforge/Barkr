@@ -1,4 +1,4 @@
-package org.storkforge.barkr.infrastructure.persistence;
+package org.storkforge.barkr.web.infrastructure.persistence;
 
 import org.springframework.data.repository.ListCrudRepository;
 import org.storkforge.barkr.domain.entity.Account;
