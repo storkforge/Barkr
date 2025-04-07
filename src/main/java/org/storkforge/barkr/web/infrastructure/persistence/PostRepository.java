@@ -7,5 +7,5 @@ import org.storkforge.barkr.domain.entity.Post;
 import java.util.List;
 
 public interface PostRepository extends ListCrudRepository<Post, Long> {
-  public List<Post> findByAccount(Account account);
+  List<Post> findByAccount(Account account);
 }
