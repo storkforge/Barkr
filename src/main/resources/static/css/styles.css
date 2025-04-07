@@ -418,6 +418,18 @@ i {
     margin-top: 15px;
 }
 
+.konami-feedback {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: rgba(0,0,0,0.8);
+    color: white;
+    border-radius: 10px;
+    z-index: 9999;
+}
+
 @media (max-width: 1024px) {
     .main-layout {
         grid-template-columns: 200px 1fr;

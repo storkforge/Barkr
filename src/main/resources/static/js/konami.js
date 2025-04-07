@@ -18,15 +18,7 @@ function switchLang() {
     try {
         const feedback = document.createElement('div');
         feedback.textContent = '🎉 Konami Code Activated! 🎉';
-        feedback.style.position = 'fixed';
-        feedback.style.top = '50%';
-        feedback.style.left = '50%';
-        feedback.style.transform = 'translate(-50%, -50%)';
-        feedback.style.padding = '20px';
-        feedback.style.backgroundColor = 'rgba(0,0,0,0.8)';
-        feedback.style.color = 'white';
-        feedback.style.borderRadius = '10px';
-        feedback.style.zIndex = '9999';
+        feedback.className = "konami-feedback"
         document.body.appendChild(feedback);
 
         setTimeout(() => {
