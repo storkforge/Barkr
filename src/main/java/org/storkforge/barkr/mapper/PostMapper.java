@@ -14,7 +14,7 @@ public class PostMapper {
         return new ResponsePost(
             post.getId(),
             post.getContent(),
-            post.getAccount(),
+            AccountMapper.mapToResponse(post.getAccount()),
             post.getCreatedAt()
             );
 }
