@@ -127,12 +127,18 @@ public class WebController {
   }
 
   @PostMapping("/account/{id}/upload")
-  public String uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
+  public String uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
     if (file.isEmpty()) {
-      return "redirect:/?error=No file selected";
+      redirectAttributes.addFlashAttribute("error", "File is empty");
+      return "redirect:/";
     }
     if (file.getContentType() == null || !file.getContentType().startsWith("image/")) {
-      return "redirect:/?error=Invalid file type. Please upload an image";
+      redirectAttributes.addFlashAttribute("error", "File is not an image");
+      return "redirect:/";
+    }
+    if (file.getSize() > 5 * 1024 * 1024) {
+      redirectAttributes.addFlashAttribute("error", "File is too large");
+      return "redirect:/";
     }
     accountService.updateImage(id, file.getBytes());
     return "redirect:/";
