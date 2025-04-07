@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.storkforge.barkr.web.domain.AccountService;
@@ -32,14 +33,26 @@ public class WebController {
   }
 
   @GetMapping("/")
-  public String index(Model model) {
+  public DeferredResult<String> index(Model model) {
+    DeferredResult<String> result = new DeferredResult<>();
+
     model.addAttribute("posts", postService.findAll());
     model.addAttribute("createPostDto", new CreatePost("", 1L));
-    model.addAttribute("fact", dogFactService.getDogFact().block());
     // TODO: Change this to the actual account once security is in place
     model.addAttribute("account", accountService.findById(1L));
 
-    return "index";
+    dogFactService.getDogFact().subscribe(
+            fact -> {
+              model.addAttribute("fact", fact);
+              result.setResult("index");
+            },
+            error -> {
+              model.addAttribute("fact", "Error loading dog fact: " + error.getMessage());
+              result.setResult("index");
+            }
+    );
+
+    return result;
   }
 
   @GetMapping("/{username}")
