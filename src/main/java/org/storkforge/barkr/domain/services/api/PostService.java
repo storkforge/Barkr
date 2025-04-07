@@ -3,11 +3,9 @@ package org.storkforge.barkr.domain.services.api;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.storkforge.barkr.domain.entity.Post;
 import org.storkforge.barkr.dto.postDto.ResponsePost;
 import org.storkforge.barkr.exceptions.PostNotFound;
@@ -30,12 +28,13 @@ public class PostService {
     }
 
     public List<ResponsePost> findAll() {
-        log.info("Finding all posts");
-
         var posts = postRepository.findAll();
+
         if (posts == null || posts.isEmpty()) {
             throw new PostNotFound("No post record(s) found in database");
         }
+
+        log.info("Finding all posts");
         return posts.stream().filter(Objects::nonNull).map(PostMapper::mapToResponse).toList();
     }
 
@@ -43,8 +42,8 @@ public class PostService {
     @ExceptionHandler(PostNotFound.class)
     @ResponseBody
     public ResponsePost findOne(Long id) {
+        Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFound("The post with id: " + id + " could not be found"));
         log.info("Finding post by id: {}", id);
-        Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFound("The post with: " + id + " could not be found"));
         return PostMapper.mapToResponse(post);
     }
 }

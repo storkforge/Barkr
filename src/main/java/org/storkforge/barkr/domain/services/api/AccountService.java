@@ -25,18 +25,19 @@ public class AccountService {
     }
 
     public List<ResponseAccount> findAll() {
-        log.info("Finding all accounts");
         List<Account> accounts = accountRepository.findAll();
         if (accounts == null ||accounts.isEmpty()) {
             throw new AccountNotFound("No account record(s) found in database");
 
         }
+        log.info("Finding all accounts");
         return accounts.stream().filter(Objects::nonNull).map(AccountMapper::mapToResponse).toList();
     }
 
     public ResponseAccount findOne(Long id) {
+        Account account = accountRepository.findById(id).orElseThrow(() -> new AccountNotFound("Account with id: "+ id +" was not found"));
         log.info("Finding account by id: {}", id);
-        return AccountMapper.mapToResponse(accountRepository.findById(id).orElseThrow(() -> new AccountNotFound("Account with id: "+ id +" was not found")));
+        return AccountMapper.mapToResponse(account);
     }
 
 }

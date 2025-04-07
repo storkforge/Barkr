@@ -36,7 +36,7 @@ class AccountServiceTest {
         @Test
         @DisplayName("No accounts in database throws exception")
         void noAccountsInDatabaseThrowsException() {
-            when(accountRepository.findAll()).thenReturn(List.of()).thenThrow(new AccountNotFound("No account record(s) found in database"));
+            when(accountRepository.findAll()).thenReturn(List.of()).thenThrow(AccountNotFound.class);
             assertThatThrownBy(accountService::findAll).isInstanceOf(AccountNotFound.class).hasMessage("No account record(s) found in database");
 
         }
@@ -87,7 +87,7 @@ class AccountServiceTest {
         }
 
 
-    }
+
 
 
     @Test
@@ -109,8 +109,6 @@ class AccountServiceTest {
         assertThat(result).extracting("id").isEqualTo(1L);
         assertThat(result).extracting("createdAt").isEqualTo(constantTime);
         verify(accountRepository, times(1)).findById(eq(1L));
-
+        }
     }
-
-
 }
