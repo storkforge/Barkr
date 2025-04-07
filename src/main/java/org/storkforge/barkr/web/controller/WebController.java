@@ -79,15 +79,13 @@ public class WebController {
     if (accountImage == null) {
       ClassPathResource resource = new ClassPathResource("static/images/logo/BarkrNoText.png");
       try (InputStream is = resource.getInputStream()) {
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, "application/octet-stream")
-                .body(is.readAllBytes());
+        accountImage = is.readAllBytes();
       }
     }
 
     return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_TYPE, "application/octet-stream")
-            .body(accountService.getAccountImage(id));
+            .body(accountImage);
   }
 
   @PostMapping("/account/{id}/upload")
