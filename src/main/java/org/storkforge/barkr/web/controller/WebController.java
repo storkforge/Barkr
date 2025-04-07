@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.storkforge.barkr.web.domain.AccountService;
+import org.storkforge.barkr.web.domain.DogFactService;
 import org.storkforge.barkr.web.domain.PostService;
 import org.storkforge.barkr.dto.accountDto.ResponseAccount;
 import org.storkforge.barkr.dto.postDto.CreatePost;
@@ -22,16 +23,19 @@ public class WebController {
 
   private final PostService postService;
   private final AccountService accountService;
+  private final DogFactService dogFactService;
 
-  public WebController(PostService postService, AccountService accountService) {
+  public WebController(PostService postService, AccountService accountService, DogFactService dogFactService) {
     this.postService = postService;
     this.accountService = accountService;
+    this.dogFactService = dogFactService;
   }
 
   @GetMapping("/")
   public String index(Model model) {
     model.addAttribute("posts", postService.findAll());
     model.addAttribute("createPostDto", new CreatePost("", 1L));
+    model.addAttribute("fact", dogFactService.getDogFact());
     // TODO: Change this to the actual account once security is in place
     model.addAttribute("account", accountService.findById(1L));
 
@@ -50,6 +54,7 @@ public class WebController {
 
     model.addAttribute("accountPosts", postService.findByUsername(username));
     model.addAttribute("queryAccount", queryAccount);
+    model.addAttribute("fact", dogFactService.getDogFact());
     // TODO: Change this to the actual account once security is in place
     model.addAttribute("account", accountService.findById(1L));
 

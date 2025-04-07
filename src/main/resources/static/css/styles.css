@@ -219,6 +219,10 @@ header {
     font-size: 20px;
 }
 
+.sidebar p {
+    color: var(--text-secondary);
+    font-size: 14px;}
+
 .main-content {
     display: flex;
     flex-direction: column;

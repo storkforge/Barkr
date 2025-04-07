@@ -6,6 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.domain.entity.Post;
 import org.storkforge.barkr.web.infrastructure.persistence.AccountRepository;
@@ -61,5 +62,10 @@ public class Config {
         log.info("Database already contains data. Skipping seed process to prevent duplicates.");
       }
     };
+  }
+
+  @Bean
+  WebClient webClient() {
+    return WebClient.builder().baseUrl("https://dogapi.dog/api/v2").build();
   }
 }

@@ -8,4 +8,5 @@
         <li><a href="/"><i>🏠</i> <span th:text="#{home}">Home</span></a></li>
         <li><a th:href="@{'/' + ${account.username}}"><i>👤</i> <span th:text="#{profile}">Profile</span></a></li>
     </ul>
+    <p th:text="${fact}">Couldn't load dog fact</p>
 </aside>
