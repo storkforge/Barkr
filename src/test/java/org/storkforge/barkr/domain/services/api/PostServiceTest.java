@@ -102,8 +102,6 @@ class PostServiceTest {
         @DisplayName("findOne returns post if valid id is passed")
         void findOneReturnsPostIfValidIdIsPassed() {
 
-            Account mockAccount = mock(Account.class);
-
             Post mockPost =  mock(Post.class);
             when(mockPost.getId()).thenReturn(1L);
             when(mockPost.getContent()).thenReturn("voff");
@@ -115,7 +113,6 @@ class PostServiceTest {
             assertThat(result).extracting("id").isEqualTo(mockPost.getId());
             assertThat(result).extracting("content").isEqualTo(mockPost.getContent());
             verify(postRepository, times(1)).findById(eq(1L));
-
 
 
         }
