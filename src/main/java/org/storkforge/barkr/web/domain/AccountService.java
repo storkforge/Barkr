@@ -9,8 +9,6 @@ import org.storkforge.barkr.dto.accountDto.ResponseAccount;
 import org.storkforge.barkr.web.infrastructure.persistence.AccountRepository;
 import org.storkforge.barkr.mapper.AccountMapper;
 
-import java.util.List;
-
 @Service
 @Transactional
 public class AccountService {
@@ -20,15 +18,6 @@ public class AccountService {
 
     public AccountService(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
-    }
-
-    public List<ResponseAccount> findAll() {
-        log.info("Finding all accounts");
-        return accountRepository
-                .findAll()
-                .stream()
-                .map(AccountMapper::mapToResponse)
-                .toList();
     }
 
     public ResponseAccount findByUsername(String username) {
