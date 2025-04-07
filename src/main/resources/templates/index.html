@@ -25,13 +25,9 @@
                 <button type="submit" class="btn" th:text="#{create.post}">Bark It!</button>
             </form>
 
-            <div th:if="${success}" th:text="#{success}" class="success-message">
-                Successfully barked!
-            </div>
+            <div th:if="${success}" th:text="#{success}" class="success-message"></div>
         </div>
-        <div th:if="${error}" th:text="${error}" class="error-message">
-            Account not found
-        </div>
+        <div th:if="${error}" th:text="${error}" class="error-message"></div>
         <div th:each="post : ${posts}">
             <div th:replace="~{fragments/post :: post(${post})}"></div>
         </div>
