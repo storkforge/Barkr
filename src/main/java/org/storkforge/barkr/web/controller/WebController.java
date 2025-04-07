@@ -35,7 +35,7 @@ public class WebController {
   public String index(Model model) {
     model.addAttribute("posts", postService.findAll());
     model.addAttribute("createPostDto", new CreatePost("", 1L));
-    model.addAttribute("fact", dogFactService.getDogFact());
+    model.addAttribute("fact", dogFactService.getDogFact().block());
     // TODO: Change this to the actual account once security is in place
     model.addAttribute("account", accountService.findById(1L));
 
@@ -54,7 +54,7 @@ public class WebController {
 
     model.addAttribute("accountPosts", postService.findByUsername(username));
     model.addAttribute("queryAccount", queryAccount);
-    model.addAttribute("fact", dogFactService.getDogFact());
+    model.addAttribute("fact", dogFactService.getDogFact().block());
     // TODO: Change this to the actual account once security is in place
     model.addAttribute("account", accountService.findById(1L));
 
