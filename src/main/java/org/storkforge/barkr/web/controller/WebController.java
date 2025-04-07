@@ -1,5 +1,6 @@
 package org.storkforge.barkr.web.controller;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -13,6 +14,7 @@ import org.storkforge.barkr.dto.accountDto.ResponseAccount;
 import org.storkforge.barkr.dto.postDto.CreatePost;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 @Controller
 @RequestMapping("/")
@@ -66,7 +68,18 @@ public class WebController {
   }
 
   @GetMapping("/account/{id}/image")
-  public ResponseEntity<byte[]> getAccountImage(@PathVariable("id") Long id) {
+  public ResponseEntity<byte[]> getAccountImage(@PathVariable("id") Long id) throws IOException {
+    byte[] accountImage = accountService.getAccountImage(id);
+
+    if (accountImage == null) {
+      ClassPathResource resource = new ClassPathResource("static/images/logo/BarkrNoText.png");
+      try (InputStream is = resource.getInputStream()) {
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, "application/octet-stream")
+                .body(is.readAllBytes());
+      }
+    }
+
     return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_TYPE, "application/octet-stream")
             .body(accountService.getAccountImage(id));
