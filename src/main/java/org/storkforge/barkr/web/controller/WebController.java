@@ -78,6 +78,17 @@ public class WebController {
   @PostMapping("/post/add")
   public String addPost(@ModelAttribute CreatePost dto,
                         RedirectAttributes redirectAttributes) {
+    if (dto.content() == null || dto.content().trim().isEmpty()) {
+      redirectAttributes.addFlashAttribute("error", "Post content cannot be empty");
+      redirectAttributes.addFlashAttribute("createPostDto", dto);
+      return "redirect:/";
+    }
+
+    if (dto.content().length() > 255) {
+      redirectAttributes.addFlashAttribute("error", "Post content cannot exceed 255 characters");
+      redirectAttributes.addFlashAttribute("createPostDto", dto);
+      return "redirect:/";
+    }
     postService.addPost(dto);
 
     redirectAttributes.addFlashAttribute("success", true);
@@ -104,6 +115,12 @@ public class WebController {
 
   @PostMapping("/account/{id}/upload")
   public String uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
+    if (file.isEmpty()) {
+      return "redirect:/?error=No file selected";
+    }
+    if (file.getContentType() == null || !file.getContentType().startsWith("image/")) {
+      return "redirect:/?error=Invalid file type. Please upload an image";
+    }
     accountService.updateImage(id, file.getBytes());
     return "redirect:/";
   }
