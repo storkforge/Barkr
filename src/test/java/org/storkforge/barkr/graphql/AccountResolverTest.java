@@ -7,9 +7,8 @@ import org.springframework.boot.test.autoconfigure.graphql.GraphQlTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.graphql.test.tester.GraphQlTester;
-import org.storkforge.barkr.web.domain.AccountService;
+import org.storkforge.barkr.domain.AccountService;
 import org.storkforge.barkr.dto.accountDto.ResponseAccount;
-import org.storkforge.barkr.web.graphql.AccountResolver;
 
 import java.time.LocalDateTime;
 import java.util.List;

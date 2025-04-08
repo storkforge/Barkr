@@ -1,4 +1,4 @@
-package org.storkforge.barkr.web.domain;
+package org.storkforge.barkr.domain;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,7 +7,7 @@ import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.storkforge.barkr.web.dto.FactResponse;
+import org.storkforge.barkr.dto.factDto.FactResponse;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -22,6 +22,8 @@ public class DogFactService {
 
     @Retryable(backoff = @Backoff(delay = 500))
     public Mono<String> getDogFact() {
+        log.info("Getting dog fact!");
+
         return webClient.get()
                 .uri("/facts?limit=1")
                 .retrieve()

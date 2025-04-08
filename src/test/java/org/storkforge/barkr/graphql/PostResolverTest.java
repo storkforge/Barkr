@@ -6,12 +6,10 @@ import org.springframework.boot.test.autoconfigure.graphql.GraphQlTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.graphql.test.tester.GraphQlTester;
-import org.storkforge.barkr.web.domain.AccountService;
-import org.storkforge.barkr.web.domain.PostService;
+import org.storkforge.barkr.domain.AccountService;
+import org.storkforge.barkr.domain.PostService;
 import org.storkforge.barkr.dto.accountDto.ResponseAccount;
 import org.storkforge.barkr.dto.postDto.ResponsePost;
-import org.storkforge.barkr.web.graphql.AccountResolver;
-import org.storkforge.barkr.web.graphql.PostResolver;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,7 +35,7 @@ class PostResolverTest {
         ResponseAccount account = new ResponseAccount(10L, "testUser", LocalDateTime.now(), "beagle", new byte[0]);
         ResponsePost post = new ResponsePost(1L, "Test content", account, LocalDateTime.now());
 
-        when(postService.findOne(1L)).thenReturn(post);
+        when(postService.findById(1L)).thenReturn(post);
         when(accountService.findById(10L)).thenReturn(account);
 
         graphQlTester.document("""
