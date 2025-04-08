@@ -15,12 +15,12 @@ import java.util.Objects;
 
 @Service
 @Transactional
-public class AccountService {
-    private final Logger log = LoggerFactory.getLogger(AccountService.class);
+public class ApiAccountService {
+    private final Logger log = LoggerFactory.getLogger(ApiAccountService.class);
 
     private final AccountRepository accountRepository;
 
-    public AccountService(AccountRepository accountRepository) {
+    public ApiAccountService(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }
 

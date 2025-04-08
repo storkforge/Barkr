@@ -31,7 +31,7 @@ class PostServiceTest {
     Account account;
 
     @InjectMocks
-    PostService postService;
+    ApiPostService postService;
 
 
     @Nested

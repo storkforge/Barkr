@@ -27,7 +27,7 @@ class AccountServiceTest {
     private Account account;
 
     @InjectMocks
-    private AccountService accountService;
+    private ApiAccountService accountService;
 
 
     @Nested

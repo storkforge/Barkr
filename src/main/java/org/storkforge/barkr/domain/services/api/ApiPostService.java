@@ -15,13 +15,13 @@ import java.util.Objects;
 
 @Service
 @Transactional
-public class PostService {
+public class ApiPostService {
 
-    private final Logger log = LoggerFactory.getLogger(PostService.class);
+    private final Logger log = LoggerFactory.getLogger(ApiPostService.class);
 
     private final PostRepository postRepository;
 
-    public PostService(PostRepository postRepository) {
+    public ApiPostService(PostRepository postRepository) {
         this.postRepository = postRepository;
     }
 

@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.storkforge.barkr.domain.services.api.PostService;
+import org.storkforge.barkr.domain.services.api.ApiPostService;
 import org.storkforge.barkr.dto.postDto.ResponsePost;
 import org.storkforge.barkr.dto.postDto.ResponsePostList;
 
@@ -15,9 +15,9 @@ import java.util.List;
 @RequestMapping("/api")
 public class ApiPostController {
 
-    private final PostService postService;
+    private final ApiPostService postService;
 
-    public ApiPostController(PostService postService) {
+    public ApiPostController(ApiPostService postService) {
         this.postService = postService;
     }
 
