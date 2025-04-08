@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.storkforge.barkr.domain.entity.Post;
 import org.storkforge.barkr.dto.postDto.ResponsePost;
 import org.storkforge.barkr.exceptions.PostNotFound;
-import org.storkforge.barkr.infrastructure.persistence.PostRepository;
+import org.storkforge.barkr.web.infrastructure.persistence.PostRepository;
 import org.storkforge.barkr.mapper.PostMapper;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public class PostService {
     public List<ResponsePost> findAll() {
         var posts = postRepository.findAll();
 
-        if (posts == null || posts.isEmpty()) {
+        if (posts.isEmpty()) {
             throw new PostNotFound("No post record(s) found in database");
         }
 
@@ -38,8 +38,8 @@ public class PostService {
 
 
     public ResponsePost findOne(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFound("The post with id: " + id + " could not be found"));
         log.info("Finding post by id: {}", id);
+        Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFound("The post with id: " + id + " could not be found"));
         return PostMapper.mapToResponse(post);
     }
 }

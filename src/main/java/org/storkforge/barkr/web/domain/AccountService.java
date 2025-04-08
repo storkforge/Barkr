@@ -6,8 +6,12 @@ import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.dto.accountDto.ResponseAccount;
+import org.storkforge.barkr.dto.postDto.ResponsePost;
+import org.storkforge.barkr.mapper.PostMapper;
 import org.storkforge.barkr.web.infrastructure.persistence.AccountRepository;
 import org.storkforge.barkr.mapper.AccountMapper;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -18,6 +22,15 @@ public class AccountService {
 
     public AccountService(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
+    }
+
+    public List<ResponseAccount> findAll() {
+        log.info("Finding all posts");
+        return accountRepository
+                .findAll()
+                .stream()
+                .map(AccountMapper::mapToResponse)
+                .toList();
     }
 
     public ResponseAccount findByUsername(String username) {

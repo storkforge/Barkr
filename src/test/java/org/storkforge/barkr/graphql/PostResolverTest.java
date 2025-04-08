@@ -6,10 +6,12 @@ import org.springframework.boot.test.autoconfigure.graphql.GraphQlTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.graphql.test.tester.GraphQlTester;
-import org.storkforge.barkr.domain.AccountService;
-import org.storkforge.barkr.domain.PostService;
+import org.storkforge.barkr.web.domain.AccountService;
+import org.storkforge.barkr.web.domain.PostService;
 import org.storkforge.barkr.dto.accountDto.ResponseAccount;
 import org.storkforge.barkr.dto.postDto.ResponsePost;
+import org.storkforge.barkr.web.graphql.AccountResolver;
+import org.storkforge.barkr.web.graphql.PostResolver;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,10 +34,10 @@ class PostResolverTest {
 
     @Test
     void testGetPostById() {
-        ResponsePost post = new ResponsePost(1L, "Test content", 10L, LocalDateTime.now());
-        ResponseAccount account = new ResponseAccount(10L, "testUser", LocalDateTime.now());
+        ResponseAccount account = new ResponseAccount(10L, "testUser", LocalDateTime.now(), "beagle", new byte[0]);
+        ResponsePost post = new ResponsePost(1L, "Test content", account, LocalDateTime.now());
 
-        when(postService.findById(1L)).thenReturn(post);
+        when(postService.findOne(1L)).thenReturn(post);
         when(accountService.findById(10L)).thenReturn(account);
 
         graphQlTester.document("""
@@ -58,8 +60,9 @@ class PostResolverTest {
 
     @Test
     void testGetAllPosts() {
-        ResponsePost post1 = new ResponsePost(1L, "First post", 10L, LocalDateTime.now());
-        ResponsePost post2 = new ResponsePost(2L, "Second post", 20L, LocalDateTime.now());
+        ResponseAccount account = new ResponseAccount(10L, "testUser", LocalDateTime.now(), "beagle", new byte[0]);
+        ResponsePost post1 = new ResponsePost(1L, "First post", account, LocalDateTime.now());
+        ResponsePost post2 = new ResponsePost(2L, "Second post", account, LocalDateTime.now());
 
         when(postService.findAll()).thenReturn(List.of(post1, post2));
 
@@ -95,9 +98,5 @@ class PostResolverTest {
             return new PostResolver(postService);
         }
 
-        @Bean
-        public PostFieldResolver postFieldResolver(AccountService accountService) {
-            return new PostFieldResolver(accountService);
-        }
     }
 }

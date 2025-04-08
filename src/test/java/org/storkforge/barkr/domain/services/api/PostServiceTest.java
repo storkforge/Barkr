@@ -10,7 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.domain.entity.Post;
 import org.storkforge.barkr.exceptions.PostNotFound;
-import org.storkforge.barkr.infrastructure.persistence.PostRepository;
+import org.storkforge.barkr.web.infrastructure.persistence.PostRepository;
 
 import java.util.List;
 import java.util.Optional;

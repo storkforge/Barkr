@@ -8,6 +8,7 @@ import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.domain.entity.Post;
 import org.storkforge.barkr.dto.postDto.CreatePost;
 import org.storkforge.barkr.dto.postDto.ResponsePost;
+import org.storkforge.barkr.exceptions.PostNotFound;
 import org.storkforge.barkr.web.infrastructure.persistence.AccountRepository;
 import org.storkforge.barkr.web.infrastructure.persistence.PostRepository;
 import org.storkforge.barkr.mapper.PostMapper;
@@ -65,5 +66,12 @@ public class PostService {
     post.setContent(dto.content());
     post.setAccount(account);
     postRepository.save(post);
+  }
+
+  public ResponsePost findOne(Long id) {
+    log.info("Finding post {}", id);
+    return  postRepository.findById(id)
+            .map(PostMapper::mapToResponse)
+            .orElseThrow(() -> new PostNotFound("Post not found with id " + id));
   }
 }

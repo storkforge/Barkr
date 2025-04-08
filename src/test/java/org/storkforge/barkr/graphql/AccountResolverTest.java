@@ -7,9 +7,9 @@ import org.springframework.boot.test.autoconfigure.graphql.GraphQlTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.graphql.test.tester.GraphQlTester;
-import org.storkforge.barkr.domain.AccountService;
+import org.storkforge.barkr.web.domain.AccountService;
 import org.storkforge.barkr.dto.accountDto.ResponseAccount;
-import org.storkforge.barkr.dto.postDto.ResponsePost;
+import org.storkforge.barkr.web.graphql.AccountResolver;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,7 +29,7 @@ class AccountResolverTest {
 
     @Test
     void testGetAccountById() {
-        ResponseAccount account = new ResponseAccount(10L, "testUser", LocalDateTime.now());
+        ResponseAccount account = new ResponseAccount(10L, "testUser", LocalDateTime.now(), "beagle", new byte[0]);
 
         when(accountService.findById(10L)).thenReturn(account);
 
@@ -48,8 +48,8 @@ class AccountResolverTest {
 
     @Test
     void testGetAllAccounts() {
-        ResponseAccount account1 = new ResponseAccount(1L, "userOne", LocalDateTime.now());
-        ResponseAccount account2 = new ResponseAccount(2L, "userTwo", LocalDateTime.now());
+        ResponseAccount account1 = new ResponseAccount(1L, "userOne", LocalDateTime.now(),"beagle", new byte[0]);
+        ResponseAccount account2 = new ResponseAccount(2L, "userTwo", LocalDateTime.now(), "beagle", new byte[0]);
 
         when(accountService.findAll()).thenReturn(List.of(account1, account2));
 
