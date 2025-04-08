@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" class="light" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="icon" th:href="@{/images/logo/BarkrNoText.png}" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${queryAccount.username} + ' / Barkr'">Barkr - Social Media for Dogs</title>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container main-layout">
+    <div th:replace="~{fragments/sidebar :: aside}"></div>
+    <main>
+        <div class="card profile-header">
+            <div class="profile-info">
+                <div class="profile-info-header">
+                    <img th:src="@{'/account/' + ${queryAccount.id} + '/image'}" alt="Profile Picture"
+                         class="profile-picture">
+                    <div class="profile-actions" th:if="${account.username() == queryAccount.username}">
+                        <button class="btn" th:text="#{edit.profile}" onclick="openModal()">Edit Profile</button>
+                    </div>
+                </div>
+                <div class="profile-details">
+                    <h1 class="profile-name" th:text="${queryAccount.username}">Unknown account</h1>
+                </div>
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <span class="stat-label" th:text="#{breed}">Breed:</span>
+                        <span class="stat-count" th:text="${queryAccount.breed}">Unknown breed</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-count" th:text="${accountPosts.size()}">N/A</span>
+                        <span class="stat-label"
+                              th:text="${accountPosts.size() == 1 ? ' Bark' : ' Barks'}"> Bark(s)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div th:each="post : ${accountPosts}">
+                <div th:replace="~{fragments/post :: post(${post})}"></div>
+            </div>
+        </div>
+    </main>
+</div>
+<div id="editModal">
+    <div class="modal-content">
+        <span onClick="closeModal()">&times;</span>
+        <h3>Edit Profile</h3>
+        <form th:action="@{/account/{id}/upload(id=${account.id})}" method="post" enctype="multipart/form-data">
+            <input type="file" id="file" name="file" required accept="image/*">
+            <button type="submit" class="btn">Update image</button>
+        </form>
+    </div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script>
+    const editModal = document.querySelector("#editModal");
+
+    function openModal() {
+        editModal.style.display = "block";
+    }
+
+    function closeModal() {
+        editModal.style.display = "none";
+    }
+
+    window.onclick = function (event) {
+        if (event.target === editModal) closeModal();
+    };
+</script>
+<script th:src="@{/js/theme-switcher.js}"></script>
+<script th:src="@{/js/konami.js}"></script>
+<script th:src="@{/js/change-language.js}"></script>
+</body>
+</html>

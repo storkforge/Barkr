@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" class="light" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="icon" th:href="@{/images/logo/BarkrNoText.png}" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{home} + ' / Barkr'">Home / Barkr</title>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container main-layout" th:style="${account == null ? 'grid-template-columns: 1fr' : ''}">
+    <div th:replace="~{fragments/sidebar :: aside}"></div>
+    <main>
+        <div class="card post-form" th:if="${account}">
+            <h2 th:text="#{create.header}">Create a New Bark</h2>
+            <form th:action="@{/post/add}" method="post" th:object="${createPostDto}">
+                <div class="post-input">
+                    <label for="post-content" th:text="#{create.form.label}">What's on your mind?</label>
+                    <textarea id="post-content" th:placeholder="#{create.form.placeholder}" th:field="*{content}"
+                              required></textarea>
+                </div>
+                <input type="hidden" th:field="*{accountId}" th:value="${account.id}">
+                <button type="submit" class="btn" th:text="#{create.post}">Bark It!</button>
+            </form>
+
+            <div th:if="${success}" th:text="#{success}" class="success-message"></div>
+        </div>
+        <div th:if="${error}" th:text="${error}" class="error-message"></div>
+        <div th:each="post : ${posts}">
+            <div th:replace="~{fragments/post :: post(${post})}"></div>
+        </div>
+    </main>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script th:src="@{/js/theme-switcher.js}"></script>
+<script th:src="@{/js/konami.js}"></script>
+<script th:src="@{/js/change-language.js}"></script>
+</body>
+</html>

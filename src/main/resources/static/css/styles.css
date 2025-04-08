@@ -6,6 +6,18 @@
     font-family: 'Arial', sans-serif;
 }
 
+body {
+    background-color: var(--background);
+    color: var(--text);
+    line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+html, body {
+    height: 100%;
+}
 
 /* Theme variables */
 :root {
@@ -39,14 +51,28 @@
     --button-text: #ffffff;
 }
 
-body {
-    background-color: var(--background);
-    color: var(--text);
-    line-height: 1.6;
-    transition: background-color 0.3s ease, color 0.3s ease;
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
-/* Header styles */
+.main-layout {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+
+.card {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px var(--shadow);
+    margin-bottom: 20px;
+}
+
 header {
     background-color: var(--card-bg);
     box-shadow: 0 2px 10px var(--shadow);
@@ -61,72 +87,51 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-.logo-container {
-    display: flex;
-    align-items: center;
 }
 
 .logo {
-    height: 90px;
-    margin-right: 15px;
-}
-
-.site-title {
-    font-size: 2.2rem;
-    color: var(--heading);
-    font-weight: bold;
-    transition: color 0.3s ease;
-}
-
-.site-title2 {
-    font-size: 1.4rem;
-    color: var(--heading);
-    transition: color 0.3s ease;
-}
-
-nav {
     display: flex;
     align-items: center;
-}
-
-nav ul {
-    display: flex;
-    list-style: none;
-}
-
-nav ul li {
-    margin-left: 20px;
-}
-
-nav ul li a {
     text-decoration: none;
-    color: var(--heading);
+}
+
+.logo img {
+    height: 50px;
+    width: 60px;
+}
+
+.logo h1 {
+    color: var(--text);
+    font-size: 24px;
+    margin-left: 10px;
+}
+
+.auth-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn {
+    background-color: var(--primary);
+    color: var(--button-text);
+    border: none;
+    padding: 10px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
     font-weight: bold;
-    padding: 5px 10px;
-    border-radius: 20px;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s;
 }
 
-.light nav ul li a:hover {
+.btn:hover {
     background-color: var(--secondary);
-    color: var(--card-bg);
+    color: var(--primary);
 }
 
-.dark nav ul li a:hover {
-    background-color: var(--secondary);
-    color: #1a1a1a;
-}
-
-/* Theme toggle */
 .theme-toggle {
     display: flex;
     align-items: center;
-    margin-left: 20px;
     cursor: pointer;
 }
 
@@ -150,39 +155,6 @@ nav ul li a {
     transition: color 0.3s ease;
 }
 
-/* Main content */
-.container {
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 0 20px;
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
-    gap: 20px;
-}
-
-/* Responsive adjustments for the grid */
-@media (max-width: 1024px) {
-    .container {
-        grid-template-columns: 1fr 2fr;
-    }
-
-    .trending {
-        grid-column: 1 / -1;
-        order: 3;
-    }
-}
-
-@media (max-width: 768px) {
-    .container {
-        grid-template-columns: 1fr;
-    }
-
-    .sidebar, .trending {
-        grid-column: 1;
-    }
-}
-
-/* Sidebar */
 .sidebar {
     background-color: var(--card-bg);
     border-radius: 10px;
@@ -190,136 +162,101 @@ nav ul li a {
     box-shadow: 0 2px 10px var(--shadow);
     height: fit-content;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    position: sticky;
+    top: 90px;
 }
 
-.profile {
+.profile-card {
     text-align: center;
     margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
 }
 
-.profile img {
-    width: 100px;
-    height: 100px;
+.profile-card img {
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid var(--secondary);
-}
-
-.profile h2 {
-    margin-top: 10px;
-    color: var(--heading);
-    transition: color 0.3s ease;
-}
-
-.profile p {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    transition: color 0.3s ease;
-}
-
-.menu {
-    list-style: none;
-}
-
-.menu li {
     margin-bottom: 10px;
 }
 
-.menu li a {
-    display: block;
-    text-decoration: none;
-    color: var(--heading);
-    padding: 10px;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-}
-
-.menu li a:hover {
-    background-color: var(--background);
-}
-
-/* Post creation form */
-.post-form {
-    background-color: var(--card-bg);
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 10px var(--shadow);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.post-form h2 {
-    color: var(--heading);
-    margin-bottom: 15px;
-    transition: color 0.3s ease;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    color: var(--heading);
-    font-weight: bold;
-    transition: color 0.3s ease;
-}
-
-.form-group input,
-.form-group textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid var(--border);
-    border-radius: 5px;
-    font-size: 1rem;
-    background-color: var(--card-bg);
+.profile-card h2 {
     color: var(--text);
-    transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease;
+    font-size: 18px;
+    margin-bottom: 5px;
 }
 
-.form-group textarea {
-    height: 100px;
-    resize: vertical;
+.profile-card p {
+    color: var(--text-secondary);
+    font-size: 14px;
 }
 
-.form-group input[type="file"] {
-    padding: 5px;
+.nav-menu {
+    list-style: none;
 }
 
-button {
-    background-color: var(--primary);
-    color: var(--button-text);
-    border: none;
-    padding: 10px 20px;
+.nav-menu li {
+    margin-bottom: 10px;
+}
+
+.nav-menu li a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text);
+    padding: 10px;
     border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: bold;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s;
+    font-weight: 500;
 }
 
-button:hover {
-    background-color: var(--secondary);
+.nav-menu li a:hover {
+    background-color: var(--accent);
 }
 
-.dark button:hover {
-    color: #1a1a1a;
+.nav-menu li a i {
+    margin-right: 10px;
+    font-size: 20px;
 }
 
-/* Feed */
-.feed {
+.sidebar p {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.main-content {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-.post {
-    background-color: var(--card-bg);
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 2px 10px var(--shadow);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+.post-form h2 {
+    margin-bottom: 15px;
+}
+
+.post-input {
+    margin-bottom: 15px;
+}
+
+.post-input label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text);
+    font-weight: bold;
+}
+
+.post-input textarea {
+    height: 100px;
+    resize: none;
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    font-size: 16px;
+    padding: 10px;
+    background-color: var(--background);
+    color: var(--text);
 }
 
 .post-header {
@@ -332,223 +269,95 @@ button:hover {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    margin-right: 10px;
     object-fit: cover;
+    margin-right: 15px;
 }
 
-.post-header .post-info h3 {
-    margin: 0;
-    color: var(--heading);
-    transition: color 0.3s ease;
+.post-header .user-info h4 {
+    color: var(--text);
+    margin-bottom: 3px;
 }
 
-.post-header .post-info p {
-    margin: 0;
-    font-size: 0.8rem;
+.post-header .user-info span {
     color: var(--text-secondary);
-    transition: color 0.3s ease;
+    font-size: 14px;
 }
 
 .post-content p {
     margin-bottom: 15px;
-    color: var(--text);
-    transition: color 0.3s ease;
 }
 
-.post-content img {
-    width: 100%;
-    border-radius: 10px;
-    margin-bottom: 15px;
+.profile-header {
+    overflow: hidden;
+    position: relative;
+    padding: 0;
 }
 
-.post-actions {
-    display: flex;
-    gap: 15px;
-    border-top: 1px solid var(--border);
-    padding-top: 15px;
-    transition: border-color 0.3s ease;
-}
-
-.post-actions button {
-    background-color: transparent;
-    color: var(--text-secondary);
-    padding: 5px 10px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    transition: color 0.3s ease, background-color 0.3s ease;
-}
-
-.post-actions button:hover {
-    background-color: var(--background);
-    color: var(--heading);
-}
-
-/* Trending Section */
-.trending {
-    position: sticky;
-    top: 100px;
-}
-
-.trending-box {
-    background-color: var(--card-bg);
-    border-radius: 10px;
+.profile-info {
     padding: 20px;
-    box-shadow: 0 2px 10px var(--shadow);
-    margin-bottom: 20px;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
 }
 
-.trending-box h2 {
-    color: var(--heading);
-    margin-bottom: 15px;
-    font-size: 1.5rem;
-    border-bottom: 2px solid var(--secondary);
-    padding-bottom: 10px;
-    transition: color 0.3s ease;
-}
-
-.trending-topics .topic {
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-    transition: border-color 0.3s ease;
-}
-
-.trending-topics .topic:last-child {
-    border-bottom: none;
-}
-
-.trending-topics .topic h3 {
-    font-size: 1.1rem;
-    color: var(--heading);
-    margin-bottom: 5px;
-    transition: color 0.3s ease;
-}
-
-.trending-topics .topic p {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    transition: color 0.3s ease;
-}
-
-.trending-topics .topic .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-top: 5px;
-}
-
-.trending-topics .topic .tag {
-    background-color: var(--background);
-    color: var(--heading);
-    padding: 3px 8px;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.event {
-    display: flex;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-    transition: border-color 0.3s ease;
-}
-
-.event:last-child {
-    border-bottom: none;
-}
-
-.event img {
-    width: 60px;
-    height: 60px;
-    border-radius: 10px;
-    object-fit: cover;
-    margin-right: 10px;
-}
-
-.event-info h3 {
-    font-size: 1rem;
-    color: var(--heading);
-    margin-bottom: 3px;
-    transition: color 0.3s ease;
-}
-
-.event-info p {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    transition: color 0.3s ease;
-}
-
-.event-info .date {
-    font-weight: bold;
-    color: var(--heading);
-    transition: color 0.3s ease;
-}
-
-.suggested-friends .friend {
-    display: flex;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-    transition: border-color 0.3s ease;
-}
-
-.suggested-friends .friend:last-child {
-    border-bottom: none;
-}
-
-.suggested-friends .friend img {
-    width: 40px;
-    height: 40px;
+.profile-picture {
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
+    border: 5px solid var(--border);
     object-fit: cover;
-    margin-right: 10px;
+    left: 20px;
 }
 
-.friend-info {
-    flex-grow: 1;
+.profile-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.friend-info h3 {
-    font-size: 1rem;
-    color: var(--heading);
-    margin-bottom: 3px;
-    transition: color 0.3s ease;
+.profile-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 60px;
 }
 
-.friend-info p {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    transition: color 0.3s ease;
+.profile-details {
+    margin-top: 10px;
 }
 
-.add-friend {
-    background-color: var(--primary);
-    color: var(--button-text);
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.8rem;
-    transition: background-color 0.3s ease, color 0.3s ease;
+.profile-name {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--text);
+    margin-bottom: 5px;
 }
 
-.add-friend:hover {
-    background-color: var(--secondary);
+.profile-stats {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
 }
 
-.dark .add-friend:hover {
-    color: #1a1a1a;
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
-/* Footer */
+.stat-count {
+    font-weight: bold;
+    color: var(--text);
+}
+
+.stat-label {
+    color: #666;
+}
+
 footer {
     background-color: var(--primary);
     color: var(--button-text);
     text-align: center;
     padding: 20px 0;
-    margin-top: 40px;
+    margin-top: auto;
     transition: color 0.3s ease;
 }
 
@@ -558,32 +367,100 @@ footer p {
     padding: 0 20px;
 }
 
-/* Responsive adjustments */
+i {
+    font-style: normal;
+}
+
+#editModal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: var(--background);
+    margin: 15% auto;
+    padding: 20px;
+    width: 500px;
+    height: 200px;
+    border-radius: 5px;
+}
+
+.modal-content span {
+    float: right;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.modal-content form {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.success-message {
+    color: green;
+}
+
+.error-message {
+    color: red;
+}
+
+.success-message, .error-message {
+    margin-top: 15px;
+}
+
+.konami-feedback {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: rgba(0,0,0,0.8);
+    color: white;
+    border-radius: 10px;
+    z-index: 9999;
+}
+
+@media (max-width: 1024px) {
+    .main-layout {
+        grid-template-columns: 200px 1fr;
+    }
+}
+
 @media (max-width: 768px) {
+    .main-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
     .header-container {
         flex-direction: column;
-        text-align: center;
+        gap: 10px;
     }
 
-    .logo {
-        height: 80px;
+    .profile-picture {
+        width: 100px;
+        height: 100px;
+        top: -50px;
     }
 
-    nav {
-        flex-direction: column;
-        margin-top: 15px;
+    .profile-actions {
+        margin-bottom: 40px;
     }
 
-    nav ul {
+    .profile-stats {
         justify-content: center;
-        margin-bottom: 10px;
-    }
-
-    nav ul li {
-        margin: 0 10px;
-    }
-
-    .theme-toggle {
-        margin: 10px 0 0 0;
     }
 }
