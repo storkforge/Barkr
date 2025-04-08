@@ -25,7 +25,7 @@ public class AccountService {
     }
 
     public List<ResponseAccount> findAll() {
-        log.info("Finding all posts");
+        log.info("Finding all accounts");
         return accountRepository
                 .findAll()
                 .stream()
