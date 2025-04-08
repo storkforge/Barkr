@@ -6,10 +6,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.domain.entity.Post;
-import org.storkforge.barkr.infrastructure.persistence.AccountRepository;
-import org.storkforge.barkr.infrastructure.persistence.PostRepository;
+import org.storkforge.barkr.web.infrastructure.persistence.AccountRepository;
+import org.storkforge.barkr.web.infrastructure.persistence.PostRepository;
 
 import java.util.List;
 
@@ -27,12 +28,18 @@ public class Config {
         log.info("Seeding users/accounts into the database...");
         Account accountOne = new Account();
         accountOne.setUsername("Bella Pawkins");
+        accountOne.setBreed("Golden Retriever");
+        accountOne.setImage(null);
 
         Account accountTwo = new Account();
         accountTwo.setUsername("Charlie Barkson");
+        accountTwo.setBreed("Siberian Husky");
+        accountTwo.setImage(null);
 
         Account accountThree = new Account();
         accountThree.setUsername("Max Woofington");
+        accountThree.setBreed("German Shepherd");
+        accountThree.setImage(null);
 
         accountRepository.saveAll(List.of(accountOne, accountTwo, accountThree));
 
@@ -55,5 +62,10 @@ public class Config {
         log.info("Database already contains data. Skipping seed process to prevent duplicates.");
       }
     };
+  }
+
+  @Bean
+  WebClient webClient() {
+    return WebClient.builder().baseUrl("https://dogapi.dog/api/v2").build();
   }
 }

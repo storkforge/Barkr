@@ -14,7 +14,9 @@ public class AccountMapper {
         return new ResponseAccount(
                 account.getId(),
                 account.getUsername(),
-                account.getCreatedAt()
+                account.getCreatedAt(),
+                account.getBreed(),
+                account.getImage()
         );
     }
 

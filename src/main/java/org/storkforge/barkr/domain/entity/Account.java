@@ -25,8 +25,16 @@ public class Account {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-  @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-  private List<Post> posts = new ArrayList<>();
+    @Column(name = "image")
+    @Size(max = 5242880)
+    private byte[] image;
+
+    @NotBlank
+    @Size(min = 2, max = 100, message = "Breed name must be between 2 and 100 characters")
+    private String breed;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Post> posts = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
@@ -57,12 +65,28 @@ public class Account {
         this.createdAt = createdAt;
     }
 
-  public void addPost(Post post) {
-    posts.add(post);
-    post.setAccount(this);
-  }
+    public byte[] getImage() {
+      return image == null ? null : image.clone();
+    }
 
-  public void removePost(Post post) {
+    public void setImage(byte[] image) {
+      this.image = image == null ? null : image.clone();
+    }
+
+    public String getBreed() {
+      return breed;
+    }
+
+    public void setBreed(String breed) {
+      this.breed = breed;
+    }
+
+    public void addPost(Post post) {
+      posts.add(post);
+      post.setAccount(this);
+    }
+
+    public void removePost(Post post) {
     posts.remove(post);
   }
 
@@ -84,9 +108,10 @@ public class Account {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" +
-                "id = " + id + ", " +
-                "username = " + username + ", " +
-                "created_at = " + createdAt + ")";
+      return getClass().getSimpleName() + "(" +
+              "id = " + id + ", " +
+              "username = " + username + ", " +
+              "createdAt = " + createdAt + ", " +
+              "breed = " + breed + ")";
     }
 }
