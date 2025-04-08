@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.storkforge.barkr.domain.AccountService;
-import org.storkforge.barkr.domain.PostService;
 import org.storkforge.barkr.dto.accountDto.ResponseAccount;
 import org.storkforge.barkr.dto.postDto.ResponsePost;
 
@@ -36,15 +35,15 @@ class AccountResolverTest {
 
         graphQlTester.document("""
                         query {
-                            Account(id: "10") {
+                            account(id: "10") {
                              id
                              username
                             }
                         }
                         """)
                 .execute()
-                .path("Account.id").entity(Long.class).isEqualTo(10L)
-                .path("Account.username").entity(String.class).isEqualTo("testUser");
+                .path("account.id").entity(Long.class).isEqualTo(10L)
+                .path("account.username").entity(String.class).isEqualTo("testUser");
     }
 
     @Test
@@ -56,25 +55,21 @@ class AccountResolverTest {
 
         graphQlTester.document("""
                             query {
-                              Accounts {
+                              accounts {
                                 id
                                 username
                               }
                             }
                         """)
                 .execute()
-                .path("Accounts").entityList(ResponsePost.class).hasSize(2)
-                .path("Accounts[0].username").entity(String.class).isEqualTo("userOne")
-                .path("Accounts[1].username").entity(String.class).isEqualTo("userTwo");
+                .path("accounts").entityList(ResponseAccount.class).hasSize(2)
+                .path("accounts[0].username").entity(String.class).isEqualTo("userOne")
+                .path("accounts[1].username").entity(String.class).isEqualTo("userTwo");
     }
 
 
     @TestConfiguration
     static class MockConfig {
-        @Bean
-        public PostService postService() {
-            return mock(PostService.class);
-        }
 
         @Bean
         public AccountService accountService() {
@@ -82,13 +77,9 @@ class AccountResolverTest {
         }
 
         @Bean
-        public PostResolver postResolver(PostService postService) {
-            return new PostResolver(postService);
+        public AccountResolver accountResolver(AccountService accountService) {
+            return new AccountResolver(accountService);
         }
 
-        @Bean
-        public PostFieldResolver postFieldResolver(AccountService accountService) {
-            return new PostFieldResolver(accountService);
-        }
     }
 }

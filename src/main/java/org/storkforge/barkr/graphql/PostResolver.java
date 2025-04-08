@@ -1,5 +1,7 @@
 package org.storkforge.barkr.graphql;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
@@ -17,9 +19,28 @@ public class PostResolver {
         this.postService = postService;
     }
 
-    @QueryMapping("Posts")
-    public List<ResponsePost> posts() { return postService.findAll(); }
+    @QueryMapping("posts")
+    public List<ResponsePost> posts() {
+        try {
+            return postService.findAll();
+        } catch (Exception e) {
+            throw new RuntimeException("Error retrieving posts: " + e.getMessage(), e);
+        }
+    }
 
-    @QueryMapping("Post")
-    public ResponsePost post(@Argument Long id) { return postService.findById(id); }
+    @QueryMapping("post")
+    public ResponsePost post(@Argument @NotNull @Positive Long id) {
+        try {
+            if (id == null) {
+                throw new IllegalArgumentException("Post ID cannot be null");
+            }
+            ResponsePost post = postService.findById(id);
+            if (post == null) {
+                throw new RuntimeException("Post not found for ID: " + id);
+            }
+            return post;
+        } catch (Exception e) {
+            throw new RuntimeException("Error retrieving post: " + e.getMessage(), e);
+        }
+    }
 }

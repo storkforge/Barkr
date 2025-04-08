@@ -40,7 +40,7 @@ class PostResolverTest {
 
         graphQlTester.document("""
                             query {
-                              Post(id: 1) {
+                              post(id: 1) {
                                 id
                                 content
                                 account {
@@ -51,9 +51,9 @@ class PostResolverTest {
                             }
                         """)
                 .execute()
-                .path("Post.id").entity(Long.class).isEqualTo(1L)
-                .path("Post.content").entity(String.class).isEqualTo("Test content")
-                .path("Post.account.username").entity(String.class).isEqualTo("testUser");
+                .path("post.id").entity(Long.class).isEqualTo(1L)
+                .path("post.content").entity(String.class).isEqualTo("Test content")
+                .path("post.account.username").entity(String.class).isEqualTo("testUser");
     }
 
     @Test
@@ -65,16 +65,16 @@ class PostResolverTest {
 
         graphQlTester.document("""
         query {
-          Posts {
+          posts {
             id
             content
           }
         }
     """)
                 .execute()
-                .path("Posts").entityList(ResponsePost.class).hasSize(2)
-                .path("Posts[0].content").entity(String.class).isEqualTo("First post")
-                .path("Posts[1].content").entity(String.class).isEqualTo("Second post");
+                .path("posts").entityList(ResponsePost.class).hasSize(2)
+                .path("posts[0].content").entity(String.class).isEqualTo("First post")
+                .path("posts[1].content").entity(String.class).isEqualTo("Second post");
     }
 
 

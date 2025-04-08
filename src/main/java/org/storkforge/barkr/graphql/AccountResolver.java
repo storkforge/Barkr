@@ -2,6 +2,8 @@ package org.storkforge.barkr.graphql;
 
 
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
@@ -19,14 +21,29 @@ public class AccountResolver {
         this.accountService = accountService;
     }
 
-    @QueryMapping("Accounts")
+    @QueryMapping("accounts")
     public List<ResponseAccount> accounts() {
-        return accountService.findAll();
+        try {
+            return accountService.findAll();
+        } catch (Exception e) {
+            throw new RuntimeException("Error retrieving Accounts: " + e.getMessage(), e);
+        }
     }
 
-    @QueryMapping("Account")
-    public ResponseAccount account(@Argument Long id) {
-        return accountService.findById(id);
+    @QueryMapping("account")
+    public ResponseAccount account(@Argument @NotNull @Positive Long id) {
+        try {
+            if (id == null) {
+                throw new IllegalArgumentException("Account ID cannot be null");
+            }
+            ResponseAccount account = accountService.findById(id);
+            if (account == null) {
+                throw new RuntimeException("Account not found for ID: " + id);
+            }
+            return account;
+        } catch (Exception e) {
+            throw new RuntimeException("Error retrieving Account: " + e.getMessage(), e);
+        }
     }
 
 }
