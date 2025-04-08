@@ -31,9 +31,6 @@ public class PostResolver {
     @QueryMapping("post")
     public ResponsePost post(@Argument @NotNull @Positive Long id) {
         try {
-            if (id == null) {
-                throw new IllegalArgumentException("Post ID cannot be null");
-            }
             ResponsePost post = postService.findById(id);
             if (post == null) {
                 throw new RuntimeException("Post not found for ID: " + id);

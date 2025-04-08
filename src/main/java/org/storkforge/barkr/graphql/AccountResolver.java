@@ -33,9 +33,6 @@ public class AccountResolver {
     @QueryMapping("account")
     public ResponseAccount account(@Argument @NotNull @Positive Long id) {
         try {
-            if (id == null) {
-                throw new IllegalArgumentException("Account ID cannot be null");
-            }
             ResponseAccount account = accountService.findById(id);
             if (account == null) {
                 throw new RuntimeException("Account not found for ID: " + id);
