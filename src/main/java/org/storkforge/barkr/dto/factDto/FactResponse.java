@@ -1,4 +1,4 @@
-package org.storkforge.barkr.web.dto;
+package org.storkforge.barkr.dto.factDto;
 
 import java.util.List;
 

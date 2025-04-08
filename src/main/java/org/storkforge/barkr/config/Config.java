@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.storkforge.barkr.web.infrastructure.persistence.PostRepository;
-import org.storkforge.barkr.web.infrastructure.persistence.AccountRepository;
+import org.storkforge.barkr.infrastructure.persistence.PostRepository;
+import org.storkforge.barkr.infrastructure.persistence.AccountRepository;
 
 import java.util.List;
 
