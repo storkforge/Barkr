@@ -35,9 +35,11 @@ class AccountResolverTest {
         when(accountService.findById(10L)).thenReturn(account);
 
         graphQlTester.document("""
-                        Account(id: "10") {
-                          id
-                          username
+                        query {
+                            Account(id: "10") {
+                             id
+                             username
+                            }
                         }
                         """)
                 .execute()
@@ -47,19 +49,19 @@ class AccountResolverTest {
 
     @Test
     void testGetAllAccounts() {
-        ResponseAccount account1 = new ResponseAccount(1L, "userOne",  LocalDateTime.now());
-        ResponseAccount account2 = new ResponseAccount(2L, "userTwo",  LocalDateTime.now());
+        ResponseAccount account1 = new ResponseAccount(1L, "userOne", LocalDateTime.now());
+        ResponseAccount account2 = new ResponseAccount(2L, "userTwo", LocalDateTime.now());
 
         when(accountService.findAll()).thenReturn(List.of(account1, account2));
 
         graphQlTester.document("""
-        query {
-          Accounts {
-            id
-            username
-          }
-        }
-    """)
+                            query {
+                              Accounts {
+                                id
+                                username
+                              }
+                            }
+                        """)
                 .execute()
                 .path("Accounts").entityList(ResponsePost.class).hasSize(2)
                 .path("Accounts[0].username").entity(String.class).isEqualTo("userOne")
