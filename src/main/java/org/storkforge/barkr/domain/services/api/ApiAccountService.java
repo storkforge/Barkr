@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.dto.accountDto.ResponseAccount;
 import org.storkforge.barkr.exceptions.AccountNotFound;
-import org.storkforge.barkr.infrastructure.persistence.AccountRepository;
+import org.storkforge.barkr.web.infrastructure.persistence.AccountRepository;
 import org.storkforge.barkr.mapper.AccountMapper;
 
 import java.util.List;
@@ -15,12 +15,12 @@ import java.util.Objects;
 
 @Service
 @Transactional
-public class AccountService {
-    private final Logger log = LoggerFactory.getLogger(AccountService.class);
+public class ApiAccountService {
+    private final Logger log = LoggerFactory.getLogger(ApiAccountService.class);
 
     private final AccountRepository accountRepository;
 
-    public AccountService(AccountRepository accountRepository) {
+    public ApiAccountService(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }
 

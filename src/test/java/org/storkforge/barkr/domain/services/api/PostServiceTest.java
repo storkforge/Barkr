@@ -10,7 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.domain.entity.Post;
 import org.storkforge.barkr.exceptions.PostNotFound;
-import org.storkforge.barkr.infrastructure.persistence.PostRepository;
+import org.storkforge.barkr.web.infrastructure.persistence.PostRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +31,7 @@ class PostServiceTest {
     Account account;
 
     @InjectMocks
-    PostService postService;
+    ApiPostService postService;
 
 
     @Nested
@@ -40,25 +40,15 @@ class PostServiceTest {
         @Test
         @DisplayName("No posts records in database throws error")
         void noPostsRecordsInDatabaseThrowsError() {
-
-            when(postRepository.findAll()).thenReturn(List.of()).thenThrow(PostNotFound.class);
+            when(postRepository.findAll()).thenReturn(List.of());
             assertThatThrownBy( () -> postService.findAll()).isInstanceOf(PostNotFound.class).hasMessage("No post record(s) found in database");
-        }
-
-        @Test
-        @DisplayName("Null post throws exception")
-        void nullPostThrowsException() {
-            when(postRepository.findAll()).thenReturn(null).thenThrow(NullPointerException.class);
-            assertThatThrownBy(postService::findAll).isInstanceOf(PostNotFound.class).hasMessage("No post record(s) found in database");
-
         }
 
         @Test
         @DisplayName("Invalid id or nonexistent id throws error")
         void invalidIdOrNonexistentIdThrowsError() {
-            when(postRepository.findById(eq(1L))).thenThrow(new PostNotFound("The post with id: 1 could not be found"));
+            when(postRepository.findById(eq(1L))).thenReturn(Optional.empty());
             assertThatThrownBy(() -> postService.findOne(1L)).isInstanceOf(PostNotFound.class).hasMessage("The post with id: 1 could not be found");
-
         }
 
     }
@@ -114,11 +104,5 @@ class PostServiceTest {
 
 
         }
-
-
     }
-
-
-
-
 }

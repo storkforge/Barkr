@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.exceptions.AccountNotFound;
-import org.storkforge.barkr.infrastructure.persistence.AccountRepository;
+import org.storkforge.barkr.web.infrastructure.persistence.AccountRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,7 +27,7 @@ class AccountServiceTest {
     private Account account;
 
     @InjectMocks
-    private AccountService accountService;
+    private ApiAccountService accountService;
 
 
     @Nested
