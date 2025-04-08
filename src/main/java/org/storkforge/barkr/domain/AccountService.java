@@ -13,8 +13,8 @@ import org.storkforge.barkr.domain.entity.Account;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Optional;
+import java.util.List;
 
 @Service
 @Transactional
@@ -41,7 +41,7 @@ public class AccountService {
         return accountRepository
                 .findById(id)
                 .map(AccountMapper::mapToResponse)
-                .orElseThrow(() -> new AccountNotFound("Account with id " + id + " not found"));
+                .orElseThrow(() -> new AccountNotFound("Account with id: " + id + " not found"));
     }
 
     public ResponseAccount findByUsername(String username) {
@@ -49,7 +49,7 @@ public class AccountService {
         return accountRepository
                 .findByUsernameEqualsIgnoreCase(username)
                 .map(AccountMapper::mapToResponse)
-                .orElseThrow(() -> new AccountNotFound("Account with username " + username + " not found"));
+                .orElseThrow(() -> new AccountNotFound("Account with username: " + username + " not found"));
     }
 
     public byte[] getAccountImage(Long id) throws IOException {
@@ -73,7 +73,7 @@ public class AccountService {
 
         Account account = accountRepository
                 .findById(id)
-                .orElseThrow(() -> new AccountNotFound("Account with id " + id + " not found"));
+                .orElseThrow(() -> new AccountNotFound("Account with id: " + id + " was not found"));
 
         account.setImage(image);
 

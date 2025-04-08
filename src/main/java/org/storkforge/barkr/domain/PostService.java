@@ -1,7 +1,6 @@
 package org.storkforge.barkr.domain;
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -53,7 +52,7 @@ public class PostService {
         log.info("Fetching user by username {}", username);
         Account account = accountRepository
                 .findByUsernameEqualsIgnoreCase(username)
-                .orElseThrow(() -> new AccountNotFound("Account with username " + username + " not found"));
+                .orElseThrow(() -> new AccountNotFound("Account with username: " + username + " not found"));
 
         log.info("Fetching user's posts");
         return postRepository
@@ -68,7 +67,7 @@ public class PostService {
 
         Account account = accountRepository
                 .findById(dto.accountId())
-                .orElseThrow(() -> new AccountNotFound("Account with id " + dto.accountId() + " not found"));
+                .orElseThrow(() -> new AccountNotFound("Account with id: " + dto.accountId() + " not found"));
 
         Post post = new Post();
         post.setContent(dto.content());
