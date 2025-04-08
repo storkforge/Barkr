@@ -1,4 +1,4 @@
-package org.storkforge.barkr.web.controller;
+package org.storkforge.barkr.api.controller;
 
 
 import org.springframework.web.bind.annotation.GetMapping;

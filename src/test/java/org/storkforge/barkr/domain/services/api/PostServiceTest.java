@@ -59,8 +59,6 @@ class PostServiceTest {
             when(postRepository.findById(eq(1L))).thenThrow(new PostNotFound("The post with id: 1 could not be found"));
             assertThatThrownBy(() -> postService.findOne(1L)).isInstanceOf(PostNotFound.class).hasMessage("The post with id: 1 could not be found");
 
-
-
         }
 
     }
