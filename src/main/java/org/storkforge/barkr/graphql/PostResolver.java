@@ -1,5 +1,6 @@
 package org.storkforge.barkr.graphql;
 
+import graphql.GraphQLException;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -24,20 +25,16 @@ public class PostResolver {
         try {
             return postService.findAll();
         } catch (Exception e) {
-            throw new RuntimeException("Error retrieving posts: " + e.getMessage(), e);
+            throw new GraphQLException("Error retrieving posts: " + e.getMessage(), e);
         }
     }
 
     @QueryMapping("post")
     public ResponsePost post(@Argument @NotNull @Positive Long id) {
         try {
-            ResponsePost post = postService.findById(id);
-            if (post == null) {
-                throw new RuntimeException("Post not found for ID: " + id);
-            }
-            return post;
+            return postService.findById(id);
         } catch (Exception e) {
-            throw new RuntimeException("Error retrieving post: " + e.getMessage(), e);
+            throw new GraphQLException("Error retrieving post: " + e.getMessage(), e);
         }
     }
 }
