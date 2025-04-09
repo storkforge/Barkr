@@ -19,7 +19,7 @@ public class MistralAiController {
     }
 
     @GetMapping("/ai/generate")
-    public Map<String,String> generate(@RequestParam(value = "message", defaultValue = "Tell me a dog joke") String message) {
+    public Map<String,String> generate(@RequestParam(value = "message", defaultValue = "tell me a dog joke like you are a dog and dont write anything else and dont explain the joke") String message) {
         return Map.of("generation", this.chatModel.call(message));
     }
 

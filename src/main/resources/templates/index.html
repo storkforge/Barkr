@@ -28,6 +28,10 @@
             <div th:if="${success}" th:text="#{success}" class="success-message"></div>
         </div>
         <div th:if="${error}" th:text="${error}" class="error-message"></div>
+        <div class="card joke-box">
+            <button id="generate-joke-btn" class="btn">Generate Joke</button>
+            <div id="joke-display" class="joke-display"></div>
+        </div>
         <div th:each="post : ${posts}">
             <div th:replace="~{fragments/post :: post(${post})}"></div>
         </div>
@@ -37,5 +41,15 @@
 <script th:src="@{/js/theme-switcher.js}"></script>
 <script th:src="@{/js/konami.js}"></script>
 <script th:src="@{/js/change-language.js}"></script>
+<script>
+    document.getElementById('generate-joke-btn').addEventListener('click', function() {
+        fetch('/ai/generate?message=tell me a dog joke like you are a dog and dont write anything else and dont explain the joke')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('joke-display').textContent = data.generation;
+            })
+            .catch(error => console.error('Error fetching joke:', error));
+    });
+</script>
 </body>
 </html>
