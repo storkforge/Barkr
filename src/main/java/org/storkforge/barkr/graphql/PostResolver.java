@@ -22,19 +22,11 @@ public class PostResolver {
 
     @QueryMapping("posts")
     public List<ResponsePost> posts() {
-        try {
-            return postService.findAll();
-        } catch (Exception e) {
-            throw new GraphQLException("Error retrieving posts: " + e.getMessage(), e);
-        }
+        return postService.findAll();
     }
 
     @QueryMapping("post")
     public ResponsePost post(@Argument @NotNull @Positive Long id) {
-        try {
-            return postService.findById(id);
-        } catch (Exception e) {
-            throw new GraphQLException("Error retrieving post: " + e.getMessage(), e);
-        }
+      return postService.findById(id);
     }
 }

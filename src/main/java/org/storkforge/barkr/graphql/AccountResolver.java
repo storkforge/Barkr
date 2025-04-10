@@ -22,20 +22,12 @@ public class AccountResolver {
 
     @QueryMapping("accounts")
     public List<ResponseAccount> accounts() {
-        try {
-            return accountService.findAll();
-        } catch (Exception e) {
-            throw new GraphQLException("Error retrieving Accounts: " + e.getMessage(), e);
-        }
+        return accountService.findAll();
     }
 
     @QueryMapping("account")
     public ResponseAccount account(@Argument @NotNull @Positive Long id) {
-        try {
-            return accountService.findById(id);
-        } catch (Exception e) {
-            throw new GraphQLException("Error retrieving Account: " + e.getMessage(), e);
-        }
+        return accountService.findById(id);
     }
 
 }
