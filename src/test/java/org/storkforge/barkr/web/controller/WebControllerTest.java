@@ -45,7 +45,7 @@ class WebControllerTest {
   private WebClient htmlClient;
 
   @Nested
-  class indexRouteTest {
+  class IndexRouteTest {
     @Test
     @DisplayName("Can view all posts")
     void viewAllPostsPage() throws IOException {
@@ -113,10 +113,39 @@ class WebControllerTest {
               () -> assertThat(posts).anyMatch(entity -> "mockPost".equals(entity.getContent()))
       );
     }
+
+    @Test
+    @DisplayName("Redirects the user on empty form value")
+    void redirectOnEmptyForm() throws IOException {
+      HtmlPage page = htmlClient.getPage("/");
+
+      HtmlForm form = page.getForms().getFirst();
+      HtmlButton submitButton = (HtmlButton) form.getElementsByTagName("button").getFirst();
+
+      HtmlPage resultPage = submitButton.click();
+
+      assertThat(((HtmlDivision) resultPage.getFirstByXPath("//div[@class='error-message']")).getTextContent()).contains("Post content cannot be empty");
+    }
+
+    @Test
+    @DisplayName("Redirects the user if value is greater than 255 characters")
+    void redirectOnToManyCharactersInput() throws IOException {
+      HtmlPage page = htmlClient.getPage("/");
+
+      HtmlForm form = page.getForms().getFirst();
+      HtmlTextArea contentInput = form.getTextAreaByName("content");
+      HtmlButton submitButton = (HtmlButton) form.getElementsByTagName("button").getFirst();
+
+      contentInput.setText("THIS STRING IS 256 CHARACTERS xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+
+      HtmlPage resultPage = submitButton.click();
+
+      assertThat(((HtmlDivision) resultPage.getFirstByXPath("//div[@class='error-message']")).getTextContent()).contains("Post content cannot exceed 255 characters");
+    }
   }
 
   @Nested
-  class profileRouteTest {
+  class ProfileRouteTest {
     @Test
     @DisplayName("Can view profile page")
     void viewProfilePage() throws IOException {
@@ -148,5 +177,15 @@ class WebControllerTest {
               () -> assertThat(pageContent).doesNotContain("mockPost2")
       );
     }
+
+    @Test
+    @DisplayName("Redirects the user on nonexistent account")
+    void redirectsOnNonexsistentAccount() throws IOException {
+      HtmlPage page = htmlClient.getPage("/mockAccount");
+
+      assertThat(((HtmlDivision) page.getFirstByXPath("//div[@class='error-message']")).getTextContent()).contains("User 'mockAccount' not found");
+    }
+  }
+}
   }
 }
