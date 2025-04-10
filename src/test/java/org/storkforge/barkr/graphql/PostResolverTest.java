@@ -1,5 +1,6 @@
 package org.storkforge.barkr.graphql;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.graphql.GraphQlTest;
@@ -9,10 +10,12 @@ import org.storkforge.barkr.domain.AccountService;
 import org.storkforge.barkr.domain.PostService;
 import org.storkforge.barkr.dto.accountDto.ResponseAccount;
 import org.storkforge.barkr.dto.postDto.ResponsePost;
+import org.storkforge.barkr.exceptions.PostNotFound;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 
@@ -76,5 +79,28 @@ class PostResolverTest {
                 .path("posts[1].content").entity(String.class).isEqualTo("Second post");
     }
 
+    @Test
+    @DisplayName("Handles error for nonexistent id")
+    void handlesErrorForNonexistentId() {
+        when(postService.findById(1L)).thenThrow(new PostNotFound("Post with id: 1 was not found"));
 
+        graphQlTester.document("""
+                            query {
+                              post(id: 1) {
+                                id
+                                content
+                                account {
+                                  id
+                                  username
+                                }
+                              }
+                            }
+                        """)
+                .execute()
+                .errors()
+                .satisfy(errors -> {
+                    assertThat(errors).hasSize(1);
+                    assertThat(errors.getFirst().getMessage()).isEqualTo("Post with id: 1 was not found");
+                });
+    }
 }

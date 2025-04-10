@@ -1,5 +1,6 @@
 package org.storkforge.barkr.graphql;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -9,10 +10,12 @@ import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.storkforge.barkr.domain.AccountService;
 import org.storkforge.barkr.dto.accountDto.ResponseAccount;
+import org.storkforge.barkr.exceptions.AccountNotFound;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 
@@ -64,5 +67,26 @@ class AccountResolverTest {
                 .path("accounts").entityList(ResponseAccount.class).hasSize(2)
                 .path("accounts[0].username").entity(String.class).isEqualTo("accountOne")
                 .path("accounts[1].username").entity(String.class).isEqualTo("accountTwo");
+    }
+
+    @Test
+    @DisplayName("Handles error for nonexistent id")
+    void handlesErrorForNonexistentId() {
+        when(accountService.findById(1L)).thenThrow(new AccountNotFound("Account with id: 1 was not found"));
+
+        graphQlTester.document("""
+                        query {
+                            account(id: "1") {
+                             id
+                             username
+                            }
+                        }
+                        """)
+                .execute()
+                .errors()
+                .satisfy(errors -> {
+                    assertThat(errors).hasSize(1);
+                    assertThat(errors.getFirst().getMessage()).isEqualTo("Account with id: 1 was not found");
+                });
     }
 }
