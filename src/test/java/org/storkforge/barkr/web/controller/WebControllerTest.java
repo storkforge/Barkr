@@ -1,8 +1,9 @@
 package org.storkforge.barkr.web.controller;
 
 import org.htmlunit.WebClient;
-import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.*;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -30,52 +31,50 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @Transactional
 class WebControllerTest {
 
-    @Container
-    @ServiceConnection
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(DockerImageName.parse("postgres:latest"));
+  @Container
+  @ServiceConnection
+  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(DockerImageName.parse("postgres:latest"));
 
-    @Autowired
-    private AccountRepository accountRepository;
+  @Autowired
+  private AccountRepository accountRepository;
 
-    @Autowired
-    private PostRepository postRepository;
+  @Autowired
+  private PostRepository postRepository;
 
-    @Autowired
-    private WebClient htmlClient;
+  @Autowired
+  private WebClient htmlClient;
 
+  @Nested
+  class indexRouteTest {
     @Test
     @DisplayName("Can view all posts")
     void viewAllPostsPage() throws IOException {
-        Account mockAccount = new Account();
-        mockAccount.setId(1L);
-        mockAccount.setUsername("mockAccount");
-        mockAccount.setBreed("husky");
+      Account mockAccount = new Account();
+      mockAccount.setUsername("mockAccount");
+      mockAccount.setBreed("husky");
 
-        Account mockAccount2 = new Account();
-        mockAccount2.setId(2L);
-        mockAccount2.setUsername("mockAccount2");
-        mockAccount2.setBreed("beagle");
+      Account mockAccount2 = new Account();
+      mockAccount2.setUsername("mockAccount2");
+      mockAccount2.setBreed("beagle");
 
-        accountRepository.saveAll(List.of(mockAccount, mockAccount2));
+      accountRepository.saveAll(List.of(mockAccount, mockAccount2));
 
-        Post mockPost = new Post();
-        mockPost.setId(1L);
-        mockPost.setAccount(mockAccount);
-        mockPost.setContent("mockPost");
+      Post mockPost = new Post();
+      mockPost.setAccount(mockAccount);
+      mockPost.setContent("mockPost");
 
-        Post mockPost2 = new Post();
-        mockPost2.setId(2L);
-        mockPost2.setAccount(mockAccount2);
-        mockPost2.setContent("mockPost2");
+      Post mockPost2 = new Post();
+      mockPost2.setAccount(mockAccount2);
+      mockPost2.setContent("mockPost2");
 
-        postRepository.saveAll(List.of(mockPost, mockPost2));
-        HtmlPage page = htmlClient.getPage("/");
-        String pageContent = page.asNormalizedText();
+      postRepository.saveAll(List.of(mockPost, mockPost2));
+      HtmlPage page = htmlClient.getPage("/");
+      String pageContent = page.asNormalizedText();
 
-        assertAll(
-                () -> assertThat(page.getTitleText()).isEqualTo("Home / Barkr"),
-                () -> assertThat(pageContent).contains("mockPost"),
-                () -> assertThat(pageContent).contains("mockPost2")
-        );
+      assertAll(
+              () -> assertThat(page.getTitleText()).isEqualTo("Home / Barkr"),
+              () -> assertThat(pageContent).contains("mockPost"),
+              () -> assertThat(pageContent).contains("mockPost2")
+      );
     }
 }

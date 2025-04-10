@@ -8,7 +8,6 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.storkforge.barkr.dto.factDto.FactResponse;
-import reactor.core.publisher.Mono;
 
 @Service
 public class DogFactService {
@@ -21,19 +20,19 @@ public class DogFactService {
     }
 
     @Retryable(backoff = @Backoff(delay = 500))
-    public Mono<String> getDogFact() {
+    public String getDogFact() {
         log.info("Getting dog fact!");
 
         return webClient.get()
                 .uri("/facts?limit=1")
                 .retrieve()
-                .bodyToMono(FactResponse.class)
-                .map(response -> response
-                        .data()
-                        .getFirst()
-                        .attributes()
-                        .body()
-                );
+                .toEntity(FactResponse.class)
+                .block()
+                .getBody()
+                .data()
+                .getFirst()
+                .attributes()
+                .body();
     }
 
     @Recover
