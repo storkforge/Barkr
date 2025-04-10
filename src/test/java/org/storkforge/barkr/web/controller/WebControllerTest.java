@@ -77,6 +77,23 @@ class WebControllerTest {
               () -> assertThat(pageContent).contains("mockPost2")
       );
     }
+
+    @Test
+    @DisplayName("Verify add post form exist")
+    void verifyAddPostFormExist() throws IOException {
+      HtmlPage page = htmlClient.getPage("/");
+      HtmlForm form = page.getForms().getFirst();
+      HtmlTextArea contentInput = form.getTextAreaByName("content");
+
+      assertAll(
+              () -> assertThat(page.getTitleText()).isEqualTo("Home / Barkr"),
+              () -> assertThat(form.getActionAttribute()).contains("/post/add"),
+              () -> assertThat(form.getMethodAttribute()).isEqualTo("post"),
+              () -> assertThat(contentInput).isNotNull(),
+              () -> assertThat(contentInput.hasAttribute("required")).isTrue()
+      );
+    }
+
     @Test
     @DisplayName("Can submit the add post form")
     void verifyAddPostFormSubmitted() throws IOException {
