@@ -114,4 +114,39 @@ class WebControllerTest {
       );
     }
   }
+
+  @Nested
+  class profileRouteTest {
+    @Test
+    @DisplayName("Can view profile page")
+    void viewProfilePage() throws IOException {
+      Account mockAccount = new Account();
+      mockAccount.setUsername("mockAccount");
+      mockAccount.setBreed("husky");
+
+      Account mockAccount2 = new Account();
+      mockAccount2.setUsername("mockAccount2");
+      mockAccount2.setBreed("beagle");
+
+      accountRepository.saveAll(List.of(mockAccount, mockAccount2));
+
+      Post mockPost = new Post();
+      mockPost.setAccount(mockAccount);
+      mockPost.setContent("mockPost");
+
+      Post mockPost2 = new Post();
+      mockPost2.setAccount(mockAccount2);
+      mockPost2.setContent("mockPost2");
+
+      postRepository.saveAll(List.of(mockPost, mockPost2));
+      HtmlPage page = htmlClient.getPage("/mockAccount");
+      String pageContent = page.asNormalizedText();
+
+      assertAll(
+              () -> assertThat(page.getTitleText()).isEqualTo("mockAccount / Barkr"),
+              () -> assertThat(pageContent).contains("mockPost"),
+              () -> assertThat(pageContent).doesNotContain("mockPost2")
+      );
+    }
+  }
 }
