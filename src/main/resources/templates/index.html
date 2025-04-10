@@ -25,7 +25,9 @@
                 <button type="submit" class="btn" th:text="#{create.post}">Bark It!</button>
             </form>
 
-            <div th:if="${success}" th:text="#{success}" class="success-message"></div>
+            <div th:if="${success}" class="success-message">
+                Post added successfully!
+            </div>
         </div>
         <div th:if="${error}" th:text="${error}" class="error-message"></div>
         <div class="card">

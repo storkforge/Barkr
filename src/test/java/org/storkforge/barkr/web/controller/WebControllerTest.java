@@ -77,4 +77,24 @@ class WebControllerTest {
               () -> assertThat(pageContent).contains("mockPost2")
       );
     }
+    @Test
+    @DisplayName("Can submit the add post form")
+    void verifyAddPostFormSubmitted() throws IOException {
+      HtmlPage page = htmlClient.getPage("/");
+
+      HtmlForm form = page.getForms().getFirst();
+      HtmlTextArea contentInput = form.getTextAreaByName("content");
+      HtmlButton submitButton = (HtmlButton) form.getElementsByTagName("button").getFirst();
+
+      contentInput.setText("mockPost");
+
+      HtmlPage resultPage = submitButton.click();
+      List<Post> posts = postRepository.findAll();
+
+      assertAll(
+              () -> assertThat(((HtmlDivision) resultPage.getFirstByXPath("//div[@class='success-message']")).getTextContent()).contains("Post added successfully!"),
+              () -> assertThat(posts).anyMatch(entity -> "mockPost".equals(entity.getContent()))
+      );
+    }
+  }
 }
