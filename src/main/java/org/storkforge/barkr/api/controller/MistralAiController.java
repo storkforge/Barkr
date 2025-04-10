@@ -19,11 +19,19 @@ public class MistralAiController {
     }
 
     @GetMapping("/ai/generate")
-    public Map<String,String> generate(@RequestParam(value = "message", defaultValue = "tell me a dog joke like you are a dog and dont write anything else and dont explain the joke") String message) {
-        return Map.of("generation", this.chatModel.call(message));
+    public Map<String, String> generate(@RequestParam(value = "message", defaultValue = "tell me a dog joke like you are a dog and dont write anything else and dont explain the joke") String message) {
+        try {
+            if (message == null || message.trim().isEmpty()) {
+                return Map.of("generation", "Please provide a valid message.");
+            }
+
+            String response = this.chatModel.call(message);
+            return Map.of("generation", response);
+        } catch (Exception e) {
+            System.err.println("Error generating AI response: " + e.getMessage());
+            return Map.of("generation", "Sorry, I couldn't generate a response. Please try again later.");
+        }
     }
-
-
 
 
 }
