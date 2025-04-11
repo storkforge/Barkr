@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.storkforge.barkr.exceptions.ServerUnavailable;
 
 import java.util.Map;
 
@@ -32,14 +31,14 @@ public class MistralAiController {
             String response = this.chatModel.call(jokePrompt);
             return Map.of(genKey, response);
 
-        } catch (ServerUnavailable e) {
-            logger.error("AI server is down: {}", e.getMessage(), e);
-            return Map.of(genKey, "The AI server is currently unavailable. Please try again later.");
-
         } catch (org.springframework.ai.retry.NonTransientAiException e) {
             if (e.getMessage().contains("401")) {
                 logger.error("Unauthorized access: {}", e.getMessage(), e);
                 return Map.of(genKey, "Unauthorized access. Please verify your API key.");
+            }
+            if (e.getMessage().contains("500")) {
+                logger.error("AI server is down: {}", e.getMessage(), e);
+                return Map.of(genKey, "The AI server is currently unavailable. Please try again later.");
             }
             logger.error("Non-transient AI exception: {}", e.getMessage(), e);
             return Map.of(genKey, "An error occurred. Please try again later.");
