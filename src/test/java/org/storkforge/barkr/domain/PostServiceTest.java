@@ -52,9 +52,9 @@ class PostServiceTest {
         @Test
         @DisplayName("Invalid id or nonexistent id throws error")
         void invalidIdOrNonexistentIdThrowsError() {
-            when(postRepository.findById(1L)).thenThrow(new PostNotFound("The post with id: 1 could not be found"));
+            when(postRepository.findById(1L)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> postService.findById(1L)).isInstanceOf(PostNotFound.class).hasMessage("The post with id: 1 could not be found");
+            assertThatThrownBy(() -> postService.findById(1L)).isInstanceOf(PostNotFound.class).hasMessage("Post with id: 1 not found");
         }
 
         @Test
@@ -147,10 +147,7 @@ class PostServiceTest {
                                    .map(PostMapper::mapToResponse)
                                    .toList()
                            ),
-                   () -> assertThat(result).isNotEqualTo(Stream.of(mockPost2)
-                           .map(PostMapper::mapToResponse)
-                           .toList()
-                   )
+                   () -> assertThat(result).doesNotContain(PostMapper.mapToResponse(mockPost2))
            );
        }
     }
@@ -172,13 +169,13 @@ class PostServiceTest {
         @Test
         @DisplayName("AddPost throws error for invalid account")
         void addPostThrowsErrorForInvalidAccount() {
-            when(accountRepository.findById(1L)).thenThrow(new AccountNotFound("Account with id 1 not found"));
+            when(accountRepository.findById(1L)).thenReturn(Optional.empty());
 
             CreatePost post = new CreatePost("mock content", 1L);
 
             assertThatThrownBy(() -> postService.addPost(post))
                     .isInstanceOf(AccountNotFound.class)
-                    .hasMessage("Account with id 1 not found");
+                    .hasMessage("Account with id: 1 not found");
         }
     }
 }
