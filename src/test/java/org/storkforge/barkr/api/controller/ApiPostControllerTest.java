@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.storkforge.barkr.domain.PostService;
 import org.storkforge.barkr.dto.accountDto.ResponseAccount;
 import org.storkforge.barkr.dto.postDto.ResponsePost;
+import org.storkforge.barkr.exceptions.PostNotFound;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -48,11 +49,11 @@ class ApiPostControllerTest {
 
     @Test
     @DisplayName("Finds a post from service")
-    void findAccount() throws Exception {
+    void findPost() throws Exception {
         ResponseAccount mockAccount = new ResponseAccount(1L, "testAccount", LocalDateTime.now(), "beagle", new byte[0]);
-        ResponsePost mockPosts = new ResponsePost(1L, "testPost1", mockAccount, LocalDateTime.now());
+        ResponsePost mockPost = new ResponsePost(1L, "testPost1", mockAccount, LocalDateTime.now());
 
-        when(service.findById(1L)).thenReturn(mockPosts);
+        when(service.findById(1L)).thenReturn(mockPost);
 
         mvc.perform(get("/api/posts/1"))
                 .andDo(print())
@@ -60,6 +61,17 @@ class ApiPostControllerTest {
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.content").value("testPost1"))
                 .andExpect(jsonPath("$.account.username").value("testAccount"));
+    }
+
+
+    @Test
+    @DisplayName("Handles error for nonexistent id")
+    void handlesErrorForNonexistentId() throws Exception {
+        when(service.findById(1L)).thenThrow(new PostNotFound("Post with id: 1 was not found"));
+
+        mvc.perform(get("/api/posts/1"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 }
 

@@ -49,7 +49,7 @@ public class PostService {
 
     public List<ResponsePost> findByUsername(String username) {
         log.info("Finding posts by username {}", username);
-        log.info("Fetching user by username {}", username);
+
         Account account = accountRepository
                 .findByUsernameEqualsIgnoreCase(username)
                 .orElseThrow(() -> new AccountNotFound("Account with username: " + username + " not found"));
@@ -69,9 +69,7 @@ public class PostService {
                 .findById(dto.accountId())
                 .orElseThrow(() -> new AccountNotFound("Account with id: " + dto.accountId() + " not found"));
 
-        Post post = new Post();
-        post.setContent(dto.content());
-        post.setAccount(account);
-        postRepository.save(post);
+        Post entity = PostMapper.mapToEntity(dto, account);
+        postRepository.save(entity);
     }
 }

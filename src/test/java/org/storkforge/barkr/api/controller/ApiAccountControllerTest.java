@@ -8,6 +8,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.storkforge.barkr.domain.AccountService;
 import org.storkforge.barkr.dto.accountDto.ResponseAccount;
+import org.storkforge.barkr.exceptions.AccountNotFound;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,7 +47,7 @@ class ApiAccountControllerTest {
     }
 
     @Test
-    void FindAccount() throws Exception {
+    void findAccount() throws Exception {
         ResponseAccount mockAccount = new ResponseAccount(1L, "testAccount", LocalDateTime.now(), "beagle", new byte[0]);
         when(service.findById(1L)).thenReturn(mockAccount);
 
@@ -56,5 +57,15 @@ class ApiAccountControllerTest {
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.username").value("testAccount"))
                 .andExpect(jsonPath("$.breed").value("beagle"));
+    }
+
+    @Test
+    @DisplayName("Handles error for nonexistent id")
+    void handlesErrorForNonexistentId() throws Exception {
+        when(service.findById(1L)).thenThrow(new AccountNotFound("Account with id: 1 was not found"));
+
+        mvc.perform(get("/api/accounts/1"))
+                .andDo(print())
+                .andExpect((status().isNotFound()));
     }
 }

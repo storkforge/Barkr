@@ -77,7 +77,7 @@ class PostServiceTest {
             Account mockAccount2 = new Account();
             mockAccount2.setId(2L);
 
-            Post mockPost = mock(Post.class);
+            Post mockPost = new Post();
             mockPost.setId(1L);
             mockPost.setAccount(mockAccount);
             mockPost.setContent("voff");
@@ -127,7 +127,7 @@ class PostServiceTest {
            mockAccount2.setId(2L);
            mockAccount2.setUsername("mockAccount2");
 
-           Post mockPost = mock(Post.class);
+           Post mockPost = new Post();
            mockPost.setId(1L);
            mockPost.setAccount(mockAccount);
            mockPost.setContent("voff");
@@ -156,7 +156,7 @@ class PostServiceTest {
     }
 
     @Nested
-    class addTests {
+    class xAddTests {
         @Test
         @DisplayName("Can create a post")
         void canCreatePost() {
