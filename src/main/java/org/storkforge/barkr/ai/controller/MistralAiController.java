@@ -1,4 +1,4 @@
-package org.storkforge.barkr.api.controller;
+package org.storkforge.barkr.ai.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
