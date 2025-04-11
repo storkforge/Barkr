@@ -18,7 +18,7 @@
                 <div class="profile-info-header">
                     <img th:src="@{'/account/' + ${queryAccount.id} + '/image'}" alt="Profile Picture"
                          class="profile-picture">
-                    <div class="profile-actions" th:if="${account.username() == queryAccount.username}">
+                    <div class="profile-actions" th:if="${account.username == queryAccount.username}">
                         <button class="btn" th:text="#{edit.profile}" onclick="openModal()">Edit Profile</button>
                     </div>
                 </div>
