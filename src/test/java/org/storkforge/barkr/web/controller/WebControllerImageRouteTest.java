@@ -55,7 +55,7 @@ class WebControllerImageRouteTest {
             fallback = is.readAllBytes();
         }
 
-        when(accountService.getAccountImage(1L)).thenReturn(null);
+        when(accountService.getAccountImage(1L)).thenReturn(fallback);
 
         mockMvc.perform(get("/account/1/image"))
                 .andExpect(status().isOk())

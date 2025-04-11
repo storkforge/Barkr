@@ -38,6 +38,7 @@ class PostMapperTest {
 
     assertThat(PostMapper.mapToEntity(dto, mockAccount))
             .isInstanceOf(Post.class)
-            .hasFieldOrPropertyWithValue("content", dto.content());
+            .hasFieldOrPropertyWithValue("content", dto.content())
+            .hasFieldOrPropertyWithValue("account", mockAccount);
   }
 }

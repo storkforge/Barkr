@@ -156,7 +156,7 @@ class PostServiceTest {
     }
 
     @Nested
-    class xAddTests {
+    class AddTests {
         @Test
         @DisplayName("Can create a post")
         void canCreatePost() {
