@@ -2,6 +2,7 @@ package org.storkforge.barkr.web.controller;
 
 import org.htmlunit.WebClient;
 import org.htmlunit.html.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -44,30 +45,34 @@ class WebControllerTest {
   @Autowired
   private WebClient htmlClient;
 
+  @BeforeEach
+  void setUp() {
+    Account mockAccount = new Account();
+    mockAccount.setUsername("mockAccount");
+    mockAccount.setBreed("husky");
+
+    Account mockAccount2 = new Account();
+    mockAccount2.setUsername("mockAccount2");
+    mockAccount2.setBreed("beagle");
+
+    accountRepository.saveAll(List.of(mockAccount, mockAccount2));
+
+    Post mockPost = new Post();
+    mockPost.setAccount(mockAccount);
+    mockPost.setContent("mockPost");
+
+    Post mockPost2 = new Post();
+    mockPost2.setAccount(mockAccount2);
+    mockPost2.setContent("mockPost2");
+
+    postRepository.saveAll(List.of(mockPost, mockPost2));
+  }
+
   @Nested
   class IndexRouteTest {
     @Test
     @DisplayName("Can view all posts")
     void viewAllPostsPage() throws IOException {
-      Account mockAccount = new Account();
-      mockAccount.setUsername("mockAccount");
-      mockAccount.setBreed("husky");
-
-      Account mockAccount2 = new Account();
-      mockAccount2.setUsername("mockAccount2");
-      mockAccount2.setBreed("beagle");
-
-      accountRepository.saveAll(List.of(mockAccount, mockAccount2));
-
-      Post mockPost = new Post();
-      mockPost.setAccount(mockAccount);
-      mockPost.setContent("mockPost");
-
-      Post mockPost2 = new Post();
-      mockPost2.setAccount(mockAccount2);
-      mockPost2.setContent("mockPost2");
-
-      postRepository.saveAll(List.of(mockPost, mockPost2));
       HtmlPage page = htmlClient.getPage("/");
       String pageContent = page.asNormalizedText();
 
@@ -129,7 +134,7 @@ class WebControllerTest {
 
     @Test
     @DisplayName("Redirects the user if value is greater than 255 characters")
-    void redirectOnToManyCharactersInput() throws IOException {
+    void redirectOnTooManyCharactersInput() throws IOException {
       HtmlPage page = htmlClient.getPage("/");
 
       HtmlForm form = page.getForms().getFirst();
@@ -150,26 +155,7 @@ class WebControllerTest {
     @Test
     @DisplayName("Can view profile page")
     void viewProfilePage() throws IOException {
-      Account mockAccount = new Account();
-      mockAccount.setUsername("mockAccount");
-      mockAccount.setBreed("husky");
-
-      Account mockAccount2 = new Account();
-      mockAccount2.setUsername("mockAccount2");
-      mockAccount2.setBreed("beagle");
-
-      accountRepository.saveAll(List.of(mockAccount, mockAccount2));
-
-      Post mockPost = new Post();
-      mockPost.setAccount(mockAccount);
-      mockPost.setContent("mockPost");
-
-      Post mockPost2 = new Post();
-      mockPost2.setAccount(mockAccount2);
-      mockPost2.setContent("mockPost2");
-
-      postRepository.saveAll(List.of(mockPost, mockPost2));
-      HtmlPage page = htmlClient.getPage("/mockAccount");
+     HtmlPage page = htmlClient.getPage("/mockAccount");
       String pageContent = page.asNormalizedText();
 
       assertAll(
@@ -181,10 +167,10 @@ class WebControllerTest {
 
     @Test
     @DisplayName("Redirects the user on nonexistent account")
-    void redirectsOnNonexsistentAccount() throws IOException {
-      HtmlPage page = htmlClient.getPage("/mockAccount");
+    void redirectsOnNonexistentAccount() throws IOException {
+      HtmlPage page = htmlClient.getPage("/nonExistent");
 
-      assertThat(((HtmlDivision) page.getFirstByXPath("//div[@class='error-message']")).getTextContent()).contains("User 'mockAccount' not found");
+      assertThat(((HtmlDivision) page.getFirstByXPath("//div[@class='error-message']")).getTextContent()).contains("User 'nonExistent' not found");
     }
   }
 }
