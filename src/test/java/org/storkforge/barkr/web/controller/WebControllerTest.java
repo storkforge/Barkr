@@ -109,7 +109,7 @@ class WebControllerTest {
       List<Post> posts = postRepository.findAll();
 
       assertAll(
-              () -> assertThat(((HtmlDivision) resultPage.getFirstByXPath("//div[@class='success-message']")).getTextContent()).contains("Post added successfully!"),
+              () -> assertThat(((HtmlDivision) resultPage.getFirstByXPath("//div[@class='success-message']")).getTextContent()).contains("Successfully barked!"),
               () -> assertThat(posts).anyMatch(entity -> "mockPost".equals(entity.getContent()))
       );
     }
