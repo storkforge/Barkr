@@ -31,18 +31,6 @@ public class MistralAiController {
             String response = this.chatModel.call(jokePrompt);
             return Map.of(genKey, response);
 
-        } catch (org.springframework.ai.retry.NonTransientAiException e) {
-            if (e.getMessage().contains("401")) {
-                logger.error("Unauthorized access: {}", e.getMessage(), e);
-                return Map.of(genKey, "Unauthorized access. Please verify your API key.");
-            }
-            if (e.getMessage().contains("500")) {
-                logger.error("AI server is down: {}", e.getMessage(), e);
-                return Map.of(genKey, "The AI server is currently unavailable. Please try again later.");
-            }
-            logger.error("Non-transient AI exception: {}", e.getMessage(), e);
-            return Map.of(genKey, "An error occurred. Please try again later.");
-
         } catch (Exception e) {
             logger.error("Unexpected error generating AI response: {}", e.getMessage(), e);
             return Map.of(genKey, "Sorry, I couldn't generate a response. Please try again later.");
