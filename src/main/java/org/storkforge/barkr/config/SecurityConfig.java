@@ -16,8 +16,7 @@ public class SecurityConfig {
     @Order(1)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http
-                .formLogin(Customizer.withDefaults())
-                //.oauth2Login(Customizer.withDefaults())
+                .oauth2Login(Customizer.withDefaults())
                 .authorizeHttpRequests(authorize -> authorize
                                 .requestMatchers("/","/login", "/error").permitAll()
                                 .requestMatchers("/profile/**").authenticated()
