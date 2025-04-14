@@ -3,6 +3,7 @@ package org.storkforge.barkr.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,11 +19,12 @@ public class SecurityConfig {
         http
                 .oauth2Login(Customizer.withDefaults())
                 .authorizeHttpRequests(authorize -> authorize
-                                .requestMatchers("/","/login", "/error").permitAll()
-                                .requestMatchers("/profile/**").authenticated()
+                                .requestMatchers("/","/login", "/error", "/css/**", "/js/**", "/images/**").permitAll()
+                                .requestMatchers( "/account/{id}/image").permitAll()
+                                .requestMatchers("/ai/generate").authenticated()
                                 .requestMatchers("/post/add").authenticated()
-                                .requestMatchers("/account/**/*").authenticated()
-                                .requestMatchers("/**/{username}").authenticated()
+                                .requestMatchers("/account/{id}/upload").authenticated()
+                                .requestMatchers("/{username}").authenticated()
                                 .anyRequest().denyAll()
 
                         );
