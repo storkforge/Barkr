@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.domain.entity.Post;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @AutoConfigureMockMvc
 @Testcontainers
 @Transactional
+@ActiveProfiles({"default", "dev"})
 class WebControllerTest {
 
   @Container
