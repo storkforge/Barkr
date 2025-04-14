@@ -28,9 +28,9 @@
             <div th:if="${success}" th:text="#{success}" class="success-message"></div>
         </div>
         <div th:if="${error}" th:text="${error}" class="error-message"></div>
-        <div class="card joke-box">
+        <div class="card">
             <button id="generate-joke-btn" class="btn">Generate Joke</button>
-            <div id="joke-display" class="joke-display"></div>
+            <div id="joke-display"></div>
         </div>
         <div th:each="post : ${posts}">
             <div th:replace="~{fragments/post :: post(${post})}"></div>
