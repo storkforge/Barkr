@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
@@ -65,6 +66,13 @@ public class WebController {
     model.addAttribute("account", accountService.findById(1L));
 
     return "profile";
+  }
+
+  @GetMapping("/post/load")
+  public String loadPosts(@RequestParam("page") int page, Model model, @PageableDefault(size = 5) Pageable pageable) {
+    pageable = PageRequest.of(page, pageable.getPageSize());
+    model.addAttribute("posts", postService.findAll(pageable));
+    return "partials/posts-wrapper";
   }
 
   @PostMapping("/post/add")

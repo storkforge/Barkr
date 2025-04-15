@@ -23,14 +23,14 @@ public class PostResolver {
     }
 
     @QueryMapping("posts")
-    public Page<ResponsePost> posts(@Argument @PositiveOrZero int page, @Argument @Positive int size) {
+    public Page<ResponsePost> posts(@Argument("page") @PositiveOrZero int page, @Argument("size") @Positive int size) {
         Pageable pageable = PageRequest.of(page,size);
 
         return postService.findAll(pageable);
     }
 
     @QueryMapping("post")
-    public ResponsePost post(@Argument @NotNull @Positive Long id) {
+    public ResponsePost post(@Argument("id") @NotNull @Positive Long id) {
       return postService.findById(id);
     }
 }

@@ -22,15 +22,14 @@ public class AccountResolver {
     }
 
     @QueryMapping("accounts")
-    public Page<ResponseAccount> accounts(@Argument @PositiveOrZero int page, @Argument @Positive int size) {
+    public Page<ResponseAccount> accounts(@Argument("page") @PositiveOrZero int page, @Argument("size") @Positive int size) {
         Pageable pageable = PageRequest.of(page, size);
 
         return accountService.findAll(pageable);
     }
 
     @QueryMapping("account")
-    public ResponseAccount account(@Argument @NotNull @Positive Long id) {
+    public ResponseAccount account(@Argument("id") @NotNull @Positive Long id) {
         return accountService.findById(id);
     }
-
 }
