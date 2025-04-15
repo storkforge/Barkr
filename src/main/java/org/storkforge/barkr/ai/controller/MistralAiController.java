@@ -3,8 +3,8 @@ package org.storkforge.barkr.ai.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.mistralai.MistralAiChatModel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,20 +20,19 @@ public class MistralAiController {
 
     private final MistralAiChatModel chatModel;
 
-    @Autowired
     public MistralAiController(MistralAiChatModel chatModel) {
         this.chatModel = chatModel;
     }
 
     @GetMapping("/ai/generate")
-    public Map<String, String> generate() {
+    public ResponseEntity<Map<String, String>> generate() {
         try {
             String response = this.chatModel.call(jokePrompt);
-            return Map.of(genKey, response);
+            return ResponseEntity.ok(Map.of(genKey, response));
 
         } catch (Exception e) {
             logger.error("Unexpected error generating AI response: {}", e.getMessage(), e);
-            return Map.of(genKey, "Sorry, I couldn't generate a response. Please try again later.");
+            return ResponseEntity.internalServerError().body(Map.of(genKey, "Sorry, I couldn't generate a response. Please try again later."));
         }
     }
 }

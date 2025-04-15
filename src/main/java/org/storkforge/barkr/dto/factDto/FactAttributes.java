@@ -1,3 +1,3 @@
-package org.storkforge.barkr.web.dto;
+package org.storkforge.barkr.dto.factDto;
 
 public record FactAttributes(String body) {}

@@ -1,17 +1,19 @@
 package org.storkforge.barkr.web.controller;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.storkforge.barkr.web.domain.AccountService;
-import org.storkforge.barkr.web.domain.DogFactService;
-import org.storkforge.barkr.web.domain.PostService;
+import org.storkforge.barkr.domain.AccountService;
+import org.storkforge.barkr.domain.DogFactService;
+import org.storkforge.barkr.domain.PostService;
 import org.storkforge.barkr.dto.accountDto.ResponseAccount;
 import org.storkforge.barkr.dto.postDto.CreatePost;
 
@@ -33,63 +35,38 @@ public class WebController {
   }
 
   @GetMapping("/")
-  public DeferredResult<String> index(Model model) {
-    DeferredResult<String> result = new DeferredResult<>();
-
+  public String index(Model model) {
     model.addAttribute("posts", postService.findAll());
     model.addAttribute("createPostDto", new CreatePost("", 1L));
+    model.addAttribute("fact", dogFactService.getDogFact());
     // TODO: Change this to the actual account once security is in place
     model.addAttribute("account", accountService.findById(1L));
 
-    dogFactService.getDogFact().subscribe(
-            fact -> {
-              model.addAttribute("fact", fact);
-              result.setResult("index");
-            },
-            error -> {
-              model.addAttribute("fact", "Error loading dog fact: " + error.getMessage());
-              result.setResult("index");
-            }
-    );
-
-    return result;
+    return "index";
   }
 
   @GetMapping("/{username}")
-  public DeferredResult<String> user(@PathVariable("username") String username, Model model, RedirectAttributes redirectAttributes) {
-    DeferredResult<String> result = new DeferredResult<>();
+  public String user(@PathVariable("username") @NotBlank String username, Model model, RedirectAttributes redirectAttributes) {
     ResponseAccount queryAccount;
-
     try {
       queryAccount = accountService.findByUsername(username);
     }
     catch (Exception e) {
       redirectAttributes.addFlashAttribute("error", "User '"+ username +"' not found");
-      result.setResult("redirect:/");
-      return result;
+      return "redirect:/";
     }
 
     model.addAttribute("accountPosts", postService.findByUsername(username));
     model.addAttribute("queryAccount", queryAccount);
+    model.addAttribute("fact", dogFactService.getDogFact());
     // TODO: Change this to the actual account once security is in place
     model.addAttribute("account", accountService.findById(1L));
 
-    dogFactService.getDogFact().subscribe(
-            fact -> {
-              model.addAttribute("fact", fact);
-              result.setResult("profile");
-            },
-            error -> {
-              model.addAttribute("fact", "Error loading dog fact: " + error.getMessage());
-              result.setResult("profile");
-            }
-    );
-
-    return result;
+    return "profile";
   }
 
   @PostMapping("/post/add")
-  public String addPost(@ModelAttribute CreatePost dto,
+  public String addPost(@ModelAttribute @NotNull CreatePost dto,
                         RedirectAttributes redirectAttributes) {
     if (dto.content() == null || dto.content().trim().isEmpty()) {
       redirectAttributes.addFlashAttribute("error", "Post content cannot be empty");
@@ -111,7 +88,7 @@ public class WebController {
   }
 
   @GetMapping("/account/{id}/image")
-  public ResponseEntity<byte[]> getAccountImage(@PathVariable("id") Long id) throws IOException {
+  public ResponseEntity<byte[]> getAccountImage(@PathVariable("id") @Positive @NotNull Long id) throws IOException {
     byte[] accountImage = accountService.getAccountImage(id);
 
     if (accountImage == null) {
@@ -127,7 +104,7 @@ public class WebController {
   }
 
   @PostMapping("/account/{id}/upload")
-  public String uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
+  public String uploadImage(@PathVariable @Positive @NotNull Long id, @RequestParam("file") @NotNull MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
     if (file.isEmpty()) {
       redirectAttributes.addFlashAttribute("error", "File is empty");
       return "redirect:/";

@@ -1,11 +1,12 @@
-package org.storkforge.barkr.web.graphql;
+package org.storkforge.barkr.graphql;
 
+import graphql.GraphQLException;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
-import org.storkforge.barkr.web.domain.PostService;
+import org.storkforge.barkr.domain.PostService;
 import org.storkforge.barkr.dto.postDto.ResponsePost;
 
 import java.util.List;
@@ -21,23 +22,11 @@ public class PostResolver {
 
     @QueryMapping("posts")
     public List<ResponsePost> posts() {
-        try {
-            return postService.findAll();
-        } catch (Exception e) {
-            throw new RuntimeException("Error retrieving posts: " + e.getMessage(), e);
-        }
+        return postService.findAll();
     }
 
     @QueryMapping("post")
     public ResponsePost post(@Argument @NotNull @Positive Long id) {
-        try {
-            ResponsePost post = postService.findOne(id);
-            if (post == null) {
-                throw new RuntimeException("Post not found for ID: " + id);
-            }
-            return post;
-        } catch (Exception e) {
-            throw new RuntimeException("Error retrieving post: " + e.getMessage(), e);
-        }
+      return postService.findById(id);
     }
 }

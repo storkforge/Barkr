@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.storkforge.barkr.domain.services.api.ApiPostService;
+import org.storkforge.barkr.domain.PostService;
 import org.storkforge.barkr.dto.postDto.ResponsePost;
 import org.storkforge.barkr.dto.postDto.ResponsePostList;
 
@@ -15,9 +15,9 @@ import java.util.List;
 @RequestMapping("/api")
 public class ApiPostController {
 
-    private final ApiPostService postService;
+    private final PostService postService;
 
-    public ApiPostController(ApiPostService postService) {
+    public ApiPostController(PostService postService) {
         this.postService = postService;
     }
 
@@ -29,7 +29,7 @@ public class ApiPostController {
 
     @GetMapping("/posts/{id}")
     public ResponsePost getPost(@PathVariable Long id) {
-        return postService.findOne(id);
+        return postService.findById(id);
     }
 
 

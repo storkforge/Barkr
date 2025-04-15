@@ -2,5 +2,5 @@ package org.storkforge.barkr.dto.accountDto;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record UpdateAccount (@NotBlank String username)
+public record UpdateAccount (@NotBlank String username, @NotBlank String breed)
 {}
