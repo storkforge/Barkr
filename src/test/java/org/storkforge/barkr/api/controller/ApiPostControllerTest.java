@@ -4,6 +4,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.storkforge.barkr.domain.PostService;
@@ -37,14 +41,19 @@ class ApiPostControllerTest {
                 new ResponsePost(1L, "testPost1", mockAccount, LocalDateTime.now()),
                 new ResponsePost(2L, "testPost2", mockAccount, LocalDateTime.now())
         );
-        when(service.findAll()).thenReturn(mockPosts);
+        Page<ResponsePost> postPage = new PageImpl<>(mockPosts);
 
-        mvc.perform(get("/api/posts"))
+        Pageable pageable = PageRequest.of(0, 10);
+        when(service.findAll(pageable)).thenReturn(postPage);
+
+        mvc.perform(get("/api/posts")
+                        .param("page", "0")
+                        .param("size", "10"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.posts.length()").value(2))
-                .andExpect(jsonPath("$.posts[0].content").value("testPost1"))
-                .andExpect(jsonPath("$.posts[1].content").value("testPost2"));
+                .andExpect(jsonPath("$.content.length()").value(2))
+                .andExpect(jsonPath("$.content[0].content").value("testPost1"))
+                .andExpect(jsonPath("$.content[1].content").value("testPost2"));
     }
 
     @Test

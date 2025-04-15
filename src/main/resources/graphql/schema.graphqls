@@ -1,16 +1,34 @@
 type Query {
-    posts: [Post!]
+    posts(page: Int, size: Int): PostPage!
     post(id: ID!): Post
-    accounts: [Account!]
+    accounts(page: Int, size: Int): AccountPage!
     account(id: ID!): Account
-
 }
 
+type PostPage {
+    content: [Post!]!
+    totalElements: Int!
+    totalPages: Int!
+    number: Int!
+    size: Int!
+    last: Boolean!
+    first: Boolean!
+}
 
 type Post {
     id: ID!
     content: String
     account: Account!
+}
+
+type AccountPage {
+    content: [Account!]
+    totalElements: Int!
+    totalPages: Int!
+    number: Int!
+    size: Int!
+    last: Boolean!
+    first: Boolean!
 }
 
 type Account {

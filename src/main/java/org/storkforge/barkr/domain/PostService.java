@@ -1,5 +1,7 @@
 package org.storkforge.barkr.domain;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,14 +35,11 @@ public class PostService {
     }
 
     @Cacheable("allPosts")
-    public List<ResponsePost> findAll() {
+    public Page<ResponsePost> findAll(Pageable pageable) {
         log.info("Finding all posts");
+        Page<Post> posts = postRepository.findAll(pageable);
 
-        return postRepository
-                .findAll()
-                .stream()
-                .map(PostMapper::mapToResponse)
-                .toList();
+        return posts.map(PostMapper::mapToResponse);
     }
 
     @Cacheable("postById")
@@ -52,7 +51,7 @@ public class PostService {
     }
 
     @Cacheable("postByUsername")
-    public List<ResponsePost> findByUsername(String username) {
+    public Page<ResponsePost> findByUsername(String username, Pageable pageable) {
         log.info("Finding posts by username {}", username);
 
         Account account = accountRepository
@@ -60,11 +59,9 @@ public class PostService {
                 .orElseThrow(() -> new AccountNotFound("Account with username: " + username + " not found"));
 
         log.info("Fetching user's posts");
-        return postRepository
-                .findByAccount(account)
-                .stream()
-                .map(PostMapper::mapToResponse)
-                .toList();
+        Page<Post> posts = postRepository.findByAccount(account, pageable);
+
+        return posts.map(PostMapper::mapToResponse);
     }
 
     @CacheEvict(value = {"allPosts", "postById", "postByUsername"}, allEntries = true)

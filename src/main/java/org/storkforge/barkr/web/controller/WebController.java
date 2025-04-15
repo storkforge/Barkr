@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -35,8 +37,8 @@ public class WebController {
   }
 
   @GetMapping("/")
-  public String index(Model model) {
-    model.addAttribute("posts", postService.findAll());
+  public String index(Model model, @PageableDefault Pageable pageable) {
+    model.addAttribute("posts", postService.findAll(pageable));
     model.addAttribute("createPostDto", new CreatePost("", 1L));
     model.addAttribute("fact", dogFactService.getDogFact());
     // TODO: Change this to the actual account once security is in place
@@ -46,7 +48,7 @@ public class WebController {
   }
 
   @GetMapping("/{username}")
-  public String user(@PathVariable("username") @NotBlank String username, Model model, RedirectAttributes redirectAttributes) {
+  public String user(@PathVariable("username") @NotBlank String username, Model model, RedirectAttributes redirectAttributes, @PageableDefault Pageable pageable) {
     ResponseAccount queryAccount;
     try {
       queryAccount = accountService.findByUsername(username);
@@ -56,7 +58,7 @@ public class WebController {
       return "redirect:/";
     }
 
-    model.addAttribute("accountPosts", postService.findByUsername(username));
+    model.addAttribute("accountPosts", postService.findByUsername(username, pageable));
     model.addAttribute("queryAccount", queryAccount);
     model.addAttribute("fact", dogFactService.getDogFact());
     // TODO: Change this to the actual account once security is in place

@@ -4,6 +4,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.graphql.GraphQlTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.storkforge.barkr.domain.AccountService;
@@ -63,20 +66,23 @@ class PostResolverTest {
         ResponsePost post1 = new ResponsePost(1L, "First post", account, LocalDateTime.now());
         ResponsePost post2 = new ResponsePost(2L, "Second post", account, LocalDateTime.now());
 
-        when(postService.findAll()).thenReturn(List.of(post1, post2));
+        Pageable pageable = PageRequest.of(0, 10);
+
+        when(postService.findAll(pageable)).thenReturn(new PageImpl<>(List.of(post1, post2)));
 
         graphQlTester.document("""
                             query {
-                              posts {
-                                id
-                                content
+                              posts(page: 0, size: 10) {
+                                content {
+                                    content
+                                }
                               }
                             }
                         """)
                 .execute()
-                .path("posts").entityList(ResponsePost.class).hasSize(2)
-                .path("posts[0].content").entity(String.class).isEqualTo("First post")
-                .path("posts[1].content").entity(String.class).isEqualTo("Second post");
+                .path("posts.content").entityList(ResponsePost.class).hasSize(2)
+                .path("posts.content[0].content").entity(String.class).isEqualTo("First post")
+                .path("posts.content[1].content").entity(String.class).isEqualTo("Second post");
     }
 
     @Test

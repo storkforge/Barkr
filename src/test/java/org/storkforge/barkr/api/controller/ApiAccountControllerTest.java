@@ -4,6 +4,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.storkforge.barkr.domain.AccountService;
@@ -36,14 +40,19 @@ class ApiAccountControllerTest {
                 new ResponseAccount(1L, "testaccount", LocalDateTime.now(), "beagle", new byte[0]),
                 new ResponseAccount(2L, "anotheraccount", LocalDateTime.now(), "beagle", new byte[0])
         );
-        when(service.findAll()).thenReturn(mockAccounts);
+        Page<ResponseAccount> accountPage = new PageImpl<>(mockAccounts);
 
-        mvc.perform(get("/api/accounts"))
+        Pageable pageable = PageRequest.of(0, 10);
+        when(service.findAll(pageable)).thenReturn(accountPage);
+
+        mvc.perform(get("/api/accounts")
+                        .param("page", "0")
+                        .param("size", "10"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accounts.length()").value(2))
-                .andExpect(jsonPath("$.accounts[0].username").value("testaccount"))
-                .andExpect(jsonPath("$.accounts[1].username").value("anotheraccount"));
+                .andExpect(jsonPath("$.content.length()").value(2))
+                .andExpect(jsonPath("$.content[0].username").value("testaccount"))
+                .andExpect(jsonPath("$.content[1].username").value("anotheraccount"));
     }
 
     @Test
