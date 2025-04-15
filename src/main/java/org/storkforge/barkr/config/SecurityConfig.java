@@ -45,7 +45,7 @@ public class SecurityConfig {
                         authorize -> authorize
                                 .requestMatchers("/api/accounts").authenticated()
                                 .requestMatchers("/api/posts").authenticated()
-                                .requestMatchers("/accounts/{id}").authenticated()
+                                .requestMatchers("/api/accounts/{id}").authenticated()
                                 .requestMatchers("/api/posts/{id}").authenticated()
                                 .requestMatchers(HttpMethod.POST, "/graphql").authenticated()
                                 .anyRequest().denyAll()
