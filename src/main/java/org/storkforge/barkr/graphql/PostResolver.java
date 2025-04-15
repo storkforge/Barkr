@@ -2,6 +2,7 @@ package org.storkforge.barkr.graphql;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,8 +23,8 @@ public class PostResolver {
     }
 
     @QueryMapping("posts")
-    public Page<ResponsePost> posts(@Argument int page, @Argument int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<ResponsePost> posts(@Argument @PositiveOrZero int page, @Argument @Positive int size) {
+        Pageable pageable = PageRequest.of(page,size);
 
         return postService.findAll(pageable);
     }

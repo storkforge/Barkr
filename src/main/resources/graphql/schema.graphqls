@@ -1,7 +1,7 @@
 type Query {
-    posts(page: Int, size: Int): PostPage!
+    posts(page: Int = 0, size: Int = 10): PostPage!
     post(id: ID!): Post
-    accounts(page: Int, size: Int): AccountPage!
+    accounts(page: Int = 0, size: Int = 10): AccountPage!
     account(id: ID!): Account
 }
 
