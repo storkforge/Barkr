@@ -36,6 +36,9 @@ public class Account {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Post> posts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<AccountAttribute> accountAttributes = new ArrayList<>();
+
     @PrePersist
     protected void onCreate() {
         if (createdAt == null) createdAt = LocalDateTime.now();
@@ -86,9 +89,18 @@ public class Account {
       post.setAccount(this);
     }
 
+    public void addKey(AccountAttribute key) {
+        accountAttributes.add(key);
+        key.setAccount(this);
+    }
+
     public void removePost(Post post) {
     posts.remove(post);
-  }
+    }
+
+    public void removeKey(AccountAttribute key) {
+        accountAttributes.remove(key);
+    }
 
     @Override
     public final boolean equals(Object o) {
