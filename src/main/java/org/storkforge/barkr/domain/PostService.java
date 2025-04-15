@@ -1,5 +1,7 @@
 package org.storkforge.barkr.domain;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +32,7 @@ public class PostService {
         this.accountRepository = accountRepository;
     }
 
+    @Cacheable("allPosts")
     public List<ResponsePost> findAll() {
         log.info("Finding all posts");
 
@@ -40,6 +43,7 @@ public class PostService {
                 .toList();
     }
 
+    @Cacheable("postById")
     public ResponsePost findById(Long id) {
         log.info("Finding post by id: {}", id);
 
@@ -47,6 +51,7 @@ public class PostService {
         return PostMapper.mapToResponse(entity);
     }
 
+    @Cacheable("postByUsername")
     public List<ResponsePost> findByUsername(String username) {
         log.info("Finding posts by username {}", username);
 
@@ -62,6 +67,7 @@ public class PostService {
                 .toList();
     }
 
+    @CacheEvict(value = {"allPost", "postById", "postByUsername"}, allEntries = true)
     public void addPost(CreatePost dto) {
         log.info("Adding post {}", dto);
 

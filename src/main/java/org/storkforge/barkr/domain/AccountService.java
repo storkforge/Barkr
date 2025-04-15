@@ -1,5 +1,7 @@
 package org.storkforge.barkr.domain;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,7 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
+    @Cacheable("allAccounts")
     public List<ResponseAccount> findAll() {
         log.info("Finding all accounts");
         return accountRepository
@@ -36,6 +39,7 @@ public class AccountService {
                 .toList();
     }
 
+    @Cacheable("accountById")
     public ResponseAccount findById(Long id) {
         log.info("Finding account by id {}", id);
         return accountRepository
@@ -44,6 +48,7 @@ public class AccountService {
                 .orElseThrow(() -> new AccountNotFound("Account with id: " + id + " not found"));
     }
 
+    @Cacheable("accountByUsername")
     public ResponseAccount findByUsername(String username) {
         log.info("Finding account by username {}", username);
         return accountRepository
@@ -52,6 +57,7 @@ public class AccountService {
                 .orElseThrow(() -> new AccountNotFound("Account with username: " + username + " not found"));
     }
 
+    @Cacheable("accountImage")
     public byte[] getAccountImage(Long id) throws IOException {
         log.info("Getting account image {}", id);
 
@@ -68,6 +74,7 @@ public class AccountService {
         }
     }
 
+    @CacheEvict(value = "accountImage", allEntries = true)
     public void updateImage(Long id, byte[] image) {
         log.info("Updating image for user with id {}", id);
 
@@ -79,5 +86,4 @@ public class AccountService {
 
         accountRepository.save(account);
     }
-
 }

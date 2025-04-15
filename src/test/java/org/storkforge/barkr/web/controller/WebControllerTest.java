@@ -2,6 +2,7 @@ package org.storkforge.barkr.web.controller;
 
 import org.htmlunit.WebClient;
 import org.htmlunit.html.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.storkforge.barkr.domain.entity.Account;
@@ -22,6 +25,7 @@ import org.testcontainers.utility.DockerImageName;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -45,6 +49,16 @@ class WebControllerTest {
 
   @Autowired
   private WebClient htmlClient;
+
+  @Autowired
+  private CacheManager cacheManager;
+
+  @BeforeEach
+  void clearCache() {
+    cacheManager.getCacheNames().forEach(name ->
+            Optional.ofNullable(cacheManager.getCache(name)).ifPresent(Cache::clear)
+    );
+  }
 
   @Nested
   class IndexRouteTest {
