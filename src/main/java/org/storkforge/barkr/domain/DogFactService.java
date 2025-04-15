@@ -21,7 +21,7 @@ public class DogFactService {
     }
 
     @Retryable(backoff = @Backoff(delay = 500))
-    //@Cacheable("dogFact")
+    @Cacheable("dogFact")
     public String getDogFact() {
         log.info("Getting dog fact!");
 

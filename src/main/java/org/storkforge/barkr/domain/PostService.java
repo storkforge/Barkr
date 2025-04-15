@@ -67,7 +67,7 @@ public class PostService {
                 .toList();
     }
 
-    @CacheEvict(value = {"allPost", "postById", "postByUsername"}, allEntries = true)
+    @CacheEvict(value = {"allPosts", "postById", "postByUsername"}, allEntries = true)
     public void addPost(CreatePost dto) {
         log.info("Adding post {}", dto);
 

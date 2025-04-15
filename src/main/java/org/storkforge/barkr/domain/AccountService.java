@@ -1,22 +1,22 @@
 package org.storkforge.barkr.domain;
 
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.dto.accountDto.ResponseAccount;
 import org.storkforge.barkr.exceptions.AccountNotFound;
 import org.storkforge.barkr.infrastructure.persistence.AccountRepository;
 import org.storkforge.barkr.mapper.AccountMapper;
-import org.storkforge.barkr.domain.entity.Account;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Optional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -29,7 +29,7 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
-    @Cacheable("allAccounts")
+    @Cacheable(value = "allAccounts")
     public List<ResponseAccount> findAll() {
         log.info("Finding all accounts");
         return accountRepository
@@ -48,7 +48,7 @@ public class AccountService {
                 .orElseThrow(() -> new AccountNotFound("Account with id: " + id + " not found"));
     }
 
-    @Cacheable("accountByUsername")
+    @Cacheable(value = "accountByUsername")
     public ResponseAccount findByUsername(String username) {
         log.info("Finding account by username {}", username);
         return accountRepository
@@ -74,7 +74,7 @@ public class AccountService {
         }
     }
 
-    @CacheEvict(value = "accountImage", allEntries = true)
+    @CacheEvict(value = "accountImage", key = "#id")
     public void updateImage(Long id, byte[] image) {
         log.info("Updating image for user with id {}", id);
 
