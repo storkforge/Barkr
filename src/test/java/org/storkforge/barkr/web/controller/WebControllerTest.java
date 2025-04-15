@@ -1,5 +1,6 @@
 package org.storkforge.barkr.web.controller;
 
+import com.redis.testcontainers.RedisContainer;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +41,10 @@ class WebControllerTest {
   @Container
   @ServiceConnection
   static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(DockerImageName.parse("postgres:latest"));
+
+  @Container
+  @ServiceConnection
+  static RedisContainer redis = new RedisContainer(DockerImageName.parse("redis:latest"));
 
   @Autowired
   private AccountRepository accountRepository;
