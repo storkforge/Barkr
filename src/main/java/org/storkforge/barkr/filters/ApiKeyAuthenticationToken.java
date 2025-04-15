@@ -1,19 +1,17 @@
 package org.storkforge.barkr.filters;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
 public class ApiKeyAuthenticationToken extends AbstractAuthenticationToken {
     private final String apiKey;
 
     public ApiKeyAuthenticationToken(String apiKey) {
-        List<GrantedAuthority> authorities =  Collections.singletonList(new SimpleGrantedAuthority("ROLE_APIKEY"));
-        super(authorities);
+        // Compatibility issues flexiable constructor not working
+        super(Collections.singletonList(new SimpleGrantedAuthority("ROLE_APIKEY")));
         this.apiKey = apiKey;
         super.setAuthenticated(true);
     }

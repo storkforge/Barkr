@@ -7,6 +7,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.graphql.GraphQlTest;
 import org.springframework.graphql.test.tester.GraphQlTester;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.storkforge.barkr.domain.AccountService;
 import org.storkforge.barkr.dto.accountDto.ResponseAccount;
@@ -30,6 +31,7 @@ class AccountResolverTest {
     private AccountService accountService;
 
     @Test
+    @WithMockUser
     void testGetAccountById() {
         ResponseAccount account = new ResponseAccount(10L, "testAccount", LocalDateTime.now(), "beagle", new byte[0]);
 
@@ -49,6 +51,7 @@ class AccountResolverTest {
     }
 
     @Test
+    @WithMockUser
     void testGetAllAccounts() {
         ResponseAccount account1 = new ResponseAccount(1L, "accountOne", LocalDateTime.now(),"beagle", new byte[0]);
         ResponseAccount account2 = new ResponseAccount(2L, "accountTwo", LocalDateTime.now(), "beagle", new byte[0]);
@@ -71,6 +74,7 @@ class AccountResolverTest {
 
     @Test
     @DisplayName("Handles error for nonexistent id")
+    @WithMockUser
     void handlesErrorForNonexistentId() {
         when(accountService.findById(1L)).thenThrow(new AccountNotFound("Account with id: 1 was not found"));
 

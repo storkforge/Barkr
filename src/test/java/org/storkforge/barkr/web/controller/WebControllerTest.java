@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.storkforge.barkr.domain.entity.Account;
@@ -97,6 +98,7 @@ class WebControllerTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("Can submit the add post form")
     void verifyAddPostFormSubmitted() throws IOException {
       HtmlPage page = htmlClient.getPage("/");
@@ -117,6 +119,7 @@ class WebControllerTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("Redirects the user on empty form value")
     void redirectOnEmptyForm() throws IOException {
       HtmlPage page = htmlClient.getPage("/");
@@ -130,6 +133,7 @@ class WebControllerTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("Redirects the user if value is greater than 255 characters")
     void redirectOnTooManyCharactersInput() throws IOException {
       HtmlPage page = htmlClient.getPage("/");
@@ -150,6 +154,7 @@ class WebControllerTest {
   @Nested
   class ProfileRouteTest {
     @Test
+    @WithMockUser
     @DisplayName("Can view profile page")
     void viewProfilePage() throws IOException {
       Account mockAccount = new Account();
@@ -182,6 +187,7 @@ class WebControllerTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("Redirects the user on nonexistent account")
     void redirectsOnNonexistentAccount() throws IOException {
       HtmlPage page = htmlClient.getPage("/nonExistent");
