@@ -30,6 +30,7 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
+    @Cacheable("allAccounts")
     public Page<ResponseAccount> findAll(Pageable pageable) {
         log.info("Finding all accounts");
         Page<Account> accounts = accountRepository.findAll(pageable);
