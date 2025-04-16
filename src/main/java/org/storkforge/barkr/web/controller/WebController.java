@@ -4,6 +4,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -16,6 +20,7 @@ import org.storkforge.barkr.domain.DogFactService;
 import org.storkforge.barkr.domain.PostService;
 import org.storkforge.barkr.dto.accountDto.ResponseAccount;
 import org.storkforge.barkr.dto.postDto.CreatePost;
+import org.storkforge.barkr.dto.postDto.ResponsePost;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,8 +40,8 @@ public class WebController {
   }
 
   @GetMapping("/")
-  public String index(Model model) {
-    model.addAttribute("posts", postService.findAll());
+  public String index(Model model, @PageableDefault Pageable pageable) {
+    model.addAttribute("posts", postService.findAll(pageable));
     model.addAttribute("createPostDto", new CreatePost("", 1L));
     model.addAttribute("fact", dogFactService.getDogFact());
     // TODO: Change this to the actual account once security is in place
@@ -46,7 +51,7 @@ public class WebController {
   }
 
   @GetMapping("/{username}")
-  public String user(@PathVariable("username") @NotBlank String username, Model model, RedirectAttributes redirectAttributes) {
+  public String user(@PathVariable("username") @NotBlank String username, Model model, RedirectAttributes redirectAttributes, @PageableDefault Pageable pageable) {
     ResponseAccount queryAccount;
     try {
       queryAccount = accountService.findByUsername(username);
@@ -56,13 +61,24 @@ public class WebController {
       return "redirect:/";
     }
 
-    model.addAttribute("accountPosts", postService.findByUsername(username));
+    model.addAttribute("accountPosts", postService.findByUsername(username, pageable));
     model.addAttribute("queryAccount", queryAccount);
     model.addAttribute("fact", dogFactService.getDogFact());
     // TODO: Change this to the actual account once security is in place
     model.addAttribute("account", accountService.findById(1L));
 
     return "profile";
+  }
+
+  @GetMapping("/post/load")
+  public String loadPosts(@RequestParam("page") int page, Model model, @PageableDefault Pageable pageable) {
+    pageable = PageRequest.of(page, pageable.getPageSize());
+    Page<ResponsePost> postPage = postService.findAll(pageable);
+
+    if (postPage.isEmpty()) return "partials/empty";
+
+    model.addAttribute("posts", postPage);
+    return "partials/posts-wrapper";
   }
 
   @PostMapping("/post/add")

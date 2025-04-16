@@ -6,6 +6,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.graphql.GraphQlTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -53,23 +56,27 @@ class AccountResolverTest {
     @Test
     @WithMockUser
     void testGetAllAccounts() {
-        ResponseAccount account1 = new ResponseAccount(1L, "accountOne", LocalDateTime.now(),"beagle", new byte[0]);
+        ResponseAccount account1 = new ResponseAccount(1L, "accountOne", LocalDateTime.now(), "beagle", new byte[0]);
         ResponseAccount account2 = new ResponseAccount(2L, "accountTwo", LocalDateTime.now(), "beagle", new byte[0]);
 
-        when(accountService.findAll()).thenReturn(List.of(account1, account2));
+        Pageable pageable = PageRequest.of(0, 10);
+
+        when(accountService.findAll(pageable)).thenReturn(new PageImpl<>(List.of(account1, account2)));
 
         graphQlTester.document("""
                             query {
-                              accounts {
-                                id
-                                username
+                              accounts(page: 0, size: 10) {
+                                content {
+                                    id
+                                    username
+                                }
                               }
                             }
                         """)
                 .execute()
-                .path("accounts").entityList(ResponseAccount.class).hasSize(2)
-                .path("accounts[0].username").entity(String.class).isEqualTo("accountOne")
-                .path("accounts[1].username").entity(String.class).isEqualTo("accountTwo");
+                .path("accounts.content").entityList(ResponseAccount.class).hasSize(2)
+                .path("accounts.content[0].username").entity(String.class).isEqualTo("accountOne")
+                .path("accounts.content[1].username").entity(String.class).isEqualTo("accountTwo");
     }
 
     @Test

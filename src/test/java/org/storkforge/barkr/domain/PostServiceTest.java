@@ -7,6 +7,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.domain.entity.Post;
 import org.storkforge.barkr.dto.postDto.CreatePost;
@@ -19,10 +23,8 @@ import org.storkforge.barkr.mapper.PostMapper;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -43,10 +45,11 @@ class PostServiceTest {
         @Test
         @DisplayName("No posts records in database returns empty array")
         void noPostsRecordsInDatabaseReturnsEmptyArray() {
-            when(postRepository.findAll()).thenReturn(List.of());
-            List<ResponsePost> posts = postService.findAll();
+            Pageable pageable = PageRequest.of(0, 10);
+            when(postRepository.findAll(pageable)).thenReturn(Page.empty());
+            Page<ResponsePost> posts = postService.findAll(pageable);
 
-            assertThat(posts).isEqualTo(List.of());
+            assertThat(posts).isEqualTo(Page.empty());
         }
 
         @Test
@@ -62,7 +65,9 @@ class PostServiceTest {
         void invalidUsernameOrNonexistentUsernameThrowsError() {
             when(accountRepository.findByUsernameEqualsIgnoreCase(anyString())).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> postService.findByUsername("mockAccount")).isInstanceOf(AccountNotFound.class).hasMessage("Account with username: mockAccount not found");
+            Pageable pageable = PageRequest.of(0, 10);
+
+            assertThatThrownBy(() -> postService.findByUsername("mockAccount", pageable)).isInstanceOf(AccountNotFound.class).hasMessage("Account with username: mockAccount not found");
         }
     }
 
@@ -88,15 +93,21 @@ class PostServiceTest {
             mockPost2.setContent("woof");
 
             List<Post> mockPosts = List.of(mockPost, mockPost2);
-            when(postRepository.findAll()).thenReturn(mockPosts);
+            Page<Post> postPage = new PageImpl<>(mockPosts);
 
-            List<ResponsePost> result = postService.findAll();
+            Pageable pageable = PageRequest.of(0, 10);
+            when(postRepository.findAll(pageable)).thenReturn(postPage);
 
-            assertThat(result).isEqualTo(mockPosts
-                    .stream()
-                    .map(PostMapper::mapToResponse)
-                    .toList()
-            );
+            Page<ResponsePost> result = postService.findAll(pageable);
+
+            assertAll(
+                    () -> assertThat(result.getContent()).hasSize(2),
+                    () -> assertThat(result.getContent())
+                        .extracting("id", "content")
+                        .containsExactlyInAnyOrder(
+                            tuple(1L, "voff"),
+                            tuple(2L, "woof")
+            ));
         }
 
         @Test
@@ -137,17 +148,19 @@ class PostServiceTest {
            mockPost2.setAccount(mockAccount2);
            mockPost2.setContent("woof");
 
-           when(accountRepository.findByUsernameEqualsIgnoreCase("mockAccount")).thenReturn(Optional.of(mockAccount));
-           when(postRepository.findByAccount(mockAccount)).thenReturn(List.of(mockPost));
+           Pageable pageable = PageRequest.of(0, 10);
+           Page<Post> postPage = new PageImpl<>(List.of(mockPost), pageable, 1);
 
-           List<ResponsePost> result = postService.findByUsername("mockAccount");
+           when(accountRepository.findByUsernameEqualsIgnoreCase("mockAccount")).thenReturn(Optional.of(mockAccount));
+           when(postRepository.findByAccount(mockAccount, pageable)).thenReturn(postPage);
+
+           Page<ResponsePost> result = postService.findByUsername("mockAccount", pageable);
+
 
            assertAll(
-                   () -> assertThat(result).isEqualTo(Stream.of(mockPost)
-                                   .map(PostMapper::mapToResponse)
-                                   .toList()
-                           ),
-                   () -> assertThat(result).doesNotContain(PostMapper.mapToResponse(mockPost2))
+                   () -> assertThat(result.getContent()).hasSize(1),
+                   () -> assertThat(result.getContent()).contains(PostMapper.mapToResponse(mockPost)),
+                   () -> assertThat(result.getContent()).doesNotContain(PostMapper.mapToResponse(mockPost2))
            );
        }
     }

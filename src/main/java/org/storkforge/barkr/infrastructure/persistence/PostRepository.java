@@ -1,11 +1,11 @@
 package org.storkforge.barkr.infrastructure.persistence;
 
-import org.springframework.data.repository.ListCrudRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.domain.entity.Post;
 
-import java.util.List;
-
-public interface PostRepository extends ListCrudRepository<Post, Long> {
-  List<Post> findByAccount(Account account);
+public interface PostRepository extends JpaRepository<Post, Long> {
+  Page<Post> findByAccount(Account account, Pageable pageable);
 }

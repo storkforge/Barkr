@@ -34,24 +34,16 @@
             <button id="generate-joke-btn" class="btn">Generate Joke</button>
             <div id="joke-display"></div>
         </div>
-        <div th:each="post : ${posts}">
-            <div th:replace="~{fragments/post :: post(${post})}"></div>
-        </div>
+
+        <div id="posts-container" th:insert="~{fragments/posts :: posts}"></div>
+        <div id="loading" style="display: none;">Loading more barks...</div>
     </main>
 </div>
 <div th:replace="~{fragments/footer :: footer}"></div>
 <script th:src="@{/js/theme-switcher.js}"></script>
 <script th:src="@{/js/konami.js}"></script>
 <script th:src="@{/js/change-language.js}"></script>
-<script>
-    document.getElementById('generate-joke-btn').addEventListener('click', function() {
-        fetch('/ai/generate')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('joke-display').textContent = data.generation;
-            })
-            .catch(error => console.error('Error fetching joke:', error));
-    });
-</script>
+<script th:src="@{/js/generate-joke.js}"></script>
+<script th:src="@{/js/infinite-scroll.js}"></script>
 </body>
 </html>

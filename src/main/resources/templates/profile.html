@@ -31,9 +31,9 @@
                         <span class="stat-count" th:text="${queryAccount.breed}">Unknown breed</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-count" th:text="${accountPosts.size()}">N/A</span>
+                        <span class="stat-count" th:text="${accountPosts.getTotalElements()}">N/A</span>
                         <span class="stat-label"
-                              th:text="${accountPosts.size() == 1 ? ' Bark' : ' Barks'}"> Bark(s)</span>
+                              th:text="${accountPosts.getTotalElements() == 1 ? ' Bark' : ' Barks'}"> Bark(s)</span>
                     </div>
                 </div>
             </div>
