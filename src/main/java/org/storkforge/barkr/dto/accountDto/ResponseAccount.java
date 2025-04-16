@@ -2,6 +2,7 @@ package org.storkforge.barkr.dto.accountDto;
 
 import jakarta.validation.constraints.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public record ResponseAccount (
@@ -10,5 +11,5 @@ public record ResponseAccount (
         @PastOrPresent LocalDateTime createdAt,
         @NotBlank String breed,
         byte[] image
-){
+) implements Serializable {
 }

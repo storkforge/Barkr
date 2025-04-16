@@ -2,5 +2,7 @@ package org.storkforge.barkr.dto.accountDto;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record UpdateAccount (@NotBlank String username, @NotBlank String breed)
+import java.io.Serializable;
+
+public record UpdateAccount (@NotBlank String username, @NotBlank String breed) implements Serializable
 {}

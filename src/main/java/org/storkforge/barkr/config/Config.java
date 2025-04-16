@@ -2,6 +2,7 @@ package org.storkforge.barkr.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.EnableCaching;
 import org.storkforge.barkr.domain.entity.Post;
 import org.springframework.boot.CommandLineRunner;
 import org.storkforge.barkr.domain.entity.Account;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Configuration
 @Profile("!test")
+@EnableCaching
 public class Config {
   private final Logger log = LoggerFactory.getLogger(Config.class);
 
