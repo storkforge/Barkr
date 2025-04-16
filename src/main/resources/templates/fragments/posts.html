@@ -1,0 +1,5 @@
+<div th:fragment="posts">
+    <div th:each="post : ${posts}">
+        <div th:replace="~{fragments/post :: post(${post})}"></div>
+    </div>
+</div>

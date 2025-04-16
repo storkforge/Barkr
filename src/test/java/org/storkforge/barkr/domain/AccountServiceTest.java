@@ -8,11 +8,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.dto.accountDto.ResponseAccount;
 import org.storkforge.barkr.exceptions.AccountNotFound;
 import org.storkforge.barkr.infrastructure.persistence.AccountRepository;
-import org.storkforge.barkr.mapper.AccountMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,8 +23,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.*;
 
@@ -38,11 +40,12 @@ class AccountServiceTest {
         @Test
         @DisplayName("No accounts in database returns empty array")
         void noAccountsInDatabaseReturnsEmptyArray() {
-            when(accountRepository.findAll()).thenReturn(List.of());
+            Pageable pageable = PageRequest.of(0, 10);
+            when(accountRepository.findAll(pageable)).thenReturn(Page.empty());
 
-            List<ResponseAccount> accounts = accountService.findAll();
+            Page<ResponseAccount> accounts = accountService.findAll(pageable);
 
-            assertThat(accounts).isEqualTo(List.of());
+            assertThat(accounts).isEqualTo(Page.empty());
         }
 
         @Test
@@ -82,12 +85,21 @@ class AccountServiceTest {
             MockAccount2.setCreatedAt(constantTime);
 
             List<Account> mockAccounts = List.of(mockAccount, MockAccount2);
-            when(accountRepository.findAll()).thenReturn(mockAccounts);
+            Page<Account> accountPage = new PageImpl<>(mockAccounts);
 
-            assertThat(accountService.findAll()).isEqualTo(mockAccounts
-                    .stream()
-                    .map(AccountMapper::mapToResponse)
-                    .toList()
+            Pageable pageable = PageRequest.of(0, 10);
+            when(accountRepository.findAll(pageable)).thenReturn(accountPage);
+
+            Page<ResponseAccount> result = accountService.findAll(pageable);
+
+            assertAll(
+                    () -> assertThat(result.getContent()).hasSize(2),
+                    () -> assertThat(result.getContent())
+                            .extracting("id", "username", "createdAt")
+                            .containsExactlyInAnyOrder(
+                                    tuple(1L, "John Doe", constantTime),
+                                    tuple(2L, "Jane Doe", constantTime)
+                            )
             );
         }
 
@@ -156,7 +168,7 @@ class AccountServiceTest {
             byte[] defaultImage;
             ClassPathResource resource = new ClassPathResource("static/images/logo/BarkrNoText.png");
             try (InputStream is = resource.getInputStream()) {
-                 defaultImage = is.readAllBytes();
+                defaultImage = is.readAllBytes();
             }
 
             byte[] result = accountService.getAccountImage(1L);

@@ -15,10 +15,6 @@ body {
     flex-direction: column;
 }
 
-html, body {
-    height: 100%;
-}
-
 /* Theme variables */
 :root {
     /* Common colors */
