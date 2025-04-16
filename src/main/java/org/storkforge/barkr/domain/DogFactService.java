@@ -2,6 +2,7 @@ package org.storkforge.barkr.domain;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
@@ -20,6 +21,7 @@ public class DogFactService {
     }
 
     @Retryable(backoff = @Backoff(delay = 500))
+    @Cacheable("dogFact")
     public String getDogFact() {
         log.info("Getting dog fact!");
 
