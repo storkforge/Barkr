@@ -19,7 +19,7 @@ public class GoogleAccountApiKeyLink implements Serializable {
 
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "google_oidc2_id", referencedColumnName = "googleOidc2Id", nullable = false, unique = true, updatable = false)
+    @JoinColumn(name = "google_oidc2id", referencedColumnName = "google_oidc2id", nullable = false, unique = true, updatable = false)
     private Account account;
 
     @OneToMany(mappedBy = "googleAccountApiKeyLink", cascade = CascadeType.ALL, orphanRemoval = true)

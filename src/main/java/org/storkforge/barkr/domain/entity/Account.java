@@ -35,7 +35,7 @@ public class Account implements Serializable {
     private String breed;
 
     @NotBlank
-    @Column(unique = true, nullable = false, updatable = false)
+    @Column(name = "google_oidc2id", unique = true, nullable = false, updatable = false)
     private String googleOidc2Id;
 
 

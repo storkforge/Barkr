@@ -3,6 +3,7 @@ package org.storkforge.barkr.config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.EnableCaching;
+import org.storkforge.barkr.domain.entity.GoogleAccountApiKeyLink;
 import org.storkforge.barkr.domain.entity.Post;
 import org.springframework.boot.CommandLineRunner;
 import org.storkforge.barkr.domain.entity.Account;
@@ -31,17 +32,34 @@ public class Config {
         Account accountOne = new Account();
         accountOne.setUsername("Bella Pawkins");
         accountOne.setBreed("Golden Retriever");
+        accountOne.setGoogleOidc2Id("1");
         accountOne.setImage(null);
 
         Account accountTwo = new Account();
         accountTwo.setUsername("Charlie Barkson");
         accountTwo.setBreed("Siberian Husky");
+        accountTwo.setGoogleOidc2Id("2");
         accountTwo.setImage(null);
 
         Account accountThree = new Account();
         accountThree.setUsername("Max Woofington");
         accountThree.setBreed("German Shepherd");
+        accountThree.setGoogleOidc2Id("3");
         accountThree.setImage(null);
+
+        GoogleAccountApiKeyLink link1 = new GoogleAccountApiKeyLink();
+        link1.setAccount(accountOne);
+        accountOne.setGoogleAccountApiKeyLink(link1);
+        System.out.println(accountOne.getGoogleAccountApiKeyLink());
+
+        GoogleAccountApiKeyLink link2 = new GoogleAccountApiKeyLink();
+        link2.setAccount(accountTwo);
+        accountTwo.setGoogleAccountApiKeyLink(link2);
+
+        GoogleAccountApiKeyLink link3 = new GoogleAccountApiKeyLink();
+        link3.setAccount(accountThree);
+        accountThree.setGoogleAccountApiKeyLink(link3);
+
 
         accountRepository.saveAll(List.of(accountOne, accountTwo, accountThree));
 
