@@ -23,6 +23,7 @@ public class SecurityConfig {
                 .oauth2Login(Customizer.withDefaults())
                 .authorizeHttpRequests(authorize -> authorize
                                 .requestMatchers("/","/login", "/error", "/css/**", "/js/**", "/images/**").permitAll()
+                                .requestMatchers("/post/load").permitAll()
                                 .requestMatchers( "/account/{id}/image").permitAll()
                                 .requestMatchers("/ai/generate").authenticated()
                                 .requestMatchers("/post/add").authenticated()

@@ -34,8 +34,33 @@ public class Account implements Serializable {
     @Size(min = 2, max = 100, message = "Breed name must be between 2 and 100 characters")
     private String breed;
 
+    @NotBlank
+    @Column(unique = true, nullable = false, updatable = false)
+    private String googleOidc2Id;
+
+
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Post> posts = new ArrayList<>();
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "account", cascade = CascadeType.ALL)
+    private GoogleAccountApiKeyLink googleAccountApiKeyLink;
+
+
+    public GoogleAccountApiKeyLink getGoogleAccountApiKeyLink() {
+        return googleAccountApiKeyLink;
+    }
+
+    public void setGoogleAccountApiKeyLink(GoogleAccountApiKeyLink googleAccountApiKeyLink) {
+        this.googleAccountApiKeyLink = googleAccountApiKeyLink;
+    }
+
+    public String getGoogleOidc2Id() {
+        return googleOidc2Id;
+    }
+
+    public void setGoogleOidc2Id(String googleOidc2Id) {
+        this.googleOidc2Id = googleOidc2Id;
+    }
 
     @PrePersist
     protected void onCreate() {
@@ -107,12 +132,17 @@ public class Account implements Serializable {
         return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
 
+
+
+
     @Override
     public String toString() {
-      return getClass().getSimpleName() + "(" +
-              "id = " + id + ", " +
-              "username = " + username + ", " +
-              "createdAt = " + createdAt + ", " +
-              "breed = " + breed + ")";
+        return getClass().getSimpleName() + "(" +
+                "id = " + id + ", " +
+                "username = " + username + ", " +
+                "createdAt = " + createdAt + ", " +
+                "image = " + image + ", " +
+                "breed = " + breed + ", " +
+                "googleOidc2Id = " + googleOidc2Id + ")";
     }
 }
