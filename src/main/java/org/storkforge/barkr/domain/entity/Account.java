@@ -3,12 +3,14 @@ package org.storkforge.barkr.domain.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.hibernate.proxy.HibernateProxy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.storkforge.barkr.domain.roles.BarkrRole;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 public class Account implements Serializable {
@@ -44,6 +46,26 @@ public class Account implements Serializable {
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "account", cascade = CascadeType.ALL)
     private GoogleAccountApiKeyLink googleAccountApiKeyLink;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "account_roles", joinColumns = @JoinColumn(name = "account_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private Set<BarkrRole> roles = new HashSet<>();
+
+    public Set<GrantedAuthority> getAuthorities() {
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getAuthorityValue()))
+                .collect(Collectors.toSet());
+    }
+
+    public void setRoles(Set<BarkrRole> roles) {
+        this.roles = roles;
+    }
+
+    public Set<BarkrRole> getRoles() {
+        return roles;
+    }
 
 
     public GoogleAccountApiKeyLink getGoogleAccountApiKeyLink() {

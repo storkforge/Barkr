@@ -31,14 +31,25 @@ public class SecurityConfig {
                                 .requestMatchers("/{username}").authenticated()
                                 .anyRequest().denyAll()
 
-                        );
+                )
+                .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+                .logoutSuccessHandler((request, response, authentication) -> {
+                    String googleLogoutUrl = "https://accounts.google.com/Logout";
+                    response.sendRedirect(googleLogoutUrl);
+
+                })
+
+        );
+
         return http.build();
     }
 
 
     @Bean
     @Order(1)
-    public SecurityFilterChain restAPIAndGraphQLFilterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain restAPIAndGraphQLFilterChain(HttpSecurity http) throws Exception {
         http.securityMatcher("/api/**", "/graphql")
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterAfter(new ApiKeyAuthenticationFilter(), LogoutFilter.class)
@@ -53,8 +64,10 @@ public class SecurityConfig {
 
                 );
         return http.build();
+
     }
 
 
 
- }
+
+}

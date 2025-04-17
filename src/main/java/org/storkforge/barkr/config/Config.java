@@ -11,10 +11,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.storkforge.barkr.domain.roles.BarkrRole;
 import org.storkforge.barkr.infrastructure.persistence.PostRepository;
 import org.storkforge.barkr.infrastructure.persistence.AccountRepository;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Configuration
 @Profile("!test")
@@ -34,23 +37,25 @@ public class Config {
         accountOne.setBreed("Golden Retriever");
         accountOne.setGoogleOidc2Id("1");
         accountOne.setImage(null);
+        accountOne.setRoles(new HashSet<>(Set.of(BarkrRole.USER)));
 
         Account accountTwo = new Account();
         accountTwo.setUsername("Charlie Barkson");
         accountTwo.setBreed("Siberian Husky");
         accountTwo.setGoogleOidc2Id("2");
         accountTwo.setImage(null);
+        accountTwo.setRoles(new HashSet<>(Set.of(BarkrRole.USER)));
 
         Account accountThree = new Account();
         accountThree.setUsername("Max Woofington");
         accountThree.setBreed("German Shepherd");
         accountThree.setGoogleOidc2Id("3");
         accountThree.setImage(null);
+        accountThree.setRoles(new HashSet<>(Set.of(BarkrRole.USER)));
 
         GoogleAccountApiKeyLink link1 = new GoogleAccountApiKeyLink();
         link1.setAccount(accountOne);
         accountOne.setGoogleAccountApiKeyLink(link1);
-        System.out.println(accountOne.getGoogleAccountApiKeyLink());
 
         GoogleAccountApiKeyLink link2 = new GoogleAccountApiKeyLink();
         link2.setAccount(accountTwo);
