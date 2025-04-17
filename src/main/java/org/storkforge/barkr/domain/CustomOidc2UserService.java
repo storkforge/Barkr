@@ -28,8 +28,6 @@ public class CustomOidc2UserService extends OidcUserService {
     }
 
 
-
-
     @Override
     public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException{
         OidcUser user = super.loadUser(userRequest);
@@ -50,7 +48,9 @@ public class CustomOidc2UserService extends OidcUserService {
         account.setImage(null);
         account.setRoles(new HashSet<>(Set.of(BarkrRole.USER)));
         link.setAccount(account);
+        log.info("New record added to database");
         account.setGoogleAccountApiKeyLink(link);
+
 
         accountRepository.save(account);
 
@@ -58,5 +58,6 @@ public class CustomOidc2UserService extends OidcUserService {
         return user;
 
     }
+
 
 }

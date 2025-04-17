@@ -10,6 +10,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +27,7 @@ import org.storkforge.barkr.dto.postDto.ResponsePost;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.Principal;
 
 @Controller
 @RequestMapping("/")
@@ -40,18 +44,28 @@ public class WebController {
   }
 
   @GetMapping("/")
-  public String index(Model model, @PageableDefault Pageable pageable) {
+  public String index(Model model, @PageableDefault Pageable pageable, @AuthenticationPrincipal OidcUser user) {
+    long id = 1L;
+
+    Principal context = SecurityContextHolder.getContext().getAuthentication();
+
+    if (!context.getName().equals("anonymousUser")) {
+
+      var currentUser = accountService.findByGoogleOidc2Id(user.getName());
+      id = currentUser.isEmpty() ? 1L : currentUser.get().getId();
+    }
+
+
     model.addAttribute("posts", postService.findAll(pageable));
-    model.addAttribute("createPostDto", new CreatePost("", 1L));
+    model.addAttribute("createPostDto", new CreatePost("", id));
     model.addAttribute("fact", dogFactService.getDogFact());
-    // TODO: Change this to the actual account once security is in place
-    model.addAttribute("account", accountService.findById(1L));
+    model.addAttribute("account", accountService.findById(id));
 
     return "index";
   }
 
   @GetMapping("/{username}")
-  public String user(@PathVariable("username") @NotBlank String username, Model model, RedirectAttributes redirectAttributes, @PageableDefault Pageable pageable) {
+  public String user(@PathVariable("username") @NotBlank String username, Model model, RedirectAttributes redirectAttributes, @PageableDefault Pageable pageable, @AuthenticationPrincipal OidcUser user) {
     ResponseAccount queryAccount;
     try {
       queryAccount = accountService.findByUsername(username);
@@ -61,11 +75,20 @@ public class WebController {
       return "redirect:/";
     }
 
+    long id = 1L;
+
+    Principal context = SecurityContextHolder.getContext().getAuthentication();
+
+    if (!context.getName().equals("anonymousUser")) {
+
+      var currentUser = accountService.findByGoogleOidc2Id(user.getName());
+      id = currentUser.isEmpty() ? 1L : currentUser.get().getId();
+    }
+
     model.addAttribute("accountPosts", postService.findByUsername(username, pageable));
     model.addAttribute("queryAccount", queryAccount);
     model.addAttribute("fact", dogFactService.getDogFact());
-    // TODO: Change this to the actual account once security is in place
-    model.addAttribute("account", accountService.findById(1L));
+    model.addAttribute("account", accountService.findById(id));
 
     return "profile";
   }
@@ -137,4 +160,3 @@ public class WebController {
     return "redirect:/";
   }
 }
-
