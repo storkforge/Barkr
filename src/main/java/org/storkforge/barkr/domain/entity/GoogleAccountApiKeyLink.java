@@ -4,13 +4,14 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "google_account_api_key_link")
-public class GoogleAccountApiKeyLink {
+public class GoogleAccountApiKeyLink implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
