@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public record CreateApiKey(
+public record GenerateApiKeyRequest(
         @NotBlank String apiKeyName ,
         LocalDateTime expiresAt) implements Serializable {
 }

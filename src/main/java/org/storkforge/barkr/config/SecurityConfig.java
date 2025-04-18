@@ -24,6 +24,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                                 .requestMatchers("/","/login", "/error", "/css/**", "/js/**", "/images/**").permitAll()
                                 .requestMatchers("/post/load").permitAll()
+                                .requestMatchers("/barkr/logout").permitAll()
                                 .requestMatchers( "/account/{id}/image").permitAll()
                                 .requestMatchers("/ai/generate").authenticated()
                                 .requestMatchers("/post/add").authenticated()
@@ -34,12 +35,12 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/")
-                .logoutSuccessHandler((request, response, authentication) -> {
-                    String googleLogoutUrl = "https://accounts.google.com/Logout";
-                    response.sendRedirect(googleLogoutUrl);
-
-                })
+                .logoutSuccessUrl("/barkr/logout")
+//                .logoutSuccessHandler((request, response, authentication) -> {
+//                    String googleLogoutUrl = "https://accounts.google.com/Logout";
+//                    response.sendRedirect(googleLogoutUrl);
+//
+//                })
 
         );
 

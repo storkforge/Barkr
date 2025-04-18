@@ -1,4 +1,6 @@
-package org.storkforge.barkr.dto.apikeyDto;
+package org.storkforge.barkr.dto.apiKeyDto;
 
-public record ResponseApiKeyList() {
+import java.util.List;
+
+public record ResponseApiKeyList(List<ResponseApiKey> apiKeys) {
 }

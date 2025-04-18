@@ -16,7 +16,7 @@ import java.util.Objects;
 public class IssuedApiKey implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, unique = true)
     private Long id;
 
     @NotBlank
@@ -38,7 +38,7 @@ public class IssuedApiKey implements Serializable {
 
     @Column(nullable = false)
     @NotNull
-    @FutureOrPresent
+    @PastOrPresent
     private LocalDateTime lastUsedAt;
 
     @Column(nullable = false)

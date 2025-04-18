@@ -1,4 +1,12 @@
-package org.storkforge.barkr.dto.apikeyDto;
+package org.storkforge.barkr.dto.apiKeyDto;
 
-public record UpdateApiKey() {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+import java.io.Serializable;
+
+public record UpdateApiKey(
+        @NotBlank String apiKeyTarget,
+        @NotBlank String apiKeyName,
+        @NotNull Boolean revoke) implements Serializable {
 }

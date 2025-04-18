@@ -1,4 +1,11 @@
-package org.storkforge.barkr.dto.apikeyDto;
+package org.storkforge.barkr.dto.apiKeyDto;
 
-public record ResponseApiKeyOnce() {
+import jakarta.validation.constraints.NotBlank;
+
+import java.io.Serializable;
+
+public record ResponseApiKeyOnce(
+        @NotBlank String key,
+        @NotBlank String value,
+        @NotBlank String message) implements Serializable {
 }

@@ -93,6 +93,12 @@ public class WebController {
     return "profile";
   }
 
+  @GetMapping("/barkr/logout")
+  public String barkrLogout(){
+    SecurityContextHolder.clearContext();
+    return "fragments/barkr-logout";
+  }
+
   @GetMapping("/post/load")
   public String loadPosts(@RequestParam("page") int page, Model model, @PageableDefault Pageable pageable) {
     pageable = PageRequest.of(page, pageable.getPageSize());

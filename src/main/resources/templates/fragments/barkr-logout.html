@@ -1,10 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Title Logging Out of Barkr</title>
 </head>
 <body>
-$END$
+<h2>Hope to see you!</h2>
+<p>You have been logged out of Barkr App via Google.</p>
+
+<script>
+    window.onload = () => {
+        window.open("https://accounts.google.com/Logout", "_blank");
+
+        setTimeout(() => {
+            window.location.href = "/";
+        }, 3000);
+    }
+
+</script>
+
 </body>
 </html>
