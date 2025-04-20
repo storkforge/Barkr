@@ -6,14 +6,15 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.UUID;
 
 public record ResponseApiKey(
-        @PastOrPresent LocalDateTime issuedAt,
-        @FutureOrPresent LocalDateTime expiresAt,
-        @FutureOrPresent LocalDateTime lastUsedAt,
+        @NotBlank String issuedAt,
+        @NotBlank String expiresAt,
+        @NotBlank String lastUsedAt,
         @NotBlank String apiKeyName,
-        @NotNull Boolean revoked
+        @NotNull Boolean revoked,
+        @NotNull UUID referenceId
 
         ) implements Serializable {
 }

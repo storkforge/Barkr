@@ -10,6 +10,7 @@ import org.hibernate.proxy.HibernateProxy;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Table(name = "issued_api_key")
@@ -45,6 +46,10 @@ public class IssuedApiKey implements Serializable {
     @NotBlank
     private String apiKeyName;
 
+    @Column(nullable = false, updatable = false, unique = true)
+    @NotNull
+    private UUID referenceId;
+
     @NotNull
     @ManyToOne
     @JoinColumn(name = "google_account_api_key_link_id")
@@ -65,6 +70,8 @@ public class IssuedApiKey implements Serializable {
         if(expiresAt == null) expiresAt = issuedAt.plusMinutes(5);
         if(lastUsedAt == null) lastUsedAt = issuedAt;
     }
+
+
 
     public Long getId() {
         return id;
@@ -123,6 +130,14 @@ public class IssuedApiKey implements Serializable {
     }
 
 
+    public UUID getReferenceId() {
+        return referenceId;
+    }
+
+    public void setReferenceId(UUID referenceId) {
+        this.referenceId = referenceId;
+    }
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
@@ -150,6 +165,7 @@ public class IssuedApiKey implements Serializable {
                 "revoked = " + revoked + ", " +
                 "lastUsedAt = " + lastUsedAt + ", " +
                 "apiKeyName = " + apiKeyName + ", " +
+                "referenceId = " + referenceId + ", " +
                 "googleAccountApiKeyLink = " + googleAccountApiKeyLink + ")";
     }
 }

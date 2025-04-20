@@ -8,6 +8,7 @@ import org.storkforge.barkr.domain.entity.GoogleAccountApiKeyLink;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public record CreateApiKey(
         @NotBlank String hashedApiKey,
@@ -16,6 +17,6 @@ public record CreateApiKey(
         @NotNull Boolean revoked,
         @PastOrPresent LocalDateTime lastUsedAt,
         @NotBlank String apiKeyName,
-        @NotNull GoogleAccountApiKeyLink googleAccountApiKeyLink
-) implements Serializable {
+        @NotNull GoogleAccountApiKeyLink googleAccountApiKeyLink,
+        @NotBlank UUID referenceId) implements Serializable {
 }

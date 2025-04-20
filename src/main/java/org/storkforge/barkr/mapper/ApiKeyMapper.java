@@ -4,8 +4,10 @@ import org.storkforge.barkr.domain.entity.IssuedApiKey;
 import org.storkforge.barkr.dto.apiKeyDto.CreateApiKey;
 import org.storkforge.barkr.dto.apiKeyDto.GenerateApiKeyRequest;
 import org.storkforge.barkr.dto.apiKeyDto.ResponseApiKey;
+import org.storkforge.barkr.dto.apiKeyDto.UpdateApiKey;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class ApiKeyMapper {
 
@@ -26,6 +28,7 @@ public class ApiKeyMapper {
         issuedApiKey.setRevoked(createApiKey.revoked());
         issuedApiKey.setExpiresAt(createApiKey.expiresAt());
         issuedApiKey.setLastUsedAt(createApiKey.lastUsedAt());
+        issuedApiKey.setReferenceId(createApiKey.referenceId());
 
         return issuedApiKey;
     }
@@ -37,11 +40,12 @@ public class ApiKeyMapper {
         }
 
         return new ResponseApiKey(
-                issuedApiKey.getIssuedAt(),
-                issuedApiKey.getExpiresAt(),
-                issuedApiKey.getLastUsedAt(),
+                formatDateAndTime(issuedApiKey.getIssuedAt()),
+                formatDateAndTime(issuedApiKey.getExpiresAt()),
+                formatDateAndTime(issuedApiKey.getLastUsedAt()),
                 issuedApiKey.getApiKeyName(),
-                issuedApiKey.isRevoked()
+                issuedApiKey.isRevoked(),
+                issuedApiKey.getReferenceId()
 
         );
 
@@ -64,4 +68,29 @@ public class ApiKeyMapper {
         return new GenerateApiKeyRequest(createApiKey.apiKeyName(), inputDate);
 
     }
+
+    public static String formatDateAndTime(LocalDateTime dateTime) {
+        if (dateTime != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            return dateTime.format(formatter);
+        }
+        return "";
+    }
+
+    public static IssuedApiKey updateIssuedApiKey(IssuedApiKey issuedApiKey, UpdateApiKey updateApiKey) {
+        if (issuedApiKey == null || issuedApiKey.getApiKeyName() == null) {
+            return null;
+        }
+
+        if (updateApiKey.revoke() != null) {
+            issuedApiKey.setRevoked(updateApiKey.revoke());
+        }
+
+        if (updateApiKey.apiKeyName() != null) {
+            issuedApiKey.setApiKeyName(updateApiKey.apiKeyName());
+        }
+        return issuedApiKey;
+
+    }
+
 }

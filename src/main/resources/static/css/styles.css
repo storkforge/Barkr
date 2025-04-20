@@ -517,5 +517,10 @@ i {
         padding: 10px 20px;
     }
 
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
 
 }

@@ -7,6 +7,10 @@
     <ul class="nav-menu">
         <li><a href="/"><i>🏠</i> <span th:text="#{home}">Home</span></a></li>
         <li><a th:href="@{'/' + ${account.username}}"><i>👤</i> <span th:text="#{profile}">Profile</span></a></li>
+        <li><a th:href="@{/apikeys/mykeys}"><i>🔑</i> <span th:text="#{mykeys}">My Keys</span>
+            </a>
+        </li>
+
     </ul>
     <p th:text="${fact}">Couldn't load dog fact</p>
 </aside>
