@@ -2,12 +2,28 @@ package org.storkforge.barkr.domain;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.storkforge.barkr.domain.entity.IssuedApiKey;
+import org.storkforge.barkr.dto.apiKeyDto.CreateApiKey;
+import org.storkforge.barkr.dto.apiKeyDto.GenerateApiKeyRequest;
+import org.storkforge.barkr.dto.apiKeyDto.ResponseApiKeyList;
+import org.storkforge.barkr.infrastructure.persistence.AccountRepository;
 import org.storkforge.barkr.infrastructure.persistence.GoogleAccountApiKeyLinkRepository;
 import org.storkforge.barkr.infrastructure.persistence.IssuedApiKeyRepository;
+import org.storkforge.barkr.mapper.ApiKeyMapper;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.Optional;
 
 @Service
@@ -18,11 +34,20 @@ public class IssuedApiKeyService {
 
     private final IssuedApiKeyRepository issuedApiKeyRepository;
     private final GoogleAccountApiKeyLinkRepository googleAccountApiKeyLinkRepository;
+    private final AccountRepository accountRepository;
+    private final String secretKey;
 
 
-    public IssuedApiKeyService(IssuedApiKeyRepository issuedApiKeyRepository, GoogleAccountApiKeyLinkRepository googleAccountApiKeyLinkRepository) {
+    public IssuedApiKeyService(
+            IssuedApiKeyRepository issuedApiKeyRepository,
+            GoogleAccountApiKeyLinkRepository googleAccountApiKeyLinkRepository,
+            AccountRepository accountRepository,
+            @Value("${barkr.api.secret}")
+            String secretKey) {
         this.issuedApiKeyRepository = issuedApiKeyRepository;
         this.googleAccountApiKeyLinkRepository = googleAccountApiKeyLinkRepository;
+        this.accountRepository = accountRepository;
+        this.secretKey = secretKey;
 
     }
 
@@ -32,12 +57,79 @@ public class IssuedApiKeyService {
         return issuedApiKeyRepository.findByHashedApiKey(hashedApiKey);
     }
 
+    public void apiKeyGenerate(GenerateApiKeyRequest request, String hashedApiKey) {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        var googleOidc2id = authentication.getName();
+        var account = accountRepository.findByGoogleOidc2Id(googleOidc2id);
+        var link = googleAccountApiKeyLinkRepository.findByAccount(account.get());
+        LocalDateTime issueDate = LocalDateTime.now();
 
+        CreateApiKey createApiKey = new CreateApiKey(
+                hashedApiKey,
+                issueDate,
+                request.expiresAt(),
+                false,
+                issueDate,
+                request.apiKeyName(),
+                link.get()
+        );
 
+        log.info("Adding new api key to account");
+        issuedApiKeyRepository.save(ApiKeyMapper.mapToEntity(createApiKey));
 
-    public void save(IssuedApiKey issuedApiKey) {
-        issuedApiKeyRepository.save(issuedApiKey);
     }
+
+    public String generateRawApiKey() {
+        byte[] lengthOfKey = new byte[32];
+        SecureRandom random = new SecureRandom();
+        random.nextBytes(lengthOfKey);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(lengthOfKey);
+
+
+    }
+
+
+    public String hashedApiKey(String rawApiKey) throws NoSuchAlgorithmException, InvalidKeyException {
+
+        SecretKeySpec keySpec = new SecretKeySpec(this.secretKey.getBytes(), "HmacSHA256");
+        Mac mac = Mac.getInstance("HmacSHA256");
+        mac.init(keySpec);
+
+        byte[] hmac = mac.doFinal(rawApiKey.getBytes());
+        return Base64.getEncoder().encodeToString(hmac);
+
+    }
+
+    public boolean apiKeyExists(String hashedApiKey) {
+        log.info("Checking if issued api key exists");
+        return issuedApiKeyRepository.findByHashedApiKey(hashedApiKey).isEmpty();
+    }
+
+    public boolean apiKeyValidation(String rawApiKey) throws NoSuchAlgorithmException, InvalidKeyException {
+        var hashedApikey = hashedApiKey(rawApiKey);
+        var keyFound = issuedApiKeyRepository.findByHashedApiKey(hashedApikey);
+        if (!keyFound.isPresent() || !keyFound.get().isRevoked()) {
+            return false;
+        }
+        return true;
+
+
+    }
+
+    public ResponseApiKeyList allApiKeys() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        var googleOidc2id = authentication.getName();
+        var account = accountRepository.findByGoogleOidc2Id(googleOidc2id);
+        var link = googleAccountApiKeyLinkRepository.findByAccount(account.get());
+        var apiKeys = issuedApiKeyRepository.findByGoogleAccountApiKeyLink(link.get());
+
+        var apiKeyResponse = apiKeys.stream().map(ApiKeyMapper::mapToResponse).toList();
+        return new ResponseApiKeyList(apiKeyResponse);
+
+    }
+
 
 
 

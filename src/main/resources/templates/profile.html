@@ -18,9 +18,15 @@
                 <div class="profile-info-header">
                     <img th:src="@{'/account/' + ${queryAccount.id} + '/image'}" alt="Profile Picture"
                          class="profile-picture">
-                    <div class="profile-actions" th:if="${account.username == queryAccount.username}">
+                    <div class="profile-actions" style="display: flex; flex-direction: column; gap: 0.5rem;" th:if="${account.username == queryAccount.username}">
                         <button class="btn" th:text="#{edit.profile}" onclick="openModal()">Edit Profile</button>
+                        <form th:action="@{/apikeys/apikeyform}" method="get">
+                            <button type="submit" class="btn"> Generate API Key
+                            </button>
+                        </form>
                     </div>
+
+
                 </div>
                 <div class="profile-details">
                     <h1 class="profile-name" th:text="${queryAccount.username}">Unknown account</h1>

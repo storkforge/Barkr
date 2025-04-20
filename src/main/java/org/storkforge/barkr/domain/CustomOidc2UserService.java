@@ -2,10 +2,13 @@ package org.storkforge.barkr.domain;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +19,7 @@ import org.storkforge.barkr.infrastructure.persistence.AccountRepository;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -34,14 +38,16 @@ public class CustomOidc2UserService extends OidcUserService {
         OidcUser user = super.loadUser(userRequest);
         String username = user.getAttributes().get("name").toString();
         String oidcId = user.getName();
+        Account account;
 
         var accountFound = accountRepository.findByUsernameEqualsIgnoreCase(username);
 
         if (accountFound.isPresent()) {
-            return user;
-        }
+            account = accountFound.get();
 
-        Account account = new Account();
+        }else{
+
+        account = new Account();
         GoogleAccountApiKeyLink link = new GoogleAccountApiKeyLink();
         account.setUsername(username);
         account.setBreed("Snoopy");
@@ -51,12 +57,14 @@ public class CustomOidc2UserService extends OidcUserService {
         link.setAccount(account);
         log.info("New record added to database");
         account.setGoogleAccountApiKeyLink(link);
-
-
         accountRepository.save(account);
+        }
 
+        Set<GrantedAuthority> mappedAuthorities = account.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.getAuthorityValue()))
+                .collect(Collectors.toSet());
 
-        return user;
+        return new DefaultOidcUser(mappedAuthorities, user.getIdToken(), user.getUserInfo());
 
     }
 

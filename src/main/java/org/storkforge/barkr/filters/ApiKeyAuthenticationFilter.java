@@ -11,10 +11,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
+
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String apiKey = request.getHeader("API-KEY");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
 
         if (isValidApiKey(apiKey)) {
             Authentication auth = new ApiKeyAuthenticationToken(apiKey);
@@ -22,10 +26,12 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(request, response);
 
-
     }
 
     private boolean isValidApiKey(String apiKey){
         return "mykey".equals(apiKey);
     }
+
+
+
 }

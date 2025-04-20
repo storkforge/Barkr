@@ -17,7 +17,7 @@ import org.storkforge.barkr.filters.ApiKeyAuthenticationFilter;
 public class SecurityConfig {
 
     @Bean
-    @Order(2)
+    @Order(3)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http
                 .oauth2Login(Customizer.withDefaults())
@@ -30,17 +30,19 @@ public class SecurityConfig {
                                 .requestMatchers("/post/add").authenticated()
                                 .requestMatchers("/account/{id}/upload").authenticated()
                                 .requestMatchers("/{username}").authenticated()
+                                .requestMatchers("/apikeys/generate").authenticated()
+                                .requestMatchers("/apikeys/apikeyform").authenticated()
+                                .requestMatchers("/apikeys/result").authenticated()
+                                .requestMatchers("/apikeys/mykeys").authenticated()
+                                .requestMatchers("/apikeys/mykeys/revoke").authenticated()
+
                                 .anyRequest().denyAll()
 
                 )
                 .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/barkr/logout")
-//                .logoutSuccessHandler((request, response, authentication) -> {
-//                    String googleLogoutUrl = "https://accounts.google.com/Logout";
-//                    response.sendRedirect(googleLogoutUrl);
-//
-//                })
+
 
         );
 
@@ -49,7 +51,7 @@ public class SecurityConfig {
 
 
     @Bean
-    @Order(1)
+    @Order(2)
     public SecurityFilterChain restAPIAndGraphQLFilterChain(HttpSecurity http) throws Exception {
         http.securityMatcher("/api/**", "/graphql")
                 .csrf(AbstractHttpConfigurer::disable)
@@ -60,6 +62,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/posts").authenticated()
                                 .requestMatchers("/api/accounts/{id}").authenticated()
                                 .requestMatchers("/api/posts/{id}").authenticated()
+                                .requestMatchers("/api/keys").authenticated()
                                 .requestMatchers(HttpMethod.POST, "/graphql").authenticated()
                                 .anyRequest().denyAll()
 
@@ -67,6 +70,7 @@ public class SecurityConfig {
         return http.build();
 
     }
+
 
 
 

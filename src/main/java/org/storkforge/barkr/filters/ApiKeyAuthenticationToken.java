@@ -10,7 +10,6 @@ public class ApiKeyAuthenticationToken extends AbstractAuthenticationToken {
     private final String apiKey;
 
     public ApiKeyAuthenticationToken(String apiKey) {
-        // Compatibility issues flexible constructor not working
         super(Collections.singletonList(new SimpleGrantedAuthority("ROLE_APIKEY")));
         this.apiKey = apiKey;
         super.setAuthenticated(true);
