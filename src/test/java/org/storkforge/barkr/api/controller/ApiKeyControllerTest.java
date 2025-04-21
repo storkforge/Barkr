@@ -135,7 +135,6 @@ class ApiKeyControllerTest {
                 .andExpect(model().attributeExists("keys"))
                 .andExpect(model().attributeExists("account"));
     }
-
     @Test
     @DisplayName("POST /apikeys/mykeys/revoke revokes a key")
     void revokeKey() throws Exception {
