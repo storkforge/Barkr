@@ -147,8 +147,6 @@ class ApiKeyControllerTest {
                 .andExpect(redirectedUrl("/apikeys/mykeys"));
     }
 
-
-
     @Test
     @DisplayName("POST /apikeys/mykeys/nameupdate updates key name")
     void updateKeyName() throws Exception {
