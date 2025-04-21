@@ -78,6 +78,7 @@ public class WebController {
     if(user != null) {
       var currentUser = accountService.findByGoogleOidc2Id(user.getName());
       id = currentUser.isEmpty() ? 1L : currentUser.get().getId();
+      username = currentUser.get().getUsername().isEmpty() ? username : currentUser.get().getUsername();
     }
     ResponseAccount queryAccount;
     try {

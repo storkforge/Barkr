@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.storkforge.barkr.domain.IssuedApiKeyService;
+import org.storkforge.barkr.domain.roles.BarkrRole;
 import org.storkforge.barkr.filters.ApiKeyAuthenticationFilter;
 
 @Configuration
@@ -27,7 +28,7 @@ public class SecurityConfig {
                                 .requestMatchers("/post/load").permitAll()
                                 .requestMatchers("/barkr/logout").permitAll()
                                 .requestMatchers( "/account/{id}/image").permitAll()
-                                .requestMatchers("/ai/generate").authenticated()
+                                .requestMatchers("/ai/generate").hasRole(BarkrRole.PREMIUM.name())
                                 .requestMatchers("/post/add").authenticated()
                                 .requestMatchers("/account/{id}/upload").authenticated()
                                 .requestMatchers("/{username}").authenticated()
@@ -43,8 +44,12 @@ public class SecurityConfig {
 
                 )
                 .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/barkr/logout")
+                        .logoutUrl("/logout")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .deleteCookies("JSESSIONID")
+                        .logoutSuccessUrl("/barkr/logout")
+                        .permitAll()
 
 
         );

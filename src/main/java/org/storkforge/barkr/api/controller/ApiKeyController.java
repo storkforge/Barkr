@@ -57,7 +57,7 @@ public class ApiKeyController {
 
 
     @PostMapping("/generate")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('USER')")
     public String generateApiKey(
             @RequestParam String apiKeyName,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME
