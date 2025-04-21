@@ -89,6 +89,10 @@ public class ApiKeyMapper {
         if (updateApiKey.apiKeyName() != null) {
             issuedApiKey.setApiKeyName(updateApiKey.apiKeyName());
         }
+
+        if(updateApiKey.lastUsedAt() != null) {
+            issuedApiKey.setLastUsedAt(updateApiKey.lastUsedAt());
+        }
         return issuedApiKey;
 
     }

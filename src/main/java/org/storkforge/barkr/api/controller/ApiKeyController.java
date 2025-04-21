@@ -98,14 +98,14 @@ public class ApiKeyController {
 
     @PostMapping("/mykeys/revoke")
     public String revokeKey(@RequestParam String referenceId) {
-        var update = new UpdateApiKey(UUID.fromString(referenceId),null, true);
+        var update = new UpdateApiKey(UUID.fromString(referenceId),null, true, null);
         issuedApiKeyService.updateApiKey(update);
         return "redirect:/apikeys/mykeys";
     }
 
     @PostMapping("mykeys/nameupdate")
     public String nameUpdate(@RequestParam String apiKeyName, @RequestParam String referenceId) {
-        var update = new UpdateApiKey(UUID.fromString(referenceId), apiKeyName, false);
+        var update = new UpdateApiKey(UUID.fromString(referenceId), apiKeyName, false, null);
         issuedApiKeyService.updateApiKey(update);
         return "redirect:/apikeys/mykeys";
     }

@@ -7,8 +7,8 @@
             </a>
         </div>
         <div class="auth-buttons">
-            <button class="btn" th:unless="${#authentication.name} != 'anonymousUser'" th:text="#{sign.in}">Sign in</button>
-            <button class="btn" th:if="${#authentication.name} != 'anonymousUser'" th:text="#{sign.out}">Sign out</button>
+            <a th:href="@{/login}" class="btn" th:unless="${#authentication.name} != 'anonymousUser'" th:text="#{sign.in}">Sign in</a>
+            <a th:href="@{/logout}" class="btn" th:if="${#authentication.name} != 'anonymousUser'" th:text="#{sign.out}">Sign out</a>
             <div>
                 <select id="languageSelect" onchange="changeLanguage(this.value)">
                     <option value="en" lang="en" th:selected="${#locale.language == 'en'}">English</option>

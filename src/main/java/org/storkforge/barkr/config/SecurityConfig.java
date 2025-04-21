@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.storkforge.barkr.domain.IssuedApiKeyService;
 import org.storkforge.barkr.filters.ApiKeyAuthenticationFilter;
 
 @Configuration
@@ -53,10 +54,12 @@ public class SecurityConfig {
 
     @Bean
     @Order(2)
-    public SecurityFilterChain restAPIAndGraphQLFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain restAPIAndGraphQLFilterChain(
+            HttpSecurity http,
+            ApiKeyAuthenticationFilter apiKeyAuthenticationFilter) throws Exception {
         http.securityMatcher("/api/**", "/graphql")
                 .csrf(AbstractHttpConfigurer::disable)
-                .addFilterAfter(new ApiKeyAuthenticationFilter(), LogoutFilter.class)
+                .addFilterAfter(apiKeyAuthenticationFilter, LogoutFilter.class)
                 .authorizeHttpRequests(
                         authorize -> authorize
                                 .requestMatchers("/api/accounts").authenticated()
@@ -70,6 +73,12 @@ public class SecurityConfig {
                 );
         return http.build();
 
+    }
+
+    @Bean
+    @Order(1)
+    public ApiKeyAuthenticationFilter apiKeyAuthenticationFilter(IssuedApiKeyService issuedApiKeyService) {
+        return new ApiKeyAuthenticationFilter(issuedApiKeyService);
     }
 
 

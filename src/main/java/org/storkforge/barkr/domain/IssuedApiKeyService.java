@@ -124,11 +124,10 @@ public class IssuedApiKeyService {
     public boolean apiKeyValidation(String rawApiKey) throws NoSuchAlgorithmException, InvalidKeyException {
         var hashedApikey = hashedApiKey(rawApiKey);
         var keyFound = issuedApiKeyRepository.findByHashedApiKey(hashedApikey);
-        if (!keyFound.isPresent() || !keyFound.get().isRevoked()) {
-            return false;
+        if (keyFound.isPresent() && !keyFound.get().isRevoked()) {
+            return true;
         }
-        return true;
-
+        return false;
 
     }
 
@@ -137,7 +136,7 @@ public class IssuedApiKeyService {
         Authentication authentication = securityContext.getAuthentication();
         var googleOidc2id = authentication.getName();
 
-        var recordsRemoved = issuedApiKeyRepository.revokeExpiredKeys(LocalDateTime.now());
+        var recordsRemoved = revokeExpiredApiKeys();
         log.info("Removed " + recordsRemoved + " api keys");
 
         var account = accountRepository.findByGoogleOidc2Id(googleOidc2id);
@@ -155,6 +154,10 @@ public class IssuedApiKeyService {
         var updateApikey = ApiKeyMapper.updateIssuedApiKey(apikey, updateApiKey);
         issuedApiKeyRepository.save(updateApikey);
 
+    }
+
+    public int revokeExpiredApiKeys() {
+        return issuedApiKeyRepository.revokeExpiredKeys(LocalDateTime.now());
     }
 
 
