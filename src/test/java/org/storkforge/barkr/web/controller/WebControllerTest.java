@@ -11,13 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.data.annotation.Transient;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.storkforge.barkr.domain.entity.Account;
+import org.storkforge.barkr.domain.entity.GoogleAccountApiKeyLink;
 import org.storkforge.barkr.domain.entity.Post;
+import org.storkforge.barkr.domain.roles.BarkrRole;
 import org.storkforge.barkr.infrastructure.persistence.AccountRepository;
 import org.storkforge.barkr.infrastructure.persistence.PostRepository;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -26,8 +29,10 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -49,6 +54,9 @@ class WebControllerTest {
 
   @Autowired
   private AccountRepository accountRepository;
+
+  @Transient
+  private GoogleAccountApiKeyLink googleAccountApiKeyLink;
 
   @Autowired
   private PostRepository postRepository;
@@ -72,12 +80,24 @@ class WebControllerTest {
     @DisplayName("Can view all posts")
     void viewAllPostsPage() throws IOException {
       Account mockAccount = new Account();
+      GoogleAccountApiKeyLink mockKeyLink = new GoogleAccountApiKeyLink();
       mockAccount.setUsername("mockAccount");
       mockAccount.setBreed("husky");
+      mockAccount.setGoogleOidc2Id("4");
+      mockAccount.setImage(null);
+      mockAccount.setRoles(new HashSet<>(Set.of(BarkrRole.USER, BarkrRole.PREMIUM)));
+      mockKeyLink.setAccount(mockAccount);
+      mockAccount.setGoogleAccountApiKeyLink(mockKeyLink);
 
       Account mockAccount2 = new Account();
+      GoogleAccountApiKeyLink mockKeyLink2 = new GoogleAccountApiKeyLink();
       mockAccount2.setUsername("mockAccount2");
       mockAccount2.setBreed("beagle");
+      mockAccount2.setGoogleOidc2Id("5");
+      mockAccount2.setImage(null);
+      mockAccount2.setRoles(new HashSet<>(Set.of(BarkrRole.USER, BarkrRole.PREMIUM)));
+      mockKeyLink2.setAccount(mockAccount2);
+      mockAccount2.setGoogleAccountApiKeyLink(mockKeyLink2);
 
       accountRepository.saveAll(List.of(mockAccount, mockAccount2));
 
@@ -177,12 +197,25 @@ class WebControllerTest {
     @DisplayName("Can view profile page")
     void viewProfilePage() throws IOException {
       Account mockAccount = new Account();
+      GoogleAccountApiKeyLink mockKeyLink = new GoogleAccountApiKeyLink();
       mockAccount.setUsername("mockAccount");
       mockAccount.setBreed("husky");
+      mockAccount.setGoogleOidc2Id("4");
+      mockAccount.setImage(null);
+      mockAccount.setRoles(new HashSet<>(Set.of(BarkrRole.USER, BarkrRole.PREMIUM)));
+      mockKeyLink.setAccount(mockAccount);
+      mockAccount.setGoogleAccountApiKeyLink(mockKeyLink);
 
       Account mockAccount2 = new Account();
+      GoogleAccountApiKeyLink mockKeyLink2 = new GoogleAccountApiKeyLink();
       mockAccount2.setUsername("mockAccount2");
       mockAccount2.setBreed("beagle");
+      mockAccount2.setBreed("beagle");
+      mockAccount2.setGoogleOidc2Id("5");
+      mockAccount2.setImage(null);
+      mockAccount2.setRoles(new HashSet<>(Set.of(BarkrRole.USER, BarkrRole.PREMIUM)));
+      mockKeyLink2.setAccount(mockAccount2);
+      mockAccount2.setGoogleAccountApiKeyLink(mockKeyLink2);
 
       accountRepository.saveAll(List.of(mockAccount, mockAccount2));
 
