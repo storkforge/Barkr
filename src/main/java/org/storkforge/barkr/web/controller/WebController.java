@@ -200,8 +200,6 @@ public ResponseEntity<?> premiumUser(@RequestParam String code, @AuthenticationP
 
     return ResponseEntity.status(HttpStatus.ACCEPTED).body("Congrats: \uD83D\uDC4D");
 
-
-
   }
 
 
