@@ -174,7 +174,7 @@ public class WebController {
   }
 
 
-  @PostMapping("/unlock-easter-egg")
+@PostMapping("/unlock-easter-egg")
 public ResponseEntity<?> premiumUser(@RequestParam String code, @AuthenticationPrincipal OidcUser user){
 
     var sanitizedCode = code.toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
