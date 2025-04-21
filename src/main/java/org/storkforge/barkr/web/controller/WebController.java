@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.storkforge.barkr.domain.AccountService;
 import org.storkforge.barkr.domain.DogFactService;
 import org.storkforge.barkr.domain.PostService;
+import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.dto.accountDto.ResponseAccount;
 import org.storkforge.barkr.dto.postDto.CreatePost;
 import org.storkforge.barkr.dto.postDto.ResponsePost;
@@ -47,10 +48,7 @@ public class WebController {
   public String index(Model model, @PageableDefault Pageable pageable, @AuthenticationPrincipal OidcUser user) {
     long id = 1L;
 
-    Principal context = SecurityContextHolder.getContext().getAuthentication();
-
-    if (!context.getName().equals("anonymousUser")) {
-
+    if(user != null) {
       var currentUser = accountService.findByGoogleOidc2Id(user.getName());
       id = currentUser.isEmpty() ? 1L : currentUser.get().getId();
     }
@@ -66,6 +64,11 @@ public class WebController {
 
   @GetMapping("/{username}")
   public String user(@PathVariable("username") @NotBlank String username, Model model, RedirectAttributes redirectAttributes, @PageableDefault Pageable pageable, @AuthenticationPrincipal OidcUser user) {
+    Long id = 1L;
+    if(user != null) {
+      var currentUser = accountService.findByGoogleOidc2Id(user.getName());
+      id = currentUser.isEmpty() ? 1L : currentUser.get().getId();
+    }
     ResponseAccount queryAccount;
     try {
       queryAccount = accountService.findByUsername(username);
@@ -75,15 +78,8 @@ public class WebController {
       return "redirect:/";
     }
 
-    long id = 1L;
 
-    Principal context = SecurityContextHolder.getContext().getAuthentication();
 
-    if (!context.getName().equals("anonymousUser")) {
-
-      var currentUser = accountService.findByGoogleOidc2Id(user.getName());
-      id = currentUser.isEmpty() ? 1L : currentUser.get().getId();
-    }
 
     model.addAttribute("accountPosts", postService.findByUsername(username, pageable));
     model.addAttribute("queryAccount", queryAccount);
