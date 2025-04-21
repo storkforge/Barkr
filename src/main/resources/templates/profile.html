@@ -28,11 +28,11 @@
                         <div class="post-form">
                             <h3>🎮 Unlock Premium</h3>
                             <form id="unlock-premium-form" class="post-form" method="post" th:action="@{/unlock-easter-egg}">
-                                <label for="code">Enter Secret Code:</label><br>
+                                <label th:text="#{code.label}" for="code">Enter Secret Code:</label><br>
                                 <input type="text" id="code" name="code" placeholder="Enter the code" required />
                                 <input type="hidden"  id="csrfToken" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                                 <br><br>
-                                <button class="btn" type="submit">Unlock</button>
+                                <button class="btn" type="submit" th:text="#{code.button}">Unlock</button>
                             </form>
                             <div id="premium-response" style="margin-top: 1em; font-weight: bold;"></div>
                         </div>
