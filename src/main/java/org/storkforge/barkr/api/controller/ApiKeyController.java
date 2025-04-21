@@ -57,7 +57,7 @@ public class ApiKeyController {
 
 
     @PostMapping("/generate")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public String generateApiKey(
             @RequestParam String apiKeyName,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME
@@ -83,21 +83,17 @@ public class ApiKeyController {
 
         return "redirect:/apikeys/result";
 
+
     }
 
     @GetMapping("/mykeys")
     public String myKeys(Model model , @AuthenticationPrincipal OidcUser user) {
         var currentUser = accountRepository.findByGoogleOidc2Id(user.getName());
-
-        if (currentUser.isEmpty()) {
-            return "apikeys/mykeys";
-        }
         var keys = issuedApiKeyService.allApiKeys();
-        if (keys != null && keys.apiKeys() != null) {
-            model.addAttribute("keys", keys.apiKeys());
-        }
+        model.addAttribute("keys", keys.apiKeys());
         model.addAttribute("account", currentUser.get());
         return "apikeys/mykeys";
+
     }
 
     @PostMapping("/mykeys/revoke")
