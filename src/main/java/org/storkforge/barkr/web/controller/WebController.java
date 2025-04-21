@@ -9,9 +9,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
@@ -21,14 +27,17 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.storkforge.barkr.domain.AccountService;
 import org.storkforge.barkr.domain.DogFactService;
 import org.storkforge.barkr.domain.PostService;
-import org.storkforge.barkr.domain.entity.Account;
+import org.storkforge.barkr.domain.roles.BarkrRole;
 import org.storkforge.barkr.dto.accountDto.ResponseAccount;
 import org.storkforge.barkr.dto.postDto.CreatePost;
 import org.storkforge.barkr.dto.postDto.ResponsePost;
+import org.storkforge.barkr.exceptions.AccountNotFound;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.Principal;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/")
@@ -42,6 +51,7 @@ public class WebController {
     this.postService = postService;
     this.accountService = accountService;
     this.dogFactService = dogFactService;
+
   }
 
   @GetMapping("/")
@@ -161,4 +171,39 @@ public class WebController {
     accountService.updateImage(id, file.getBytes());
     return "redirect:/";
   }
+
+
+  @PostMapping("/unlock-easter-egg")
+public ResponseEntity<?> premiumUser(@RequestParam String code, @AuthenticationPrincipal OidcUser user){
+
+    var sanitizedCode = code.toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
+
+    if (!sanitizedCode.trim().equals("upupdowndownleftrightleftrightba")) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Better try next time: \uD83D\uDE1C");
+
+    }
+
+    var account = accountService.findByGoogleOidc2Id(user.getName()).orElseThrow(() -> new AccountNotFound("No account found"));
+    account.setRoles(new HashSet<>(Set.of(BarkrRole.USER, BarkrRole.PREMIUM)));
+
+    Set<GrantedAuthority> mappedAuthorities = account.getRoles().stream()
+            .map(role -> new SimpleGrantedAuthority(role.getAuthorityValue()))
+            .collect(Collectors.toSet());
+
+    OidcUser updateUser = new DefaultOidcUser(mappedAuthorities, user.getIdToken(), user.getUserInfo());
+    OAuth2AuthenticationToken auth = new OAuth2AuthenticationToken(updateUser, updateUser.getAuthorities(), updateUser.getAccessTokenHash());
+
+    SecurityContext context = SecurityContextHolder.getContext();
+    context.setAuthentication(auth);
+
+
+    return ResponseEntity.status(HttpStatus.ACCEPTED).body("Congrats: \uD83D\uDC4D");
+
+
+
+  }
+
+
+
+
 }

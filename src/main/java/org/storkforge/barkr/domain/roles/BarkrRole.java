@@ -16,4 +16,7 @@ public enum BarkrRole {
     public String getAuthorityValue() {
         return authorityValue;
     }
+
+
+
 }

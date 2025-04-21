@@ -37,6 +37,7 @@ public class SecurityConfig {
                                 .requestMatchers("/apikeys/mykeys").authenticated()
                                 .requestMatchers("/apikeys/mykeys/revoke").authenticated()
                                 .requestMatchers("/apikeys/mykeys/nameupdate").authenticated()
+                                .requestMatchers("/unlock-easter-egg").authenticated()
 
                                 .anyRequest().denyAll()
 

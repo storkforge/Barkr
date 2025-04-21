@@ -90,10 +90,10 @@
                         </form>
 
                         <form method="post" th:action="@{mykeys/nameupdate}">
-                        <input type="hidden" name="referenceId" th:value="${key.referenceId}" />
-                        <input type="hidden" name="apiKeyName" id="nameUpdater" th:value="${key.apiKeyName}" />
-                        <button type="button" onclick="promptAndSetName(this.form)" th:disabled="${key.revoked}" style="margin: 2px;" class="btn" th:text="#{apikey.nameupdate}">Edit Name</button>
-                    </form>
+                            <input type="hidden" name="referenceId" th:value="${key.referenceId}" />
+                            <input type="hidden" name="apiKeyName" id="nameUpdater" th:value="${key.apiKeyName}" />
+                            <button type="button" onclick="promptAndSetName(this.form)" th:disabled="${key.revoked}" style="margin: 2px;" class="btn" th:text="#{apikey.nameupdate}">Edit Name</button>
+                        </form>
                     </td>
                 </tr>
                 </tbody>

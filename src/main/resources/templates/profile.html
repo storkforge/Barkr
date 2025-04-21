@@ -21,9 +21,21 @@
                     <div class="profile-actions" style="display: flex; flex-direction: column; gap: 0.5rem;" th:if="${account.username == queryAccount.username}">
                         <button class="btn" th:text="#{edit.profile}" onclick="openModal()">Edit Profile</button>
                         <form th:action="@{/apikeys/apikeyform}" method="get">
-                            <button type="submit" class="btn"> Generate API Key
+                            <button type="submit" class="btn" th:text="#{apikey.gen}" > Generate API Key
                             </button>
                         </form>
+
+                        <div class="post-form">
+                            <h3>🎮 Unlock Premium</h3>
+                            <form id="unlock-premium-form" class="post-form" method="post" th:action="@{/unlock-easter-egg}">
+                                <label for="code">Enter Secret Code:</label><br>
+                                <input type="text" id="code" name="code" placeholder="Enter the code" required />
+                                <input type="hidden"  id="csrfToken" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                <br><br>
+                                <button class="btn" type="submit">Unlock</button>
+                            </form>
+                            <div id="premium-response" style="margin-top: 1em; font-weight: bold;"></div>
+                        </div>
                     </div>
 
 
@@ -79,6 +91,7 @@
 </script>
 <script th:src="@{/js/theme-switcher.js}"></script>
 <script th:src="@{/js/konami.js}"></script>
+<script th:src="@{/js/unlock-easter-egg.js}"></script>
 <script th:src="@{/js/change-language.js}"></script>
 </body>
 </html>

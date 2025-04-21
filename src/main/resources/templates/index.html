@@ -30,8 +30,12 @@
             </div>
         </div>
         <div th:if="${error}" th:text="${error}" class="error-message"></div>
-        <div class="card">
-            <button id="generate-joke-btn" class="btn">Generate Joke</button>
+        <div class="card" th:if="${#authorization.expression('hasAuthority(''ROLE_PREMIUM'')')}">
+
+            <button
+                    th:if="${#authorization.expression('hasAuthority(''ROLE_PREMIUM'')')}"
+                    id="generate-joke-btn" class="btn">Generate Joke
+            </button>
             <div id="joke-display"></div>
         </div>
 
