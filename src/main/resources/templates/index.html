@@ -10,16 +10,15 @@
 <body>
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="container main-layout" th:style="${account == null ? 'grid-template-columns: 1fr' : ''}">
+<div name="index-first-page" class="container main-layout" th:style="${account == null ? 'grid-template-columns: 1fr' : ''}">
     <div th:replace="~{fragments/sidebar :: aside}"></div>
     <main>
         <div class="card post-form" th:if="${account}">
             <h2 th:text="#{create.header}">Create a New Bark</h2>
-            <form th:action="@{/post/add}" method="post" th:object="${createPostDto}">
+            <form th:action="@{/post/add}" name="index-first-form"  method="post" th:object="${createPostDto}">
                 <div class="post-input">
                     <label for="post-content" th:text="#{create.form.label}">What's on your mind?</label>
-                    <textarea id="post-content" th:placeholder="#{create.form.placeholder}" th:field="*{content}"
-                              required></textarea>
+                    <textarea id="post-content" name="content" th:placeholder="#{create.form.placeholder}" th:field="*{content}"required></textarea>
                 </div>
                 <input type="hidden" th:field="*{accountId}" th:value="${account.id}">
                 <button type="submit" class="btn" th:text="#{create.post}">Bark It!</button>
@@ -31,7 +30,6 @@
         </div>
         <div th:if="${error}" th:text="${error}" class="error-message"></div>
         <div class="card" th:if="${#authorization.expression('hasAuthority(''ROLE_PREMIUM'')')}">
-
             <button
                     th:if="${#authorization.expression('hasAuthority(''ROLE_PREMIUM'')')}"
                     id="generate-joke-btn" class="btn">Generate Joke

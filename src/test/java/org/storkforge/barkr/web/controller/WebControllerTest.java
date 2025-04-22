@@ -17,6 +17,7 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+import org.storkforge.barkr.domain.IssuedApiKeyService;
 import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.domain.entity.GoogleAccountApiKeyLink;
 import org.storkforge.barkr.domain.entity.Post;
@@ -58,6 +59,9 @@ class WebControllerTest {
   @Transient
   private GoogleAccountApiKeyLink googleAccountApiKeyLink;
 
+  @Transient
+  private IssuedApiKeyService issuedApiKeyService;
+
   @Autowired
   private PostRepository postRepository;
 
@@ -74,27 +78,36 @@ class WebControllerTest {
     );
   }
 
+
+
   @Nested
   class IndexRouteTest {
     @Test
+    @WithMockUser
     @DisplayName("Can view all posts")
     void viewAllPostsPage() throws IOException {
       Account mockAccount = new Account();
       GoogleAccountApiKeyLink mockKeyLink = new GoogleAccountApiKeyLink();
+
       mockAccount.setUsername("mockAccount");
       mockAccount.setBreed("husky");
       mockAccount.setGoogleOidc2Id("4");
+
       mockAccount.setImage(null);
       mockAccount.setRoles(new HashSet<>(Set.of(BarkrRole.USER, BarkrRole.PREMIUM)));
+
       mockKeyLink.setAccount(mockAccount);
       mockAccount.setGoogleAccountApiKeyLink(mockKeyLink);
 
       Account mockAccount2 = new Account();
       GoogleAccountApiKeyLink mockKeyLink2 = new GoogleAccountApiKeyLink();
+
       mockAccount2.setUsername("mockAccount2");
       mockAccount2.setBreed("beagle");
+
       mockAccount2.setGoogleOidc2Id("5");
       mockAccount2.setImage(null);
+
       mockAccount2.setRoles(new HashSet<>(Set.of(BarkrRole.USER, BarkrRole.PREMIUM)));
       mockKeyLink2.setAccount(mockAccount2);
       mockAccount2.setGoogleAccountApiKeyLink(mockKeyLink2);
@@ -121,10 +134,11 @@ class WebControllerTest {
     }
 
     @Test
+    @WithMockUser(authorities = {"ROLE_USER", "ROLE_PREMIUM"})
     @DisplayName("Verify add post form exist")
     void verifyAddPostFormExist() throws IOException {
       HtmlPage page = htmlClient.getPage("/");
-      HtmlForm form = page.getForms().getFirst();
+      HtmlForm form = page.getFormByName("index-first-form");
       HtmlTextArea contentInput = form.getTextAreaByName("content");
 
       assertAll(
@@ -142,7 +156,7 @@ class WebControllerTest {
     void verifyAddPostFormSubmitted() throws IOException {
       HtmlPage page = htmlClient.getPage("/");
 
-      HtmlForm form = page.getForms().getFirst();
+      HtmlForm form = page.getFormByName("index-first-form");
       HtmlTextArea contentInput = form.getTextAreaByName("content");
       HtmlButton submitButton = (HtmlButton) form.getElementsByTagName("button").getFirst();
 
@@ -163,7 +177,8 @@ class WebControllerTest {
     void redirectOnEmptyForm() throws IOException {
       HtmlPage page = htmlClient.getPage("/");
 
-      HtmlForm form = page.getForms().getFirst();
+
+      HtmlForm form = page.getFormByName("index-first-form");
       HtmlButton submitButton = (HtmlButton) form.getElementsByTagName("button").getFirst();
 
       HtmlPage resultPage = submitButton.click();
@@ -177,7 +192,7 @@ class WebControllerTest {
     void redirectOnTooManyCharactersInput() throws IOException {
       HtmlPage page = htmlClient.getPage("/");
 
-      HtmlForm form = page.getForms().getFirst();
+      HtmlForm form = page.getFormByName("index-first-form");
       HtmlTextArea contentInput = form.getTextAreaByName("content");
       HtmlButton submitButton = (HtmlButton) form.getElementsByTagName("button").getFirst();
 
@@ -210,7 +225,6 @@ class WebControllerTest {
       GoogleAccountApiKeyLink mockKeyLink2 = new GoogleAccountApiKeyLink();
       mockAccount2.setUsername("mockAccount2");
       mockAccount2.setBreed("beagle");
-      mockAccount2.setBreed("beagle");
       mockAccount2.setGoogleOidc2Id("5");
       mockAccount2.setImage(null);
       mockAccount2.setRoles(new HashSet<>(Set.of(BarkrRole.USER, BarkrRole.PREMIUM)));
@@ -229,6 +243,8 @@ class WebControllerTest {
 
       postRepository.saveAll(List.of(mockPost, mockPost2));
       HtmlPage page = htmlClient.getPage("/mockAccount");
+
+      mockAccount2.setRoles(Set.of());
       String pageContent = page.asNormalizedText();
 
       assertAll(
