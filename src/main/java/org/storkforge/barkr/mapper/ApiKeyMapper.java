@@ -56,7 +56,7 @@ public class ApiKeyMapper {
         LocalDateTime inputDate = createApiKey.expiresAt();
 
         if (inputDate == null) {
-            inputDate = LocalDateTime.now();
+            inputDate = LocalDateTime.now().plusMinutes(5);
         }
 
         if (inputDate != null && inputDate.isBefore(now)) {
@@ -95,7 +95,7 @@ public class ApiKeyMapper {
         }
 
         if(updateApiKey.lastUsedAt() != null) {
-            issuedApiKey.setLastUsedAt(LocalDateTime.now());
+            issuedApiKey.setLastUsedAt(updateApiKey.lastUsedAt());
         }
         return issuedApiKey;
 

@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.storkforge.barkr.domain.IssuedApiKeyService;
 import org.storkforge.barkr.domain.roles.BarkrRole;
 import org.storkforge.barkr.filters.ApiKeyAuthenticationFilter;
@@ -27,7 +28,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                                 .requestMatchers("/","/login", "/error", "/css/**", "/js/**", "/images/**").permitAll()
                                 .requestMatchers("/post/load").permitAll()
-                                .requestMatchers("/barkr/logout").permitAll()
+//                                .requestMatchers("/barkr/logout").permitAll()
                                 .requestMatchers( "/account/{id}/image").permitAll()
                                 .requestMatchers("/ai/generate").hasRole(BarkrRole.PREMIUM.name())
                                 .requestMatchers("/post/add").authenticated()
@@ -52,8 +53,10 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/barkr/logout")
                         .permitAll()
 
-
-        );
+        ).csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/barkr/logout", "/logout")
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                );
 
         return http.build();
     }
