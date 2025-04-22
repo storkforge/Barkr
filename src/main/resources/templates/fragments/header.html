@@ -7,8 +7,11 @@
             </a>
         </div>
         <div class="auth-buttons">
-            <a th:href="@{/login}" class="btn" th:unless="${#authentication.name} != 'anonymousUser'" th:text="#{sign.in}">Sign in</a>
-            <a th:href="@{/logout}" class="btn" th:if="${#authentication.name} != 'anonymousUser'" th:text="#{sign.out}">Sign out</a>
+            <a th:href="@{/login}" class="btn" th:unless="${#authentication.name != 'anonymousUser'}" th:text="#{sign.in}">Sign in</a>
+            <form th:href="@{/logout}" class="btn" th:if="${#authentication.name} != 'anonymousUser'}" style="display: inline;">
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <button type="submit" class="btn" th:text="#{sign.out}" th:text="#{sign.out}">Sign out</button>
+            </form>
             <div>
                 <select id="languageSelect" onchange="changeLanguage(this.value)">
                     <option value="en" lang="en" th:selected="${#locale.language == 'en'}">English</option>

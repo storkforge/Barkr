@@ -1,5 +1,5 @@
 <aside class="sidebar" th:if="${account}">
-    <div class="profile-card" th:if="${#authentication.name} != 'anonymousUser'">
+    <div class="profile-card" th:if="${#authentication.name != 'anonymousUser'}">
         <img th:src="@{'/account/' + ${account.id} + '/image'}" alt="Profile Picture">
         <h2 th:text="${account.username}">Username Placeholder</h2>
         <p th:text="${account.breed}">Breed Placeholder</p>

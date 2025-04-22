@@ -159,7 +159,7 @@ public class IssuedApiKey implements Serializable {
     public String toString() {
         return getClass().getSimpleName() + "(" +
                 "id = " + id + ", " +
-                "hashedApiKey = " + hashedApiKey + ", " +
+                "hashedApiKey = [REDACTED], " +
                 "issuedAt = " + issuedAt + ", " +
                 "expiresAt = " + expiresAt + ", " +
                 "revoked = " + revoked + ", " +

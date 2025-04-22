@@ -1,9 +1,7 @@
 package org.storkforge.barkr.dto.apiKeyDto;
 
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
 
 import java.io.Serializable;
 import java.util.UUID;

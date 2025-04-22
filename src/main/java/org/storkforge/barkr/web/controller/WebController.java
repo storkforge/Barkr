@@ -177,6 +177,10 @@ public class WebController {
 @PostMapping("/unlock-easter-egg")
 public ResponseEntity<?> premiumUser(@RequestParam String code, @AuthenticationPrincipal OidcUser user){
 
+    if(user == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login Required \uD83D\uDE1C");
+    }
+
     var sanitizedCode = code.toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
 
     if (!sanitizedCode.trim().equals("upupdowndownleftrightleftrightba")) {
@@ -192,7 +196,11 @@ public ResponseEntity<?> premiumUser(@RequestParam String code, @AuthenticationP
             .collect(Collectors.toSet());
 
     OidcUser updateUser = new DefaultOidcUser(mappedAuthorities, user.getIdToken(), user.getUserInfo());
-    OAuth2AuthenticationToken auth = new OAuth2AuthenticationToken(updateUser, updateUser.getAuthorities(), updateUser.getAccessTokenHash());
+    String registrationId = ((OAuth2AuthenticationToken) SecurityContextHolder.getContext()
+            .getAuthentication())
+            .getAuthorizedClientRegistrationId();
+
+    OAuth2AuthenticationToken auth = new OAuth2AuthenticationToken(updateUser, updateUser.getAuthorities(), registrationId);
 
     SecurityContext context = SecurityContextHolder.getContext();
     context.setAuthentication(auth);

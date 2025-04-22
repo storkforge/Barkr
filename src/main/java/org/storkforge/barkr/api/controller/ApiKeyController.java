@@ -73,8 +73,8 @@ public class ApiKeyController {
         do{
         apiKey = issuedApiKeyService.generateRawApiKey();
         hashedApiKey = issuedApiKeyService.hashedApiKey(apiKey);
-        issuedApiKeyService.apiKeyGenerate(request, hashedApiKey);
         } while (issuedApiKeyService.apiKeyExists(hashedApiKey));
+        issuedApiKeyService.apiKeyGenerate(request, hashedApiKey);
 
         ResponseApiKeyOnce response = new ResponseApiKeyOnce(
                 "API-KEY", apiKey, "Please store these credentials safely");

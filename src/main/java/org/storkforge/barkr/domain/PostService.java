@@ -18,7 +18,6 @@ import org.storkforge.barkr.infrastructure.persistence.AccountRepository;
 import org.storkforge.barkr.infrastructure.persistence.PostRepository;
 import org.storkforge.barkr.mapper.PostMapper;
 
-import java.util.List;
 
 @Service
 @Transactional

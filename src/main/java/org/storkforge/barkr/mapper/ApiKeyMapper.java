@@ -55,6 +55,10 @@ public class ApiKeyMapper {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime inputDate = createApiKey.expiresAt();
 
+        if (inputDate == null) {
+            inputDate = LocalDateTime.now();
+        }
+
         if (inputDate != null && inputDate.isBefore(now)) {
             inputDate = LocalDateTime.now().plusMinutes(5);
         }
@@ -78,7 +82,7 @@ public class ApiKeyMapper {
     }
 
     public static IssuedApiKey updateIssuedApiKey(IssuedApiKey issuedApiKey, UpdateApiKey updateApiKey) {
-        if (issuedApiKey == null || issuedApiKey.getApiKeyName() == null) {
+        if (issuedApiKey == null || updateApiKey == null || issuedApiKey.getApiKeyName() == null) {
             return null;
         }
 
@@ -91,7 +95,7 @@ public class ApiKeyMapper {
         }
 
         if(updateApiKey.lastUsedAt() != null) {
-            issuedApiKey.setLastUsedAt(updateApiKey.lastUsedAt());
+            issuedApiKey.setLastUsedAt(LocalDateTime.now());
         }
         return issuedApiKey;
 

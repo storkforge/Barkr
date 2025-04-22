@@ -38,12 +38,15 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
 
                 var hashedApiKey = issuedApiKeyService.hashedApiKey(apiKey);
                 var foundApikey = issuedApiKeyService.issuedApiKeyExists(hashedApiKey);
-                var updateApikey = new UpdateApiKey(
-                        foundApikey.get().getReferenceId(),
-                        null,
-                        null,
-                        LocalDateTime.now());
-                issuedApiKeyService.updateApiKey(updateApikey);
+
+                if (foundApikey.isPresent()) {
+                    var updateApikey = new UpdateApiKey(
+                            foundApikey.get().getReferenceId(),
+                            null,
+                            null,
+                            LocalDateTime.now());
+                    issuedApiKeyService.updateApiKey(updateApikey);
+                }
 
 
             }

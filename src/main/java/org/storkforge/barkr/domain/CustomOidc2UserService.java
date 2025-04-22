@@ -33,7 +33,7 @@ public class CustomOidc2UserService extends OidcUserService {
 
 
     @Override
-    public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException{
+    public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
         OidcUser user = super.loadUser(userRequest);
         String username = user.getAttributes().get("name").toString();
         String oidcId = user.getName();
@@ -44,19 +44,24 @@ public class CustomOidc2UserService extends OidcUserService {
         if (accountFound.isPresent()) {
             account = accountFound.get();
 
-        }else{
+        } else {
 
-        account = new Account();
-        GoogleAccountApiKeyLink link = new GoogleAccountApiKeyLink();
-        account.setUsername(username);
-        account.setBreed("Snoopy");
-        account.setGoogleOidc2Id(oidcId);
-        account.setImage(null);
-        account.setRoles(new HashSet<>(Set.of(BarkrRole.USER)));
-        link.setAccount(account);
-        log.info("New record added to database");
-        account.setGoogleAccountApiKeyLink(link);
-        accountRepository.save(account);
+            account = new Account();
+            GoogleAccountApiKeyLink link = new GoogleAccountApiKeyLink();
+            account.setUsername(username);
+            account.setBreed("Snoopy");
+            account.setGoogleOidc2Id(oidcId);
+            account.setImage(null);
+            account.setRoles(new HashSet<>(Set.of(BarkrRole.USER)));
+            link.setAccount(account);
+            log.info("New record added to database");
+            account.setGoogleAccountApiKeyLink(link);
+            try {
+
+                accountRepository.save(account);
+            } catch (Exception e) {
+                throw new OAuth2AuthenticationException("Failed to save account " + account);
+            }
         }
 
         Set<GrantedAuthority> mappedAuthorities = account.getRoles().stream()

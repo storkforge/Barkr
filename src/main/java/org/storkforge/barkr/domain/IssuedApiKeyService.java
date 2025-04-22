@@ -118,7 +118,7 @@ public class IssuedApiKeyService {
 
     public boolean apiKeyExists(String hashedApiKey) {
         log.info("Checking if issued api key exists");
-        return issuedApiKeyRepository.findByHashedApiKey(hashedApiKey).isEmpty();
+        return issuedApiKeyRepository.findByHashedApiKey(hashedApiKey).isPresent();
     }
 
     public boolean apiKeyValidation(String rawApiKey) throws NoSuchAlgorithmException, InvalidKeyException {

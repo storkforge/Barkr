@@ -18,5 +18,5 @@ public record CreateApiKey(
         @PastOrPresent LocalDateTime lastUsedAt,
         @NotBlank String apiKeyName,
         @NotNull GoogleAccountApiKeyLink googleAccountApiKeyLink,
-        @NotBlank UUID referenceId) implements Serializable {
+        @NotNull UUID referenceId) implements Serializable {
 }
