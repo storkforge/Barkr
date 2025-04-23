@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.storkforge.barkr.domain.IssuedApiKeyService;
 import org.storkforge.barkr.domain.roles.BarkrRole;
 import org.storkforge.barkr.filters.ApiKeyAuthenticationFilter;
