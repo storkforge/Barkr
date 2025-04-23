@@ -4,17 +4,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.storkforge.barkr.domain.entity.GoogleAccountApiKeyLink;
 import org.storkforge.barkr.domain.entity.IssuedApiKey;
 import org.storkforge.barkr.dto.apiKeyDto.CreateApiKey;
 import org.storkforge.barkr.dto.apiKeyDto.GenerateApiKeyRequest;
 import org.storkforge.barkr.dto.apiKeyDto.ResponseApiKeyList;
 import org.storkforge.barkr.dto.apiKeyDto.UpdateApiKey;
+import org.storkforge.barkr.exceptions.AccountNotFound;
 import org.storkforge.barkr.exceptions.IssuedApiKeyNotFound;
-import org.storkforge.barkr.infrastructure.persistence.AccountRepository;
 import org.storkforge.barkr.infrastructure.persistence.GoogleAccountApiKeyLinkRepository;
 import org.storkforge.barkr.infrastructure.persistence.IssuedApiKeyRepository;
 import org.storkforge.barkr.mapper.ApiKeyMapper;
@@ -28,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -37,18 +40,20 @@ public class IssuedApiKeyService {
 
     private final IssuedApiKeyRepository issuedApiKeyRepository;
     private final GoogleAccountApiKeyLinkRepository googleAccountApiKeyLinkRepository;
-    private final AccountRepository accountRepository;
     @Value("${barkr.api.secret}")
     private String secretKey;
 
 
     public IssuedApiKeyService(
             IssuedApiKeyRepository issuedApiKeyRepository,
-            GoogleAccountApiKeyLinkRepository googleAccountApiKeyLinkRepository,
-            AccountRepository accountRepository) {
+            GoogleAccountApiKeyLinkRepository googleAccountApiKeyLinkRepository) {
         this.issuedApiKeyRepository = issuedApiKeyRepository;
         this.googleAccountApiKeyLinkRepository = googleAccountApiKeyLinkRepository;
-        this.accountRepository = accountRepository;
+
+    }
+
+    public Optional<GoogleAccountApiKeyLink> findByGoogleOidc2Id(String name) {
+        return Optional.ofNullable(googleAccountApiKeyLinkRepository.findByAccount_GoogleOidc2Id(name).orElseThrow(() -> new AccountNotFound("Account was not found")));
 
     }
 
@@ -62,8 +67,7 @@ public class IssuedApiKeyService {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         var googleOidc2id = authentication.getName();
-        var account = accountRepository.findByGoogleOidc2Id(googleOidc2id);
-        var link = googleAccountApiKeyLinkRepository.findByAccount(account.get());
+        var link = googleAccountApiKeyLinkRepository.findByAccount_GoogleOidc2Id(googleOidc2id).orElseThrow(() -> new AccountNotFound("Account was not found! "));
         LocalDateTime issueDate = LocalDateTime.now();
 
         CreateApiKey createApiKey = new CreateApiKey(
@@ -73,7 +77,7 @@ public class IssuedApiKeyService {
                 false,
                 issueDate,
                 request.apiKeyName(),
-                link.get(),
+                link,
                 generateUuid()
         );
 
@@ -129,16 +133,12 @@ public class IssuedApiKeyService {
 
     }
 
-    public ResponseApiKeyList allApiKeys() {
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        Authentication authentication = securityContext.getAuthentication();
-        var googleOidc2id = authentication.getName();
+    public ResponseApiKeyList allApiKeys(String googleOidc2Id) {
 
         var recordsRemoved = revokeExpiredApiKeys();
         log.info("Removed " + recordsRemoved + " api keys");
 
-        var account = accountRepository.findByGoogleOidc2Id(googleOidc2id);
-        var link = googleAccountApiKeyLinkRepository.findByAccount(account.get());
+        var link = googleAccountApiKeyLinkRepository.findByAccount_GoogleOidc2Id(googleOidc2Id);
         var apiKeys = issuedApiKeyRepository.findByGoogleAccountApiKeyLinkOrderByIssuedAtDesc(link.get());
 
         var apiKeyResponse = apiKeys.stream().map(ApiKeyMapper::mapToResponse).toList();
@@ -156,6 +156,13 @@ public class IssuedApiKeyService {
 
     public int revokeExpiredApiKeys() {
         return issuedApiKeyRepository.revokeExpiredKeys(LocalDateTime.now());
+    }
+
+    public boolean isValidUuid(UUID uuid, String googleOidc2Id) {
+        var allApiKeys = allApiKeys(googleOidc2Id);
+        return allApiKeys.apiKeys().stream()
+                .anyMatch(k -> k.referenceId().equals(uuid));
+
     }
 
 

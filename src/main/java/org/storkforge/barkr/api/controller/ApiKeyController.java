@@ -12,7 +12,6 @@ import org.storkforge.barkr.domain.IssuedApiKeyService;
 import org.storkforge.barkr.dto.apiKeyDto.GenerateApiKeyRequest;
 import org.storkforge.barkr.dto.apiKeyDto.ResponseApiKeyOnce;
 import org.storkforge.barkr.dto.apiKeyDto.UpdateApiKey;
-import org.storkforge.barkr.infrastructure.persistence.AccountRepository;
 import org.storkforge.barkr.mapper.ApiKeyMapper;
 
 import java.security.InvalidKeyException;
@@ -27,11 +26,9 @@ import java.util.UUID;
 @RequestMapping("/apikeys")
 public class ApiKeyController {
     private final IssuedApiKeyService issuedApiKeyService;
-    private final AccountRepository accountRepository;
 
-    public ApiKeyController(IssuedApiKeyService issuedApiKeyService, AccountRepository accountRepository) {
+    public ApiKeyController(IssuedApiKeyService issuedApiKeyService) {
         this.issuedApiKeyService = issuedApiKeyService;
-        this.accountRepository = accountRepository;
     }
 
     @GetMapping("/apikeyform")
@@ -88,18 +85,20 @@ public class ApiKeyController {
 
     @GetMapping("/mykeys")
     public String myKeys(Model model , @AuthenticationPrincipal OidcUser user) {
-        var currentUser = accountRepository.findByGoogleOidc2Id(user.getName());
-        var keys = issuedApiKeyService.allApiKeys();
+        var currentUser = issuedApiKeyService.findByGoogleOidc2Id(user.getName());
+        var keys = issuedApiKeyService.allApiKeys(user.getName());
+        model.addAttribute("account", currentUser.get().getAccount());
         model.addAttribute("keys", keys.apiKeys());
-        model.addAttribute("account", currentUser.get());
         return "apikeys/mykeys";
 
     }
 
     @PostMapping("/mykeys/revoke")
-    public String revokeKey(@RequestParam String referenceId) {
+    public String revokeKey(@RequestParam String referenceId, @AuthenticationPrincipal OidcUser user) {
+        if (issuedApiKeyService.isValidUuid(UUID.fromString(referenceId), user.getName())) {
         var update = new UpdateApiKey(UUID.fromString(referenceId),null, true, null);
         issuedApiKeyService.updateApiKey(update);
+        }
         return "redirect:/apikeys/mykeys";
     }
 

@@ -26,4 +26,7 @@ public interface IssuedApiKeyRepository extends JpaRepository<IssuedApiKey, Long
     @Query("UPDATE IssuedApiKey k SET k.revoked = true WHERE k.expiresAt <= :now AND k.revoked = false")
     int revokeExpiredKeys(@Param("now") LocalDateTime now);
 
+
+    Boolean existsByReferenceIdAndGoogleAccountApiKeyLink(@NotNull UUID uuid, GoogleAccountApiKeyLink googleAccountApiKeyLink);
+
 }

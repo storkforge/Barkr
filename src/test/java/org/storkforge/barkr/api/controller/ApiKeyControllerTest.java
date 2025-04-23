@@ -13,19 +13,21 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.storkforge.barkr.api.controller.ApiKeyController;
 import org.storkforge.barkr.domain.IssuedApiKeyService;
 import org.storkforge.barkr.domain.entity.Account;
+import org.storkforge.barkr.domain.entity.GoogleAccountApiKeyLink;
 import org.storkforge.barkr.dto.apiKeyDto.ResponseApiKeyList;
 import org.storkforge.barkr.dto.apiKeyDto.ResponseApiKeyOnce;
+import org.storkforge.barkr.dto.apiKeyDto.UpdateApiKey;
 import org.storkforge.barkr.infrastructure.persistence.AccountRepository;
+import org.storkforge.barkr.infrastructure.persistence.GoogleAccountApiKeyLinkRepository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -44,11 +46,14 @@ class ApiKeyControllerTest {
     private IssuedApiKeyService issuedApiKeyService;
 
     @MockitoBean
+    private GoogleAccountApiKeyLinkRepository googleAccountApiKeyLinkRepository;
+
+    @MockitoBean
     private AccountRepository accountRepository;
 
     private OAuth2AuthenticationToken mockOAuth2Auth(String name) {
         OidcUser mockUser = Mockito.mock(OidcUser.class);
-        Mockito.when(mockUser.getName()).thenReturn(name);
+        when(mockUser.getName()).thenReturn(name);
 
         return new OAuth2AuthenticationToken(
                 mockUser,
@@ -80,9 +85,9 @@ class ApiKeyControllerTest {
     @Test
     @DisplayName("POST /apikeys/generate redirects to result")
     void generateApiKey() throws Exception {
-        Mockito.when(issuedApiKeyService.generateRawApiKey()).thenReturn("fake-key");
-        Mockito.when(issuedApiKeyService.hashedApiKey("fake-key")).thenReturn("hashed-key");
-        Mockito.when(issuedApiKeyService.apiKeyExists("hashed-key")).thenReturn(false);
+        when(issuedApiKeyService.generateRawApiKey()).thenReturn("fake-key");
+        when(issuedApiKeyService.hashedApiKey("fake-key")).thenReturn("hashed-key");
+        when(issuedApiKeyService.apiKeyExists("hashed-key")).thenReturn(false);
 
         mvc.perform(postWithCsrf("/apikeys/generate")
                         .param("apiKeyName", "test-key"))
@@ -103,12 +108,12 @@ class ApiKeyControllerTest {
 
     @Test
     void generateApiKey_retriesUntilUnique() throws Exception {
-        Mockito.when(issuedApiKeyService.generateRawApiKey())
+        when(issuedApiKeyService.generateRawApiKey())
                 .thenReturn("duplicate", "unique");
-        Mockito.when(issuedApiKeyService.hashedApiKey(any()))
+        when(issuedApiKeyService.hashedApiKey(any()))
                 .thenReturn("hashed-duplicate", "hashed-unique");
-        Mockito.when(issuedApiKeyService.apiKeyExists("hashed-duplicate")).thenReturn(true);
-        Mockito.when(issuedApiKeyService.apiKeyExists("hashed-unique")).thenReturn(false);
+        when(issuedApiKeyService.apiKeyExists("hashed-duplicate")).thenReturn(true);
+        when(issuedApiKeyService.apiKeyExists("hashed-unique")).thenReturn(false);
 
         mvc.perform(postWithCsrf("/apikeys/generate")
                         .param("apiKeyName", "retry-test"))
@@ -122,29 +127,65 @@ class ApiKeyControllerTest {
     @Test
     @DisplayName("GET /apikeys/mykeys displays user keys")
     void showMyKeys() throws Exception {
+
         var account = new Account();
         account.setUsername("test-user");
+        account.setGoogleOidc2Id("google-oidc2");
+        account.setId(1L);
+        var link = new GoogleAccountApiKeyLink();
+        link.setAccount(account);
+        link.setId(1L);
 
-        Mockito.when(accountRepository.findByGoogleOidc2Id(any())).thenReturn(Optional.of(account));
-        Mockito.when(issuedApiKeyService.allApiKeys()).thenReturn(new ResponseApiKeyList(List.of()));
+        when(issuedApiKeyService.findByGoogleOidc2Id("google-oidc2")).thenReturn(Optional.of(link));
+        when(issuedApiKeyService.allApiKeys("google-oidc2")).thenReturn(new ResponseApiKeyList(List.of()));
+
 
         mvc.perform(get("/apikeys/mykeys")
-                        .with(SecurityMockMvcRequestPostProcessors.authentication(mockOAuth2Auth("test-oidc-id"))))
+                        .with(SecurityMockMvcRequestPostProcessors.authentication(mockOAuth2Auth("google-oidc2"))))
                 .andExpect(status().isOk())
                 .andExpect(view().name("apikeys/mykeys"))
                 .andExpect(model().attributeExists("keys"))
                 .andExpect(model().attributeExists("account"));
+        Mockito.verify(issuedApiKeyService).findByGoogleOidc2Id("google-oidc2");
+        Mockito.verify(issuedApiKeyService).allApiKeys("google-oidc2");
+
+
     }
     @Test
     @DisplayName("POST /apikeys/mykeys/revoke revokes a key")
     void revokeKey() throws Exception {
         String fakeReferenceId = UUID.randomUUID().toString();
+        UUID uuid = UUID.fromString(fakeReferenceId);
+        String userName = "testuser";
 
-        mvc.perform(postWithCsrf("/apikeys/mykeys/revoke")
+        when(issuedApiKeyService.isValidUuid(uuid, userName)).thenReturn(false);
+
+        mvc.perform(postWithCsrf("/apikeys/mykeys/revoke").with(SecurityMockMvcRequestPostProcessors.authentication(mockOAuth2Auth(userName)))
                         .param("referenceId", fakeReferenceId))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/apikeys/mykeys"));
+        verify(issuedApiKeyService, Mockito.times(1)).isValidUuid(uuid, userName);
+        verify(issuedApiKeyService, never()).updateApiKey(any(UpdateApiKey.class));
     }
+
+    @Test
+    @DisplayName("POST /apikeys/mykeys/revoke revokes a key if valid")
+    void revokeKey_valid() throws Exception {
+        String fakeReferenceId = UUID.randomUUID().toString();
+        UUID uuid = UUID.fromString(fakeReferenceId);
+        String userName = "testuser";
+
+        when(issuedApiKeyService.isValidUuid(uuid, userName)).thenReturn(true);
+
+        mvc.perform(postWithCsrf("/apikeys/mykeys/revoke").with(SecurityMockMvcRequestPostProcessors.authentication(mockOAuth2Auth(userName)))
+                        .param("referenceId", fakeReferenceId)
+                        .principal(mockOAuth2Auth(userName)))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/apikeys/mykeys"));
+    }
+
+
+
 
     @Test
     @DisplayName("POST /apikeys/mykeys/nameupdate updates key name")
