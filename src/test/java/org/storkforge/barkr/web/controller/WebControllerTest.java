@@ -22,6 +22,7 @@ import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.domain.entity.GoogleAccountApiKeyLink;
 import org.storkforge.barkr.domain.entity.Post;
 import org.storkforge.barkr.domain.roles.BarkrRole;
+import org.storkforge.barkr.filters.ApiKeyAuthenticationFilter;
 import org.storkforge.barkr.infrastructure.persistence.AccountRepository;
 import org.storkforge.barkr.infrastructure.persistence.PostRepository;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -59,8 +60,12 @@ class WebControllerTest {
   @Transient
   private GoogleAccountApiKeyLink googleAccountApiKeyLink;
 
-  @Transient
+  @Autowired
   private IssuedApiKeyService issuedApiKeyService;
+
+  @Autowired
+  private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
+
 
   @Autowired
   private PostRepository postRepository;
