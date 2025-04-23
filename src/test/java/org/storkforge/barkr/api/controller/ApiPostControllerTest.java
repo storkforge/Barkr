@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -33,6 +34,7 @@ class ApiPostControllerTest {
     private PostService service;
 
     @Test
+    @WithMockUser
     @DisplayName("Finds all posts from service")
     void postsReturnsAllPosts() throws Exception {
         ResponseAccount mockAccount = new ResponseAccount(1L, "testAccount", LocalDateTime.now(), "beagle", new byte[0]);
@@ -57,6 +59,7 @@ class ApiPostControllerTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("Finds a post from service")
     void findPost() throws Exception {
         ResponseAccount mockAccount = new ResponseAccount(1L, "testAccount", LocalDateTime.now(), "beagle", new byte[0]);
@@ -74,6 +77,7 @@ class ApiPostControllerTest {
 
 
     @Test
+    @WithMockUser
     @DisplayName("Handles error for nonexistent id")
     void handlesErrorForNonexistentId() throws Exception {
         when(service.findById(1L)).thenThrow(new PostNotFound("Post with id: 1 was not found"));
@@ -83,4 +87,3 @@ class ApiPostControllerTest {
                 .andExpect(status().isNotFound());
     }
 }
-

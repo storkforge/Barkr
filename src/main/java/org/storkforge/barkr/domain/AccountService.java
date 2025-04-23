@@ -30,6 +30,10 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
+    public Optional<Account> findByGoogleOidc2Id(String googleOidc2Id) {
+        return accountRepository.findByGoogleOidc2Id(googleOidc2Id);
+    }
+
     @Cacheable("allAccounts")
     public Page<ResponseAccount> findAll(Pageable pageable) {
         log.info("Finding all accounts");
@@ -85,4 +89,10 @@ public class AccountService {
 
         accountRepository.save(account);
     }
+
+
+
+
+
+
 }

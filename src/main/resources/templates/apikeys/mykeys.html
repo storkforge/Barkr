@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" class="light" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>API Keys</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="icon" th:href="@{/images/logo/BarkrNoText.png}" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Add your custom CSS styles here */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            word-wrap: break-word;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background-color: var(--card-bg);
+            color: var(--heading);
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        td {
+            color: var(--text);
+        }
+
+        /* UUID column (Reference ID) */
+        td:nth-child(5) {
+            max-width: 160px;
+            word-break: break-word;
+        }
+
+        /* Zebra striping for rows */
+        tbody tr:nth-child(odd) {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+    </style>
+</head>
+<body>
+<!-- Page Container -->
+<div th:replace="~{fragments/header :: header}"></div>
+<div class="container main-layout">
+    <div th:replace="~{fragments/sidebar :: aside}"></div>
+    <!-- Card for API Keys -->
+    <div class="card">
+        <h2 class="text-center">API Keys</h2>
+
+        <!-- Table Container -->
+        <div class="table-responsive">
+            <table>
+                <thead>
+                <tr>
+                    <th>API Key Name</th>
+                    <th>Issued At</th>
+                    <th>Expires At</th>
+                    <th>Last Used At</th>
+                    <th>Reference ID</th>
+                    <th>Revoked</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Table Row for Each Key -->
+                <tr th:each="key : ${keys}">
+                    <td th:text="${key.apiKeyName}">test</td>
+                    <td th:text="${key.issuedAt}">2025-04-20T15:44</td>
+                    <td th:text="${key.expiresAt}">2025-04-20T15:49</td>
+                    <td th:text="${key.lastUsedAt}">2025-04-20T15:44</td>
+                    <td th:text="${key.referenceId}">00-000-000-0000</td>
+                    <td th:text="${key.revoked}">false</td>
+                    <td>
+                        <form method="post" th:action="@{mykeys/revoke}">
+                            <input type="hidden" name="referenceId" th:value="${key.referenceId}" />
+                            <button type="submit" th:disabled="${key.revoked}" style="margin: 2px;" class="btn" th:text="#{apikey.revoke}" >Revoke</button>
+                        </form>
+
+                        <form method="post" th:action="@{mykeys/nameupdate}">
+                            <input type="hidden" name="referenceId" th:value="${key.referenceId}" />
+                            <input type="hidden" name="apiKeyName" id="nameUpdater" th:value="${key.apiKeyName}" />
+                            <button type="button" onclick="promptAndSetName(this.form)" th:disabled="${key.revoked}" style="margin: 2px;" class="btn" th:text="#{apikey.nameupdate}">Edit Name</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div> <!-- End of Container -->
+</body>
+<script th:src="@{/js/theme-switcher.js}"></script>
+<script th:src="@{/js/change-language.js}"></script>
+<script th:src="@{/js/update-apikey-name.js}"></script>
+</html>

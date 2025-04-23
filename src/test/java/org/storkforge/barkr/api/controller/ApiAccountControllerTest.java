@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -35,6 +36,7 @@ class ApiAccountControllerTest {
 
     @Test
     @DisplayName("Returns all accounts from service")
+    @WithMockUser
     void accountsReturnsAllAccounts() throws Exception {
         List<ResponseAccount> mockAccounts = List.of(
                 new ResponseAccount(1L, "testaccount", LocalDateTime.now(), "beagle", new byte[0]),
@@ -56,6 +58,7 @@ class ApiAccountControllerTest {
     }
 
     @Test
+    @WithMockUser
     void findAccount() throws Exception {
         ResponseAccount mockAccount = new ResponseAccount(1L, "testAccount", LocalDateTime.now(), "beagle", new byte[0]);
         when(service.findById(1L)).thenReturn(mockAccount);
@@ -69,6 +72,7 @@ class ApiAccountControllerTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("Handles error for nonexistent id")
     void handlesErrorForNonexistentId() throws Exception {
         when(service.findById(1L)).thenThrow(new AccountNotFound("Account with id: 1 was not found"));

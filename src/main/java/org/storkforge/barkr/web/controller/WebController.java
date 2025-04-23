@@ -9,7 +9,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +27,17 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.storkforge.barkr.domain.AccountService;
 import org.storkforge.barkr.domain.DogFactService;
 import org.storkforge.barkr.domain.PostService;
+import org.storkforge.barkr.domain.roles.BarkrRole;
 import org.storkforge.barkr.dto.accountDto.ResponseAccount;
 import org.storkforge.barkr.dto.postDto.CreatePost;
 import org.storkforge.barkr.dto.postDto.ResponsePost;
+import org.storkforge.barkr.exceptions.AccountNotFound;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/")
@@ -37,21 +51,35 @@ public class WebController {
     this.postService = postService;
     this.accountService = accountService;
     this.dogFactService = dogFactService;
+
   }
 
   @GetMapping("/")
-  public String index(Model model, @PageableDefault Pageable pageable) {
+  public String index(Model model, @PageableDefault Pageable pageable, @AuthenticationPrincipal OidcUser user) {
+    long id = 1L;
+
+    if(user != null) {
+      var currentUser = accountService.findByGoogleOidc2Id(user.getName());
+      id = currentUser.isEmpty() ? 1L : currentUser.get().getId();
+    }
+
+
     model.addAttribute("posts", postService.findAll(pageable));
-    model.addAttribute("createPostDto", new CreatePost("", 1L));
+    model.addAttribute("createPostDto", new CreatePost("", id));
     model.addAttribute("fact", dogFactService.getDogFact());
-    // TODO: Change this to the actual account once security is in place
-    model.addAttribute("account", accountService.findById(1L));
+    model.addAttribute("account", accountService.findById(id));
 
     return "index";
   }
 
   @GetMapping("/{username}")
-  public String user(@PathVariable("username") @NotBlank String username, Model model, RedirectAttributes redirectAttributes, @PageableDefault Pageable pageable) {
+  public String user(@PathVariable("username") @NotBlank String username, Model model, RedirectAttributes redirectAttributes, @PageableDefault Pageable pageable, @AuthenticationPrincipal OidcUser user) {
+    Long id = 1L;
+    if(user != null) {
+      var currentUser = accountService.findByGoogleOidc2Id(user.getName());
+      id = currentUser.isEmpty() ? 1L : currentUser.get().getId();
+      username = currentUser.get().getUsername().isEmpty() ? username : currentUser.get().getUsername();
+    }
     ResponseAccount queryAccount;
     try {
       queryAccount = accountService.findByUsername(username);
@@ -61,13 +89,21 @@ public class WebController {
       return "redirect:/";
     }
 
+
+
+
     model.addAttribute("accountPosts", postService.findByUsername(username, pageable));
     model.addAttribute("queryAccount", queryAccount);
     model.addAttribute("fact", dogFactService.getDogFact());
-    // TODO: Change this to the actual account once security is in place
-    model.addAttribute("account", accountService.findById(1L));
+    model.addAttribute("account", accountService.findById(id));
 
     return "profile";
+  }
+
+  @GetMapping("/barkr/logout")
+  public String barkrLogout(){
+    SecurityContextHolder.clearContext();
+    return "fragments/barkr-logout";
   }
 
   @GetMapping("/post/load")
@@ -136,5 +172,45 @@ public class WebController {
     accountService.updateImage(id, file.getBytes());
     return "redirect:/";
   }
-}
 
+
+@PostMapping("/unlock-easter-egg")
+public ResponseEntity<?> premiumUser(@RequestParam String code, @AuthenticationPrincipal OidcUser user){
+
+    if(user == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login Required \uD83D\uDE1C");
+    }
+
+    var sanitizedCode = code.toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
+
+    if (!sanitizedCode.trim().equals("upupdowndownleftrightleftrightba")) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Better try next time: \uD83D\uDE1C");
+
+    }
+
+    var account = accountService.findByGoogleOidc2Id(user.getName()).orElseThrow(() -> new AccountNotFound("No account found"));
+    account.setRoles(new HashSet<>(Set.of(BarkrRole.USER, BarkrRole.PREMIUM)));
+
+    Set<GrantedAuthority> mappedAuthorities = account.getRoles().stream()
+            .map(role -> new SimpleGrantedAuthority(role.getAuthorityValue()))
+            .collect(Collectors.toSet());
+
+    OidcUser updateUser = new DefaultOidcUser(mappedAuthorities, user.getIdToken(), user.getUserInfo());
+    String registrationId = ((OAuth2AuthenticationToken) SecurityContextHolder.getContext()
+            .getAuthentication())
+            .getAuthorizedClientRegistrationId();
+
+    OAuth2AuthenticationToken auth = new OAuth2AuthenticationToken(updateUser, updateUser.getAuthorities(), registrationId);
+
+    SecurityContext context = SecurityContextHolder.getContext();
+    context.setAuthentication(auth);
+
+
+    return ResponseEntity.status(HttpStatus.ACCEPTED).body("Congrats: \uD83D\uDC4D");
+
+  }
+
+
+
+
+}

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="light" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" class="light" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="icon" th:href="@{/images/logo/BarkrNoText.png}" type="image/png">
@@ -18,9 +18,26 @@
                 <div class="profile-info-header">
                     <img th:src="@{'/account/' + ${queryAccount.id} + '/image'}" alt="Profile Picture"
                          class="profile-picture">
-                    <div class="profile-actions" th:if="${account.username == queryAccount.username}">
+                    <div class="profile-actions" style="display: flex; flex-direction: column; gap: 0.5rem;" th:if="${account.username == queryAccount.username}">
                         <button class="btn" th:text="#{edit.profile}" onclick="openModal()">Edit Profile</button>
+                        <form th:action="@{/apikeys/apikeyform}" method="get">
+                            <button type="submit" class="btn" th:text="#{apikey.gen}" > Generate API Key
+                            </button>
+                        </form>
+
+                        <div class="post-form">
+                            <h3>🎮 Unlock Premium</h3>
+                            <form  id="unlock-premium-form" class="post-form" method="post" th:action="@{/unlock-easter-egg}">
+                                <label th:text="#{code.label}" for="code">Enter Secret Code:</label><br>
+                                <input type="text" id="code" name="code" placeholder="Enter the code" required />
+                                <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
+                                <button class="btn" type="submit" th:text="#{code.button}">Unlock</button>
+                            </form>
+                            <div id="premium-response" style="margin-top: 1em; font-weight: bold;"></div>
+                        </div>
                     </div>
+
+
                 </div>
                 <div class="profile-details">
                     <h1 class="profile-name" th:text="${queryAccount.username}">Unknown account</h1>
@@ -73,6 +90,7 @@
 </script>
 <script th:src="@{/js/theme-switcher.js}"></script>
 <script th:src="@{/js/konami.js}"></script>
+<script th:src="@{/js/unlock-easter-egg.js}"></script>
 <script th:src="@{/js/change-language.js}"></script>
 </body>
 </html>

@@ -3,12 +3,14 @@ package org.storkforge.barkr.domain.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.hibernate.proxy.HibernateProxy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.storkforge.barkr.domain.roles.BarkrRole;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 public class Account implements Serializable {
@@ -34,8 +36,53 @@ public class Account implements Serializable {
     @Size(min = 2, max = 100, message = "Breed name must be between 2 and 100 characters")
     private String breed;
 
+    @NotBlank
+    @Column(name = "google_oidc2id", unique = true, nullable = false, updatable = false)
+    private String googleOidc2Id;
+
+
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Post> posts = new ArrayList<>();
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "account", cascade = CascadeType.ALL)
+    private GoogleAccountApiKeyLink googleAccountApiKeyLink;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "account_roles", joinColumns = @JoinColumn(name = "account_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private Set<BarkrRole> roles = new HashSet<>();
+
+    public Set<GrantedAuthority> getAuthorities() {
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getAuthorityValue()))
+                .collect(Collectors.toSet());
+    }
+
+    public void setRoles(Set<BarkrRole> roles) {
+        this.roles = roles;
+    }
+
+    public Set<BarkrRole> getRoles() {
+        return roles;
+    }
+
+
+    public GoogleAccountApiKeyLink getGoogleAccountApiKeyLink() {
+        return googleAccountApiKeyLink;
+    }
+
+    public void setGoogleAccountApiKeyLink(GoogleAccountApiKeyLink googleAccountApiKeyLink) {
+        this.googleAccountApiKeyLink = googleAccountApiKeyLink;
+    }
+
+    public String getGoogleOidc2Id() {
+        return googleOidc2Id;
+    }
+
+    public void setGoogleOidc2Id(String googleOidc2Id) {
+        this.googleOidc2Id = googleOidc2Id;
+    }
 
     @PrePersist
     protected void onCreate() {
@@ -107,12 +154,17 @@ public class Account implements Serializable {
         return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
 
+
+
+
     @Override
     public String toString() {
-      return getClass().getSimpleName() + "(" +
-              "id = " + id + ", " +
-              "username = " + username + ", " +
-              "createdAt = " + createdAt + ", " +
-              "breed = " + breed + ")";
+        return getClass().getSimpleName() + "(" +
+                "id = " + id + ", " +
+                "username = " + username + ", " +
+                "createdAt = " + createdAt + ", " +
+                "image = " + image + ", " +
+                "breed = " + breed + ", " +
+                "googleOidc2Id = " + googleOidc2Id + ")";
     }
 }

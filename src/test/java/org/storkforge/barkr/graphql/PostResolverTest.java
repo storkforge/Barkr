@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.graphql.test.tester.GraphQlTester;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.storkforge.barkr.domain.AccountService;
 import org.storkforge.barkr.domain.PostService;
@@ -35,6 +36,7 @@ class PostResolverTest {
     private AccountService accountService;
 
     @Test
+    @WithMockUser
     void testGetPostById() {
         ResponseAccount account = new ResponseAccount(10L, "testAccount", LocalDateTime.now(), "beagle", new byte[0]);
         ResponsePost post = new ResponsePost(1L, "Test content", account, LocalDateTime.now());
@@ -61,6 +63,7 @@ class PostResolverTest {
     }
 
     @Test
+    @WithMockUser
     void testGetAllPosts() {
         ResponseAccount account = new ResponseAccount(10L, "testAccount", LocalDateTime.now(), "beagle", new byte[0]);
         ResponsePost post1 = new ResponsePost(1L, "First post", account, LocalDateTime.now());
@@ -86,6 +89,7 @@ class PostResolverTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("Handles error for nonexistent id")
     void handlesErrorForNonexistentId() {
         when(postService.findById(1L)).thenThrow(new PostNotFound("Post with id: 1 was not found"));
