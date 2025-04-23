@@ -11,6 +11,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check Maven version
+        run: mvn --version
+
+      - name: Check Java version
+        run: java -version
+
       - name: Checkout
         uses: actions/checkout@v4
 

@@ -1,5 +1,6 @@
 package org.storkforge.barkr.api.controller;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -24,6 +25,8 @@ import org.storkforge.barkr.infrastructure.persistence.AccountRepository;
 import org.storkforge.barkr.infrastructure.persistence.GoogleAccountApiKeyLinkRepository;
 import org.storkforge.barkr.infrastructure.persistence.IssuedApiKeyRepository;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -72,6 +75,17 @@ class ApiKeyControllerTest {
     private static org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder postWithCsrf(String url) {
         return post(url).with(csrf());
     }
+
+
+
+    @BeforeEach
+    void setupMocks() throws NoSuchAlgorithmException, InvalidKeyException {
+        // Define behavior for issuedApiKeyService mock
+        when(issuedApiKeyService.generateRawApiKey()).thenReturn("mockRawApiKey");
+        when(issuedApiKeyService.hashedApiKey("mockRawApiKey")).thenReturn("mockHashedApiKey");
+        when(issuedApiKeyService.apiKeyExists("mockHashedApiKey")).thenReturn(false);
+    }
+
 
     @Test
     @DisplayName("GET /apikeys/apikeyform returns form view")
