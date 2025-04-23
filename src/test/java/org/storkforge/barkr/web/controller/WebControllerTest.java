@@ -7,6 +7,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +19,8 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+import org.storkforge.barkr.api.controller.ApiKeyController;
+import org.storkforge.barkr.domain.IssuedApiKeyService;
 import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.domain.entity.GoogleAccountApiKeyLink;
 import org.storkforge.barkr.domain.entity.Post;
@@ -51,6 +55,13 @@ class WebControllerTest {
   @Container
   @ServiceConnection
   static RedisContainer redis = new RedisContainer(DockerImageName.parse("redis:latest"));
+
+  @Mock
+  private IssuedApiKeyService issuedApiKeyService;
+
+  @InjectMocks
+  private ApiKeyController apiKeyController;
+
 
   @Autowired
   private AccountRepository accountRepository;
