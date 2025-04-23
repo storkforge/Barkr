@@ -38,19 +38,17 @@ public class IssuedApiKeyService {
     private final IssuedApiKeyRepository issuedApiKeyRepository;
     private final GoogleAccountApiKeyLinkRepository googleAccountApiKeyLinkRepository;
     private final AccountRepository accountRepository;
-    private final String secretKey;
+    @Value("${barkr.api.secret}")
+    private String secretKey;
 
 
     public IssuedApiKeyService(
             IssuedApiKeyRepository issuedApiKeyRepository,
             GoogleAccountApiKeyLinkRepository googleAccountApiKeyLinkRepository,
-            AccountRepository accountRepository,
-            @Value("${barkr.api.secret}")
-            String secretKey) {
+            AccountRepository accountRepository) {
         this.issuedApiKeyRepository = issuedApiKeyRepository;
         this.googleAccountApiKeyLinkRepository = googleAccountApiKeyLinkRepository;
         this.accountRepository = accountRepository;
-        this.secretKey = secretKey;
 
     }
 
@@ -107,7 +105,7 @@ public class IssuedApiKeyService {
 
     public String hashedApiKey(String rawApiKey) throws NoSuchAlgorithmException, InvalidKeyException {
 
-        SecretKeySpec keySpec = new SecretKeySpec(this.secretKey.getBytes(), "HmacSHA256");
+        SecretKeySpec keySpec = new SecretKeySpec(secretKey.getBytes(), "HmacSHA256");
         Mac mac = Mac.getInstance("HmacSHA256");
         mac.init(keySpec);
 
