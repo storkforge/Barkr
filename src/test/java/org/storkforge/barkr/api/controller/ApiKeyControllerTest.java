@@ -37,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ApiKeyController.class)
 @AutoConfigureMockMvc
 @WithMockUser(roles = "USER")
+
 class ApiKeyControllerTest {
 
     @Autowired
@@ -173,7 +174,7 @@ class ApiKeyControllerTest {
     void revokeKey_valid() throws Exception {
         String fakeReferenceId = UUID.randomUUID().toString();
         UUID uuid = UUID.fromString(fakeReferenceId);
-        String userName = "testuser";
+        String userName = "testuser3";
 
         when(issuedApiKeyService.isValidUuid(uuid, userName)).thenReturn(true);
 
@@ -191,11 +192,18 @@ class ApiKeyControllerTest {
     @DisplayName("POST /apikeys/mykeys/nameupdate updates key name")
     void updateKeyName() throws Exception {
         String fakeReferenceId = UUID.randomUUID().toString();
+        UUID uuid = UUID.fromString(fakeReferenceId);
+        String userName = "testuser5";
+        String newKeyName = "new-key";
 
-        mvc.perform(postWithCsrf("/apikeys/mykeys/nameupdate")
+        when(issuedApiKeyService.isValidUuid(uuid, userName)).thenReturn(true);
+
+        mvc.perform(postWithCsrf("/apikeys/mykeys/nameupdate").with(SecurityMockMvcRequestPostProcessors.authentication(mockOAuth2Auth(userName)))
                         .param("referenceId", fakeReferenceId)
-                        .param("apiKeyName", "updated-name"))
+                        .param("apiKeyName", newKeyName))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/apikeys/mykeys"));
+        verify(issuedApiKeyService, Mockito.times(1)).isValidUuid(uuid, userName);
+        verify(issuedApiKeyService, times(1)).updateApiKey(any(UpdateApiKey.class));
     }
 }

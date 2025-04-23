@@ -66,7 +66,7 @@ class WebControllerTest {
   @Autowired
   private AccountRepository accountRepository;
 
-  @Transient
+  @Mock
   private GoogleAccountApiKeyLink googleAccountApiKeyLink;
 
   @Autowired

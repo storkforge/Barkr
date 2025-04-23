@@ -2,9 +2,9 @@ package org.storkforge.barkr.domain;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,6 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -44,6 +43,7 @@ public class IssuedApiKeyService {
     private String secretKey;
 
 
+    @Autowired
     public IssuedApiKeyService(
             IssuedApiKeyRepository issuedApiKeyRepository,
             GoogleAccountApiKeyLinkRepository googleAccountApiKeyLinkRepository) {
@@ -82,7 +82,11 @@ public class IssuedApiKeyService {
         );
 
         log.info("Adding new api key to account");
-        issuedApiKeyRepository.save(ApiKeyMapper.mapToEntity(createApiKey));
+
+        IssuedApiKey key = ApiKeyMapper.mapToEntity(createApiKey);
+
+        if(key != null)
+            issuedApiKeyRepository.save(key);
 
     }
 
@@ -126,20 +130,17 @@ public class IssuedApiKeyService {
     public boolean apiKeyValidation(String rawApiKey) throws NoSuchAlgorithmException, InvalidKeyException {
         var hashedApikey = hashedApiKey(rawApiKey);
         var keyFound = issuedApiKeyRepository.findByHashedApiKey(hashedApikey);
-        if (keyFound.isPresent() && !keyFound.get().isRevoked()) {
-            return true;
-        }
-        return false;
+        return keyFound.isPresent() && !keyFound.get().isRevoked();
 
     }
 
     public ResponseApiKeyList allApiKeys(String googleOidc2Id) {
 
         var recordsRemoved = revokeExpiredApiKeys();
-        log.info("Removed " + recordsRemoved + " api keys");
+        log.info("Removed {} api keys", recordsRemoved);
 
-        var link = googleAccountApiKeyLinkRepository.findByAccount_GoogleOidc2Id(googleOidc2Id);
-        var apiKeys = issuedApiKeyRepository.findByGoogleAccountApiKeyLinkOrderByIssuedAtDesc(link.get());
+        var link = googleAccountApiKeyLinkRepository.findByAccount_GoogleOidc2Id(googleOidc2Id).orElseThrow(() -> new AccountNotFound("Account was not found! "));
+        var apiKeys = issuedApiKeyRepository.findByGoogleAccountApiKeyLinkOrderByIssuedAtDesc(link);
 
         var apiKeyResponse = apiKeys.stream().map(ApiKeyMapper::mapToResponse).toList();
         return new ResponseApiKeyList(apiKeyResponse);

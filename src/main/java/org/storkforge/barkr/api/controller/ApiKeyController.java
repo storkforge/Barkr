@@ -103,9 +103,11 @@ public class ApiKeyController {
     }
 
     @PostMapping("mykeys/nameupdate")
-    public String nameUpdate(@RequestParam String apiKeyName, @RequestParam String referenceId) {
+    public String nameUpdate(@RequestParam String apiKeyName, @RequestParam String referenceId, @AuthenticationPrincipal OidcUser user) {
+        if(issuedApiKeyService.isValidUuid(UUID.fromString(referenceId), user.getName())) {
         var update = new UpdateApiKey(UUID.fromString(referenceId), apiKeyName, false, null);
         issuedApiKeyService.updateApiKey(update);
+        }
         return "redirect:/apikeys/mykeys";
     }
 

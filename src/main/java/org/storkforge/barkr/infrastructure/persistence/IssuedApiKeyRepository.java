@@ -13,8 +13,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface IssuedApiKeyRepository extends JpaRepository<IssuedApiKey, Long> {
-    @Override
-    Optional<IssuedApiKey> findById(Long id);
 
     Optional<IssuedApiKey> findByHashedApiKey(String hashedApiKey);
 
@@ -25,8 +23,5 @@ public interface IssuedApiKeyRepository extends JpaRepository<IssuedApiKey, Long
     @Modifying
     @Query("UPDATE IssuedApiKey k SET k.revoked = true WHERE k.expiresAt <= :now AND k.revoked = false")
     int revokeExpiredKeys(@Param("now") LocalDateTime now);
-
-
-    Boolean existsByReferenceIdAndGoogleAccountApiKeyLink(@NotNull UUID uuid, GoogleAccountApiKeyLink googleAccountApiKeyLink);
 
 }
