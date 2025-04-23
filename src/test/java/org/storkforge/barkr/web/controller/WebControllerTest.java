@@ -17,12 +17,10 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import org.storkforge.barkr.domain.IssuedApiKeyService;
 import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.domain.entity.GoogleAccountApiKeyLink;
 import org.storkforge.barkr.domain.entity.Post;
 import org.storkforge.barkr.domain.roles.BarkrRole;
-import org.storkforge.barkr.filters.ApiKeyAuthenticationFilter;
 import org.storkforge.barkr.infrastructure.persistence.AccountRepository;
 import org.storkforge.barkr.infrastructure.persistence.PostRepository;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -61,13 +59,6 @@ class WebControllerTest {
   private GoogleAccountApiKeyLink googleAccountApiKeyLink;
 
   @Autowired
-  private IssuedApiKeyService issuedApiKeyService;
-
-  @Autowired
-  private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
-
-
-  @Autowired
   private PostRepository postRepository;
 
   @Autowired
@@ -96,7 +87,7 @@ class WebControllerTest {
 
       mockAccount.setUsername("mockAccount");
       mockAccount.setBreed("husky");
-      mockAccount.setGoogleOidc2Id("4");
+      mockAccount.setGoogleOidc2Id("6");
 
       mockAccount.setImage(null);
       mockAccount.setRoles(new HashSet<>(Set.of(BarkrRole.USER, BarkrRole.PREMIUM)));
@@ -110,7 +101,7 @@ class WebControllerTest {
       mockAccount2.setUsername("mockAccount2");
       mockAccount2.setBreed("beagle");
 
-      mockAccount2.setGoogleOidc2Id("5");
+      mockAccount2.setGoogleOidc2Id("7");
       mockAccount2.setImage(null);
 
       mockAccount2.setRoles(new HashSet<>(Set.of(BarkrRole.USER, BarkrRole.PREMIUM)));

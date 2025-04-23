@@ -65,11 +65,11 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain restAPIAndGraphQLFilterChain(
             HttpSecurity http,
-            ApiKeyAuthenticationFilter apiKeyAuthenticationFilter) throws Exception {
+            IssuedApiKeyService issuedApiKeyService) throws Exception {
         http.securityMatcher("/api/**", "/graphql")
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
-                .addFilterAfter(apiKeyAuthenticationFilter, LogoutFilter.class)
+                .addFilterAfter(new ApiKeyAuthenticationFilter(issuedApiKeyService), LogoutFilter.class)
                 .authorizeHttpRequests(
                         authorize -> authorize
                                 .requestMatchers("/api/accounts").authenticated()
@@ -85,11 +85,7 @@ public class SecurityConfig {
 
     }
 
-    @Bean
-    @Order(1)
-    public ApiKeyAuthenticationFilter apiKeyAuthenticationFilter(IssuedApiKeyService issuedApiKeyService) {
-        return new ApiKeyAuthenticationFilter(issuedApiKeyService);
-    }
+
 
 
 
