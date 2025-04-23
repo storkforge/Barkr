@@ -16,12 +16,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.storkforge.barkr.domain.IssuedApiKeyService;
 import org.storkforge.barkr.domain.entity.Account;
 import org.storkforge.barkr.domain.entity.GoogleAccountApiKeyLink;
+import org.storkforge.barkr.dto.apiKeyDto.GenerateApiKeyRequest;
 import org.storkforge.barkr.dto.apiKeyDto.ResponseApiKeyList;
 import org.storkforge.barkr.dto.apiKeyDto.ResponseApiKeyOnce;
 import org.storkforge.barkr.dto.apiKeyDto.UpdateApiKey;
 import org.storkforge.barkr.infrastructure.persistence.AccountRepository;
 import org.storkforge.barkr.infrastructure.persistence.GoogleAccountApiKeyLinkRepository;
+import org.storkforge.barkr.infrastructure.persistence.IssuedApiKeyRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -45,6 +48,9 @@ class ApiKeyControllerTest {
 
     @MockitoBean
     private IssuedApiKeyService issuedApiKeyService;
+
+    @MockitoBean
+    private IssuedApiKeyRepository issuedApiKeyRepository;
 
     @MockitoBean
     private GoogleAccountApiKeyLinkRepository googleAccountApiKeyLinkRepository;
@@ -74,6 +80,26 @@ class ApiKeyControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("apikeys"));
     }
+
+
+    @Test
+    @WithMockUser(username = "testUser", roles = {"USER"})
+    void testGenerateApiKey() throws Exception {
+        GenerateApiKeyRequest request = new GenerateApiKeyRequest("TestKey", LocalDateTime.now().plusDays(1));
+        String rawApiKey = "mockRawApiKey";
+        String hashedApiKey = "mockHashedApiKey";
+
+        when(issuedApiKeyService.generateRawApiKey()).thenReturn(rawApiKey);
+        when(issuedApiKeyService.hashedApiKey(rawApiKey)).thenReturn(hashedApiKey);
+        when(issuedApiKeyService.apiKeyExists(hashedApiKey)).thenReturn(false);
+
+        mvc.perform(post("/apikeys/generate").with(csrf())
+                        .param("apiKeyName", request.apiKeyName())
+                        .param("expiresAt", request.expiresAt().toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/apikeys/result"));
+    }
+
 
     @Test
     @DisplayName("GET /apikeys/result redirects if response is null")
